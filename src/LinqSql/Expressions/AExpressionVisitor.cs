@@ -24,6 +24,18 @@
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public abstract void VisitSelect(SelectExpression expression);
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public abstract void VisitField(FieldExpression expression);
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         /// <remarks>Extend this method to add custom expressions to the visitor.</remarks>
         public virtual void VisitExtension(AExpression expression)
         {
