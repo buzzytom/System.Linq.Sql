@@ -9,7 +9,6 @@
         /// Dispatches to the specific visit method for this node type.
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
-        /// <returns>The result of visiting this node.</returns>
-        public abstract AExpression Accept(AExpressionVisitor visitor);
+        public abstract void Accept(AExpressionVisitor visitor);
     }
 }

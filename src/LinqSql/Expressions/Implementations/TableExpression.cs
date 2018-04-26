@@ -37,10 +37,9 @@ namespace LinqSql.Expressions
         /// Dispatches to the specific visit method for this node type.
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
-        /// <returns>The result of visiting this node.</returns>
-        public override AExpression Accept(AExpressionVisitor visitor)
+        public override void Accept(AExpressionVisitor visitor)
         {
-            return visitor.Visit(this);
+            visitor.VisitTable(this);
         }
         
         // ----- Properties ----- //

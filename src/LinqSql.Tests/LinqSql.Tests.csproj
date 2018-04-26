@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Expressions\Implementations\TableExpressionTests.cs" />
+    <Compile Include="Expressions\Visitors\SqlStandardExpressionVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
