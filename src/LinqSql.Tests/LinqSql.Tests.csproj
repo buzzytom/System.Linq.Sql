@@ -48,7 +48,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\FieldExpressionsTests.cs" />
+    <Compile Include="Expressions\Implementations\SelectExpressionTests.cs" />
+    <Compile Include="Expressions\Implementations\FieldExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\TableExpressionTests.cs" />
+    <Compile Include="Expressions\Visitors\SqlVisitorContextTests.cs" />
     <Compile Include="Expressions\Visitors\SqlStandardExpressionVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
