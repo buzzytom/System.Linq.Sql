@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,6 +10,14 @@ namespace LinqSql.Expressions.Tests
     {
         private static readonly string[] fields = new string[] { "FieldA", "FieldB" };
         private TableExpression expression = new TableExpression("Table", "Alias", fields);
+
+        [TestMethod]
+        public void TableExpression_Constructor_Exceptions()
+        {
+            Assert.ThrowsException<ArgumentException>(() => new TableExpression("", "Alias", fields));
+            Assert.ThrowsException<ArgumentException>(() => new TableExpression("Table", "", fields));
+            Assert.ThrowsException<ArgumentNullException>(() => new TableExpression("Table", "Alias", null));
+        }
 
         [TestMethod]
         public void TableExpression_Properties()
@@ -22,6 +31,19 @@ namespace LinqSql.Expressions.Tests
                 Assert.AreSame(expression, field.Source);
                 Assert.IsTrue(fields.Contains(field.Field));
             }
+        }
+
+        [TestMethod]
+        public void TableExpression_Accept()
+        {
+            // Setup test
+            MockExpressionVisitor visitor = new MockExpressionVisitor();
+
+            // Perform the test operation
+            expression.Accept(visitor);
+
+            // Check test result
+            Assert.IsTrue(visitor.TableVisited);
         }
     }
 }
