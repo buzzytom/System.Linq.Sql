@@ -52,6 +52,7 @@
     <Compile Include="Expressions\Implementations\SelectExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\FieldExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\TableExpressionTests.cs" />
+    <Compile Include="Expressions\MockExpressionVisitor.cs" />
     <Compile Include="Expressions\Visitors\SqlVisitorContextTests.cs" />
     <Compile Include="Expressions\Visitors\SqlStandardExpressionVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
