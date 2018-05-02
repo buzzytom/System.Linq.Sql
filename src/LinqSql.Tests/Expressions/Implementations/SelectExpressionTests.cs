@@ -9,21 +9,21 @@ namespace LinqSql.Expressions.Tests
     public class SelectExpressionTests
     {
         private static readonly string[] fields = new string[] { "FieldA", "FieldB" };
-        private ASourceExpression source = new TableExpression("Table", "Alias", fields);
+        private TableExpression source = new TableExpression("Table", "Alias", fields);
         private SelectExpression expression = null;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            expression = new SelectExpression(source, fields);
+            expression = new SelectExpression(source, source.Fields);
         }
 
         [TestMethod]
         public void SelectExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(null, fields));
+            Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(null, source.Fields));
             Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(source, null));
-            Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new string[0]));
+            Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new FieldExpression[0]));
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace LinqSql.Expressions.Tests
             Assert.AreSame(source, expression.Source);
             foreach (FieldExpression field in expressions)
             {
-                Assert.AreSame(source, field.Source);
+                Assert.AreEqual(source.Alias, field.TableName);
                 Assert.IsTrue(fields.Contains(field.FieldName));
             }
         }

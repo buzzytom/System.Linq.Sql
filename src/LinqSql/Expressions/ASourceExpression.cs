@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace LinqSql.Expressions
 {
@@ -9,6 +8,6 @@ namespace LinqSql.Expressions
     public abstract class ASourceExpression : Expression
     {
         /// <summary>Gets the field expressions exposed by this source.</summary>
-        public virtual IEnumerable<FieldExpression> Fields => null;
+        public virtual FieldExpressions Fields => null;
     }
 }

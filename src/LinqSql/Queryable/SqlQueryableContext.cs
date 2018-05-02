@@ -15,7 +15,7 @@ namespace LinqSql.Queryable
             // Create the outer select expression
             SelectExpression select = expression as SelectExpression;
             if (select == null)
-                select = new SelectExpression(expression, expression.Fields.Select(x => x.Alias));
+                select = new SelectExpression(expression, expression.Fields);
 
             // Ensure the connection is open
             if (connection.State != ConnectionState.Open)
@@ -63,11 +63,10 @@ namespace LinqSql.Queryable
             return item;
         }
 
-        private static ILookup<string, CommandField> GetFieldMap(this DbDataReader reader, IEnumerable<FieldExpression> fields)
+        private static ILookup<string, CommandField> GetFieldMap(this DbDataReader reader, FieldExpressions fields)
         {
-            // TODO - Resolve the table alias to give the field
             return fields
-                .Select(x => new CommandField("table", x.Alias, reader.GetOrdinal(x.Alias)))
+                .Select(x => new CommandField(x.TableName, x.FieldName, reader.GetOrdinal(fields.GetKey(x))))
                 .ToLookup(x => x.Table);
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace LinqSql.Expressions
@@ -12,7 +11,7 @@ namespace LinqSql.Expressions
     {
         private readonly string table = null;
         private readonly string alias = null;
-        private readonly IEnumerable<FieldExpression> fields = null;
+        private readonly FieldExpressions fields = null;
 
         /// <summary>
         /// Initializes a new instance of <see cref="TableExpression"/>, selecting the specified fields from the specified table.
@@ -30,7 +29,7 @@ namespace LinqSql.Expressions
 
             this.table = table;
             this.alias = alias;
-            this.fields = fields.Select(x => new FieldExpression(this, x, x));
+            this.fields = new FieldExpressions(alias, fields);
         }
 
         /// <summary>
@@ -54,6 +53,6 @@ namespace LinqSql.Expressions
         public string Alias => alias;
 
         /// <summary>Gets the fields exposed by the table.</summary>
-        public override IEnumerable<FieldExpression> Fields => fields;
+        public override FieldExpressions Fields => fields;
     }
 }

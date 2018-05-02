@@ -28,7 +28,7 @@ namespace LinqSql.Expressions.Tests
             Assert.AreEqual(fields.Length, expressions.Length);
             foreach (FieldExpression field in expressions)
             {
-                Assert.AreSame(expression, field.Source);
+                Assert.AreEqual(expression.Alias, field.TableName);
                 Assert.IsTrue(fields.Contains(field.FieldName));
             }
         }

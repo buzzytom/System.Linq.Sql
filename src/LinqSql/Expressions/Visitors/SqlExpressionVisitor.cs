@@ -44,7 +44,7 @@ namespace LinqSql.Expressions
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append($"{expression.Table} as [{expression.Alias}]");
+            builder.Append($"[{expression.Table}] as [{expression.Alias}]");
 
             return expression;
         }
@@ -59,7 +59,7 @@ namespace LinqSql.Expressions
                 throw new ArgumentNullException(nameof(expression));
 
             builder.Append("(select ");
-            VisitFields(expression.Fields);
+            VisitFields(expression, expression.Fields);
             builder.Append(" from ");
             Visit(expression.Source);
             builder.Append($")as[{context.GetSource(expression)}]");
@@ -84,17 +84,18 @@ namespace LinqSql.Expressions
         /// <summary>
         /// Visits the specified expressions.
         /// </summary>
+        /// <param name="expression">The expression the fields are being rendered for.</param>
         /// <param name="fields">A collection of expressions to visit.</param>
-        protected virtual void VisitFields(IEnumerable<FieldExpression> fields)
+        protected virtual void VisitFields(ASourceExpression expression, IEnumerable<FieldExpression> fields)
         {
-            bool comma = false;
+            StringBuilder builder = new StringBuilder();
             foreach (FieldExpression field in fields)
             {
-                if (comma)
+                if (builder.Length > 0)
                     builder.Append(",");
-                builder.Append($"[{context.GetSource(field.Source)}].[{field.FieldName}]as[{field.Alias}]");
-                comma = true;
+                builder.Append($"[{field.TableName}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
             }
+            this.builder.Append(builder.ToString());
         }
 
         // ----- Properties ----- //

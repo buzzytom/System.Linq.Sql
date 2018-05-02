@@ -7,29 +7,20 @@ namespace LinqSql.Expressions.Tests
     [TestClass]
     public class FieldExpressionTests
     {
-        private ASourceExpression source = new TableExpression("Table", "Alias", new string[] { "FieldName" });
-        private FieldExpression expression = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            expression = new FieldExpression(source, "FieldName", "FieldAlias");
-        }
+        private FieldExpression expression = new FieldExpression("TableName", "FieldName");
 
         [TestMethod]
         public void FieldExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpression(null, "FieldName", "FieldAlias"));
-            Assert.ThrowsException<ArgumentException>(() => new FieldExpression(source, "", "FieldAlias"));
-            Assert.ThrowsException<ArgumentException>(() => new FieldExpression(source, "FieldName", ""));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpression("", "FieldName"));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpression("TableName", ""));
         }
 
         [TestMethod]
         public void FieldExpression_Properties()
         {
+            Assert.AreEqual("TableName", expression.TableName);
             Assert.AreEqual("FieldName", expression.FieldName);
-            Assert.AreEqual("FieldAlias", expression.Alias);
-            Assert.AreSame(source, expression.Source);
         }
 
         [TestMethod]

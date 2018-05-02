@@ -11,15 +11,22 @@ namespace LinqSql.Expressions
     public class SelectExpression : ASourceExpression
     {
         private readonly ASourceExpression source = null;
-        private readonly FieldExpressions fields = new FieldExpressions();
+        private readonly FieldExpressions fields = null;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="TableExpression"/>, selecting the specified fields from the specified table.
+        /// Initializes a new instance of <see cref="SelectExpression"/> selecting all the fields from the specified source.
         /// </summary>
-        /// <param name="fields">The fields from each record of the table to query.</param>
-        /// <param name="table">The name of the table in the database to query.</param>
-        /// <param name="alias">The alias name the <see cref="TableExpression"/> should expose for other queries.</param>
-        public SelectExpression(ASourceExpression source, IEnumerable<string> fields)
+        /// <param name="source">The source expression to select from.</param>
+        public SelectExpression(ASourceExpression source)
+            : this(source, source?.Fields)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="SelectExpression"/> selecting the specified fields from the source.
+        /// </summary>
+        /// <param name="source">The source expression to select from.</param>
+        /// <param name="fields">The fields to select from the source.</param>
+        public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields)
         {
             if (source == null)
                 throw new ArgumentNullException();
@@ -29,7 +36,7 @@ namespace LinqSql.Expressions
                 throw new ArgumentException("There must be at least one field specified in a select query.", nameof(fields));
 
             this.source = source;
-            this.fields = new FieldExpressions(source, fields);
+            this.fields = new FieldExpressions(fields);
         }
 
         /// <summary>
@@ -50,6 +57,6 @@ namespace LinqSql.Expressions
         public ASourceExpression Source => source;
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
-        public override IEnumerable<FieldExpression> Fields => fields;
+        public override FieldExpressions Fields => fields;
     }
 }
