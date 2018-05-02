@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LinqSql.Expressions
 {
@@ -36,11 +37,14 @@ namespace LinqSql.Expressions
         /// Dispatches to the specific visit method for this node type.
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
-        public override void Accept(AExpressionVisitor visitor)
+        protected override Expression Accept(ExpressionVisitor visitor)
         {
-            visitor.VisitTable(this);
+            if (visitor is ISqlExpressionVisitor sqlVisitor)
+                return sqlVisitor.VisitTable(this);
+            else
+                return base.Accept(visitor);
         }
-        
+
         // ----- Properties ----- //
 
         /// <summary>Gets the physical name of table.</summary>

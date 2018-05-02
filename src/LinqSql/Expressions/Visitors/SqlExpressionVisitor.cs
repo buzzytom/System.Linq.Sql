@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace LinqSql.Expressions
 {
     /// <summary>
-    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="AExpressionVisitor"/>, which the visit implementations generate an SQL representation of .
+    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="ISqlExpressionVisitor"/>, which the visit implementations generate an SQL representation of .
     /// </summary>
-    public class SqlExpressionVisitor : AExpressionVisitor
+    public class SqlExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
-        private StringBuilder builder = new StringBuilder();
-        private SqlVisitorContext context = new SqlVisitorContext();
+        private readonly StringBuilder builder = new StringBuilder();
+        private readonly SqlVisitorContext context = new SqlVisitorContext();
 
         /// <summary>
         /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
@@ -25,15 +26,12 @@ namespace LinqSql.Expressions
         /// <param name="expression">The root node of the expression tree to generate sql for.</param>
         /// <returns>The sql representation of the specified expression.</returns>
         /// <remarks>This method will clear any state currently executing on the visitor.</remarks>
-        public string GenerateSql(AExpression expression)
+        public string GenerateSql(SelectExpression expression)
         {
             builder.Clear();
             context.Clear();
-
-            if (expression is ASourceExpression)
-                builder.Append("select * from ");
-
-            expression.Accept(this);
+            builder.Append("select * from ");
+            Visit(expression);
             return builder.ToString();
         }
 
@@ -41,19 +39,21 @@ namespace LinqSql.Expressions
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
-        public override void VisitTable(TableExpression expression)
+        public virtual Expression VisitTable(TableExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
             builder.Append($"{expression.Table} as [{expression.Alias}]");
+
+            return expression;
         }
 
         /// <summary>
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
-        public override void VisitSelect(SelectExpression expression)
+        public virtual Expression VisitSelect(SelectExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
@@ -61,30 +61,38 @@ namespace LinqSql.Expressions
             builder.Append("(select ");
             VisitFields(expression.Fields);
             builder.Append(" from ");
-            expression.Source.Accept(this);
+            Visit(expression.Source);
             builder.Append($")as[{context.GetSource(expression)}]");
+
+            return expression;
         }
 
         /// <summary>
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
-        public override void VisitField(FieldExpression expression)
+        public virtual Expression VisitField(FieldExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
             throw new NotImplementedException();
+
+            //return expression;
         }
 
-        private void VisitFields(IEnumerable<FieldExpression> fields)
+        /// <summary>
+        /// Visits the specified expressions.
+        /// </summary>
+        /// <param name="fields">A collection of expressions to visit.</param>
+        protected virtual void VisitFields(IEnumerable<FieldExpression> fields)
         {
             bool comma = false;
             foreach (FieldExpression field in fields)
             {
                 if (comma)
                     builder.Append(",");
-                builder.Append($"[{context.GetSource(field.Source)}].[{field.Field}]as[{field.Alias}]");
+                builder.Append($"[{context.GetSource(field.Source)}].[{field.FieldName}]as[{field.Alias}]");
                 comma = true;
             }
         }

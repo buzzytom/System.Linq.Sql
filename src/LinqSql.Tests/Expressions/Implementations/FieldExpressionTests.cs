@@ -27,7 +27,7 @@ namespace LinqSql.Expressions.Tests
         [TestMethod]
         public void FieldExpression_Properties()
         {
-            Assert.AreEqual("FieldName", expression.Field);
+            Assert.AreEqual("FieldName", expression.FieldName);
             Assert.AreEqual("FieldAlias", expression.Alias);
             Assert.AreSame(source, expression.Source);
         }
@@ -39,7 +39,7 @@ namespace LinqSql.Expressions.Tests
             MockExpressionVisitor visitor = new MockExpressionVisitor();
 
             // Perform the test operation
-            expression.Accept(visitor);
+            visitor.Visit(expression);
 
             // Check test result
             Assert.IsTrue(visitor.FieldVisited);

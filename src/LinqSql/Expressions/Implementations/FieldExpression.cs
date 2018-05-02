@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace LinqSql.Expressions
 {
     /// <summary>
     /// Represents a column selection of a database table.
     /// </summary>
-    public class FieldExpression : AExpression
+    public class FieldExpression : Expression
     {
         private readonly string field = null;
         private readonly string alias = null;
@@ -35,15 +36,18 @@ namespace LinqSql.Expressions
         /// Dispatches to the specific visit method for this node type.
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
-        public override void Accept(AExpressionVisitor visitor)
+        protected override Expression Accept(ExpressionVisitor visitor)
         {
-            visitor.VisitField(this);
+            if (visitor is ISqlExpressionVisitor sqlVisitor)
+                return sqlVisitor.VisitField(this);
+            else
+                return base.Accept(visitor);
         }
 
         // ----- Properties ----- //
 
         /// <summary>Gets the name of the field on the <see cref="Source"/>.</summary>
-        public string Field => field;
+        public string FieldName => field;
 
         /// <summary>Gets the alias the field is exposed as.</summary>
         public string Alias => alias;

@@ -29,7 +29,7 @@ namespace LinqSql.Expressions.Tests
             foreach (FieldExpression field in expressions)
             {
                 Assert.AreSame(expression, field.Source);
-                Assert.IsTrue(fields.Contains(field.Field));
+                Assert.IsTrue(fields.Contains(field.FieldName));
             }
         }
 
@@ -40,7 +40,7 @@ namespace LinqSql.Expressions.Tests
             MockExpressionVisitor visitor = new MockExpressionVisitor();
 
             // Perform the test operation
-            expression.Accept(visitor);
+            visitor.Visit(expression);
 
             // Check test result
             Assert.IsTrue(visitor.TableVisited);

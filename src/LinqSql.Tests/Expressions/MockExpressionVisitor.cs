@@ -1,20 +1,25 @@
-﻿namespace LinqSql.Expressions.Tests
+﻿using System.Linq.Expressions;
+
+namespace LinqSql.Expressions.Tests
 {
-    public class MockExpressionVisitor : AExpressionVisitor
+    public class MockExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
-        public override void VisitField(FieldExpression expression)
+        public Expression VisitField(FieldExpression expression)
         {
             FieldVisited = true;
+            return expression;
         }
 
-        public override void VisitSelect(SelectExpression expression)
+        public Expression VisitSelect(SelectExpression expression)
         {
             SelectVisited = true;
+            return expression;
         }
 
-        public override void VisitTable(TableExpression expression)
+        public Expression VisitTable(TableExpression expression)
         {
             TableVisited = true;
+            return expression;
         }
 
         // ----- Properties ----- //

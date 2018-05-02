@@ -33,7 +33,7 @@ namespace LinqSql.Expressions.Tests
             foreach (FieldExpression field in expressions)
             {
                 Assert.AreSame(source, field.Source);
-                Assert.IsTrue(fields.Any(x => x == field.Field));
+                Assert.IsTrue(fields.Any(x => x == field.FieldName));
                 Assert.AreEqual($"f{next}", field.Alias);
                 next++;
             }
