@@ -5,17 +5,17 @@ using System.Text;
 namespace LinqSql.Expressions
 {
     /// <summary>
-    /// <see cref="SqlStandardExpressionVisitor"/> is an implementation of <see cref="AExpressionVisitor"/>, which the visit implementations generate an SQL representation of .
+    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="AExpressionVisitor"/>, which the visit implementations generate an SQL representation of .
     /// </summary>
-    public class SqlStandardExpressionVisitor : AExpressionVisitor
+    public class SqlExpressionVisitor : AExpressionVisitor
     {
         private StringBuilder builder = new StringBuilder();
         private SqlVisitorContext context = new SqlVisitorContext();
 
         /// <summary>
-        /// Creates a new instance of <see cref="SqlStandardExpressionVisitor"/>.
+        /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
         /// </summary>
-        public SqlStandardExpressionVisitor()
+        public SqlExpressionVisitor()
         {
         }
 

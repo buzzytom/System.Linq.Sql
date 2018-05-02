@@ -3,12 +3,12 @@
 namespace LinqSql.Expressions.Tests
 {
     [TestClass]
-    public class SqlStandardExpressionVisitorTests
+    public class SqlExpressionVisitorTests
     {
-        private SqlStandardExpressionVisitor visitor = new SqlStandardExpressionVisitor();
+        private SqlExpressionVisitor visitor = new SqlExpressionVisitor();
 
         [TestMethod]
-        public void GenerateSql()
+        public void SqlExpressionVisitor_GenerateSql()
         {
             // Prepare the test data
             string[] fields = new string[] { "FieldA", "FieldB" };
@@ -23,7 +23,7 @@ namespace LinqSql.Expressions.Tests
         }
 
         [TestMethod]
-        public void VisitTable()
+        public void SqlExpressionVisitor_VisitTable()
         {
             // Prepare the test data
             string[] fields = new string[] { "FieldA", "FieldB" };
@@ -37,7 +37,7 @@ namespace LinqSql.Expressions.Tests
         }
 
         [TestMethod]
-        public void VisitSelect()
+        public void SqlExpressionVisitor_VisitSelect()
         {
             // Prepare the test data
             string[] fields = new string[] { "FieldA", "FieldB" };
