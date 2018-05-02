@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,17 +20,24 @@ namespace LinqSql.Queryable
         /// <summary>
         /// Initializes a new instance of <see cref="SqlQueryable"/> from the specified table information.
         /// </summary>
-        public SqlQueryable(string table, IEnumerable<string> fields)
-            : this(table, table, fields)
+        /// <param name="connection">The database connection to query from.</param>
+        /// <param name="table">The name of the table to be queried.</param>
+        /// <param name="fields">The fields that exist on the specified table.</param>
+        public SqlQueryable(DbConnection connection, string table, IEnumerable<string> fields)
+            : this(connection, table, table, fields)
         { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="SqlQueryable"/> from the specified table information.
         /// </summary>
-        public SqlQueryable(string table, string alias, IEnumerable<string> fields)
+        /// <param name="connection">The database connection to query from.</param>
+        /// <param name="table">The name of the table to be queried.</param>
+        /// <param name="alias">An alias to give the table for use in query filtering.</param>
+        /// <param name="fields">The fields that exist on the specified table.</param>
+        public SqlQueryable(DbConnection connection, string table, string alias, IEnumerable<string> fields)
         {
             expression = new TableExpression(table, alias, fields);
-            provider = new SqlQueryableProvider();
+            provider = new SqlQueryableProvider(connection);
         }
 
         /// <summary>

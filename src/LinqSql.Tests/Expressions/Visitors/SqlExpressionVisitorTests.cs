@@ -16,10 +16,10 @@ namespace LinqSql.Expressions.Tests
             SelectExpression expression = new SelectExpression(table, fields);
 
             // Performs the test operation
-            string sql = visitor.GenerateSql(expression);
+            Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from Table as [Alias])as[t1]", sql);
+            Assert.AreEqual("select * from (select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from Table as [Alias])as[t1]", query.Sql);
         }
 
         [TestMethod]

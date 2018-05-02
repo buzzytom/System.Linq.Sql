@@ -26,13 +26,13 @@ namespace LinqSql.Expressions
         /// <param name="expression">The root node of the expression tree to generate sql for.</param>
         /// <returns>The sql representation of the specified expression.</returns>
         /// <remarks>This method will clear any state currently executing on the visitor.</remarks>
-        public string GenerateSql(SelectExpression expression)
+        public Query GenerateQuery(SelectExpression expression)
         {
             builder.Clear();
             context.Clear();
             builder.Append("select * from ");
             Visit(expression);
-            return builder.ToString();
+            return new Query(builder.ToString(), context.Parameters);
         }
 
         /// <summary>

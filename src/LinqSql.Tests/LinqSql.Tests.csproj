@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Expressions\FieldExpressionsTests.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Expressions\Visitors\SqlVisitorContextTests.cs" />
     <Compile Include="Expressions\Visitors\SqlExpressionVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queryable\SqlQueryableTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinqSql\LinqSql.csproj">

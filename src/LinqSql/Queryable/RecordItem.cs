@@ -13,8 +13,8 @@ namespace LinqSql.Queryable
         /// </summary>
         /// <param name="key">The table or selection key which the record item represents.</param>
         /// <param name="data">The mapping which the record represents.</param>
-        public RecordItem(string key, Dictionary<string, object> data)
-            : base(data)
+        public RecordItem(string key, Dictionary<string, object> data = null)
+            : base(data ?? new Dictionary<string, object>())
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("Cannot be null or whitespace.", nameof(key));
