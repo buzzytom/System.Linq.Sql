@@ -61,6 +61,7 @@
     <Compile Include="Expressions\Visitors\SqlVisitorContextTests.cs" />
     <Compile Include="Expressions\Visitors\SqlExpressionVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queryable\CommandFieldTests.cs" />
     <Compile Include="Queryable\RecordItemTests.cs" />
     <Compile Include="Queryable\RecordTests.cs" />
     <Compile Include="Queryable\SqlQueryableTests.cs" />

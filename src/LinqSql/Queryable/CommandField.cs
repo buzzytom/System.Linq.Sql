@@ -1,6 +1,11 @@
 ﻿namespace LinqSql.Queryable
 {
-    internal struct CommandField
+#if DEBUG
+    public
+#else
+    internal
+#endif
+    struct CommandField
     {
         private readonly string field;
         private readonly int ordinal;
