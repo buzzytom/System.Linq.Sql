@@ -32,8 +32,9 @@ namespace LinqSql.Queryable.Tests
             IQueryable<Record> queryable = new SqlQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            IQueryable<Record> query = queryable.Where(x => true);
-            Record[] records = query.ToArray();
+            Record[] records = queryable
+                .Where(x => true)
+                .ToArray();
 
             // Check the test result
             Assert.AreEqual(1, records.Length);
