@@ -20,8 +20,23 @@ namespace LinqSql.Queryable.Tests
             // Perform the test operation
             Record[] records = queryable.ToArray();
 
-            // Check test result
+            // Check the test result
             Assert.AreEqual(ConnectionTestHelper.CountCourses, records.Length);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Where()
+        {
+            // Prepare test data
+            string[] fields = new string[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqlQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            IQueryable<Record> query = queryable.Where(x => true);
+            Record[] records = query.ToArray();
+
+            // Check the test result
+            Assert.AreEqual(1, records.Length);
         }
     }
 }
