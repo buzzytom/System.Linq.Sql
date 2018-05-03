@@ -8,9 +8,14 @@ namespace LinqSql.Queryable
 {
     using Expressions;
 
-    internal static class SqlQueryableContext
+#if DEBUG
+    public
+#else
+    internal
+#endif
+    static class SqlQueryableContext
     {
-        internal static IEnumerable<Record> ExecuteQuery(this DbConnection connection, ASourceExpression expression, SqlExpressionVisitor visitor)
+        public static IEnumerable<Record> ExecuteQuery(this DbConnection connection, ASourceExpression expression, SqlExpressionVisitor visitor)
         {
             // Create the outer select expression
             SelectExpression select = expression as SelectExpression;
