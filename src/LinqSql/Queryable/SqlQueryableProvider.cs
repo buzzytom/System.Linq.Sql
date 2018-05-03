@@ -7,7 +7,12 @@ namespace LinqSql.Queryable
 {
     using Expressions;
 
-    public class SqlQueryableProvider : IQueryProvider
+#if DEBUG
+    public
+#else
+    internal
+#endif
+    class SqlQueryableProvider : IQueryProvider
     {
         private readonly DbConnection connection = null;
         private readonly SqlExpressionVisitor visitor = null;

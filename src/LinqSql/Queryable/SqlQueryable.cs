@@ -51,8 +51,6 @@ namespace LinqSql.Queryable
                 throw new ArgumentNullException(nameof(provider));
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
-            if (!typeof(IQueryable<Record>).IsAssignableFrom(expression.Type))
-                throw new ArgumentOutOfRangeException(nameof(expression));
 
             this.provider = provider;
             this.expression = expression;

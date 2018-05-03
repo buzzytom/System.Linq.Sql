@@ -65,6 +65,7 @@
     <Compile Include="Queryable\RecordItemTests.cs" />
     <Compile Include="Queryable\RecordTests.cs" />
     <Compile Include="Queryable\SqlQueryableContextTests.cs" />
+    <Compile Include="Queryable\SqlQueryableProviderTests.cs" />
     <Compile Include="Queryable\SqlQueryableTests.cs" />
   </ItemGroup>
   <ItemGroup>
