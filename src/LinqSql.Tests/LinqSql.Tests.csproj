@@ -56,6 +56,7 @@
     <Compile Include="Expressions\FieldExpressionsTests.cs" />
     <Compile Include="Expressions\Implementations\SelectExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\FieldExpressionTests.cs" />
+    <Compile Include="Expressions\Implementations\WhereExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\TableExpressionTests.cs" />
     <Compile Include="Expressions\MockExpressionVisitor.cs" />
     <Compile Include="Expressions\Visitors\QueryTests.cs" />

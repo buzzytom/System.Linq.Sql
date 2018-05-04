@@ -22,6 +22,12 @@ namespace System.Linq.Sql.Expressions.Tests
             return expression;
         }
 
+        public Expression VisitWhere(WhereExpression expression)
+        {
+            WhereVisited = true;
+            return expression;
+        }
+
         // ----- Properties ----- //
 
         public bool FieldVisited { private set; get; } = false;
@@ -29,5 +35,7 @@ namespace System.Linq.Sql.Expressions.Tests
         public bool SelectVisited { private set; get; } = false;
 
         public bool TableVisited { private set; get; } = false;
+
+        public bool WhereVisited { private set; get; } = false;
     }
 }

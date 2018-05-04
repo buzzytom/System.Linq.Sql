@@ -38,14 +38,14 @@ namespace System.Linq.Sql.Expressions
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
-        public virtual Expression VisitTable(TableExpression expression)
+        public virtual Expression VisitField(FieldExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append($"[{expression.Table}] as [{expression.Alias}]");
+            throw new NotImplementedException();
 
-            return expression;
+            //return expression;
         }
 
         /// <summary>
@@ -70,7 +70,21 @@ namespace System.Linq.Sql.Expressions
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
-        public virtual Expression VisitField(FieldExpression expression)
+        public virtual Expression VisitTable(TableExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            builder.Append($"[{expression.Table}] as [{expression.Alias}]");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitWhere(WhereExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));

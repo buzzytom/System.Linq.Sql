@@ -35,12 +35,10 @@ namespace System.Linq.Sql.Expressions
         /// Dispatches to the specific visit method for this node type.
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
-        protected override Expression Accept(ExpressionVisitor visitor)
+        /// <returns>The result of visiting this node.</returns>
+        protected override Expression AcceptSql(ISqlExpressionVisitor visitor)
         {
-            if (visitor is ISqlExpressionVisitor sqlVisitor)
-                return sqlVisitor.VisitTable(this);
-            else
-                return base.Accept(visitor);
+            return visitor.VisitTable(this);
         }
 
         // ----- Properties ----- //
