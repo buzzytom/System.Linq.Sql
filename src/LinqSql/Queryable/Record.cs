@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinqSql.Queryable
+namespace System.Linq.Sql.Queryable
 {
     /// <summary>
     /// <see cref="Record"/> is the map of a single result row of a query. The mapping correlates a table name or alias to a single <see cref="RecordItem"/>.

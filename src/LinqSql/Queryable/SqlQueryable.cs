@@ -1,11 +1,9 @@
-﻿using System;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
-namespace LinqSql.Queryable
+namespace System.Linq.Sql.Queryable
 {
     using Expressions;
 

@@ -3,7 +3,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Expressions.Tests
+namespace System.Linq.Sql.Expressions.Tests
 {
     [TestClass]
     public class TableExpressionTests

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqSql.Expressions
+namespace System.Linq.Sql.Expressions
 {
     /// <summary>
     /// Represents the field selection on a source expression.

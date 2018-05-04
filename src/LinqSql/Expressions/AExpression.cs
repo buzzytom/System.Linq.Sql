@@ -1,10 +1,7 @@
 ﻿using System.Linq.Expressions;
 
-namespace LinqSql.Expressions
+namespace System.Linq.Sql.Expressions
 {
-    using System;
-    using Queryable;
-
     /// <summary>
     /// <see cref="AExpression"/> provides the base class from which concrete query expressions are derived. This is an abstract class. This class extends <see cref="Expression"/>.
     /// </summary>

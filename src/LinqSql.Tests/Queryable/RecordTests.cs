@@ -2,7 +2,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Queryable.Tests
+namespace System.Linq.Sql.Queryable.Tests
 {
     [TestClass]
     public class RecordTests

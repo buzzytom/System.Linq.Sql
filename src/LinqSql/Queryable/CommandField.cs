@@ -1,4 +1,4 @@
-﻿namespace LinqSql.Queryable
+﻿namespace System.Linq.Sql.Queryable
 {
 #if DEBUG
     public

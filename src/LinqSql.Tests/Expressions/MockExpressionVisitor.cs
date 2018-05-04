@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace LinqSql.Expressions.Tests
+namespace System.Linq.Sql.Expressions.Tests
 {
     public class MockExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {

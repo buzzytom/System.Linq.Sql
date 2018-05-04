@@ -1,10 +1,8 @@
-﻿using System;
-using System.Data.Common;
-using System.Linq;
+﻿using System.Data.Common;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Queryable.Tests
+namespace System.Linq.Sql.Queryable.Tests
 {
     using Expressions;
 

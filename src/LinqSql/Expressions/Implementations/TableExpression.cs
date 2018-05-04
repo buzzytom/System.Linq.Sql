@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqSql.Expressions
+namespace System.Linq.Sql.Expressions
 {
     /// <summary>
     /// Represents a record selection of a database table.

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SQLite;
-using System.Linq;
 
-namespace LinqSql
+namespace System.Linq.Sql
 {
     public static class ConnectionTestHelper
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace LinqSql.Expressions
+﻿namespace System.Linq.Sql.Expressions
 {
     using Queryable;
 

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Data.Common;
+﻿using System.Data.Common;
 
-namespace LinqSql
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="CommandHelper"/> defines extension methods <see cref="DbCommand"/> instances.

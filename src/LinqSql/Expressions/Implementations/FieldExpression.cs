@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace LinqSql.Expressions
+namespace System.Linq.Sql.Expressions
 {
     /// <summary>
     /// Represents a column selection of a database table.

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Data.Common;
-using System.Linq;
+﻿using System.Data.Common;
 using System.Linq.Expressions;
 
-namespace LinqSql.Queryable
+namespace System.Linq.Sql.Queryable
 {
     using Expressions;
 
