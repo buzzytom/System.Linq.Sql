@@ -79,8 +79,8 @@ namespace System.Linq.Sql.Queryable.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void SqlQueryableProvider_Execute_InvalidOperationException()
+        [ExpectedException(typeof(NotSupportedException))]
+        public void SqlQueryableProvider_Execute_NotSupportedException()
         {
             // Prepare test data
             Expression expression = Expression.Constant(this);

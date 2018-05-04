@@ -42,10 +42,14 @@ namespace System.Linq.Sql.Queryable
 
         public object Execute(Expression expression)
         {
+            // Translate the expression tree
+            expression = SqlTranslatorVisitor.Translate(expression);
+
+            // Execute the query
             if (expression is ASourceExpression source)
                 return connection.ExecuteQuery(source, visitor);
-            else
-                throw new InvalidOperationException();
+
+            throw new NotSupportedException("The expression could not be converted to sql.");
         }
 
         public TResult Execute<TResult>(Expression expression)

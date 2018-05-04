@@ -16,8 +16,7 @@ namespace System.Linq.Sql.Expressions
         /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
         /// </summary>
         public SqlExpressionVisitor()
-        {
-        }
+        { }
 
         /// <summary>
         /// Generates the sql representation of the specified expression.
