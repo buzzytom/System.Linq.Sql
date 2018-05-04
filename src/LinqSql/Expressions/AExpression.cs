@@ -7,8 +7,10 @@ namespace System.Linq.Sql.Expressions
     /// </summary>
     public abstract class AExpression : Expression
     {
+        /// <summary>Gets the node type of this System.Linq.Expressions.Expression.</summary>
         public override ExpressionType NodeType => ExpressionType.Extension;
 
+        /// <summary>Gets the static type of the expression that this System.Linq.Expressions.Expression represents.</summary>
         public override Type Type => typeof(object);
     }
 }

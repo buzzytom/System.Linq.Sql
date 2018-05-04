@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,6 +19,8 @@ namespace System.Linq.Sql.Expressions.Tests
         [TestMethod]
         public void FieldExpression_Properties()
         {
+            Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
+            Assert.AreEqual(typeof(object), expression.Type);
             Assert.AreEqual("TableName", expression.TableName);
             Assert.AreEqual("FieldName", expression.FieldName);
         }

@@ -1,10 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Linq.Sql.Expressions.Tests
 {
+    using Queryable;
+
     [TestClass]
     public class TableExpressionTests
     {
@@ -23,6 +24,8 @@ namespace System.Linq.Sql.Expressions.Tests
         public void TableExpression_Properties()
         {
             FieldExpression[] expressions = expression.Fields.ToArray();
+            Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
+            Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             Assert.AreEqual("Table", expression.Table);
             Assert.AreEqual("Alias", expression.Alias);
             Assert.AreEqual(fields.Length, expressions.Length);

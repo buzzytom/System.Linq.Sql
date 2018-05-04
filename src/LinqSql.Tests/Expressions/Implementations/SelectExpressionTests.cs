@@ -1,10 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Linq.Sql.Expressions.Tests
 {
+    using Queryable;
+
     [TestClass]
     public class SelectExpressionTests
     {
@@ -30,6 +31,8 @@ namespace System.Linq.Sql.Expressions.Tests
         public void SelectExpression_Properties()
         {
             FieldExpression[] expressions = expression.Fields.ToArray();
+            Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
+            Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             Assert.AreSame(source, expression.Source);
             foreach (FieldExpression field in expressions)
             {

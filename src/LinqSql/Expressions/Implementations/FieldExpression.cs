@@ -5,7 +5,7 @@ namespace System.Linq.Sql.Expressions
     /// <summary>
     /// Represents a column selection of a database table.
     /// </summary>
-    public class FieldExpression : Expression
+    public class FieldExpression : AExpression
     {
         private readonly string table = null;
         private readonly string field = null;
