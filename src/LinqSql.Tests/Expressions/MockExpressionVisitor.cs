@@ -4,9 +4,27 @@ namespace System.Linq.Sql.Expressions.Tests
 {
     public class MockExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
+        public Expression VisitComposite(CompositeExpression expression)
+        {
+            CompositeVisited = true;
+            return expression;
+        }
+
         public Expression VisitField(FieldExpression expression)
         {
             FieldVisited = true;
+            return expression;
+        }
+
+        public Expression VisitLiteral(LiteralExpression expression)
+        {
+            LiteralVisited = true;
+            return expression;
+        }
+
+        public Expression VisitNull(NullExpression expression)
+        {
+            NullVisited = true;
             return expression;
         }
 
@@ -30,7 +48,13 @@ namespace System.Linq.Sql.Expressions.Tests
 
         // ----- Properties ----- //
 
+        public bool CompositeVisited { private set; get; } = false;
+
         public bool FieldVisited { private set; get; } = false;
+
+        public bool LiteralVisited { private set; get; } = false;
+
+        public bool NullVisited { private set; get; } = false;
 
         public bool SelectVisited { private set; get; } = false;
 

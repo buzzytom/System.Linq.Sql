@@ -37,6 +37,20 @@ namespace System.Linq.Sql.Expressions
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitComposite(CompositeExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            throw new NotImplementedException();
+
+            //return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         public virtual Expression VisitField(FieldExpression expression)
         {
             if (expression == null)
@@ -45,6 +59,34 @@ namespace System.Linq.Sql.Expressions
             throw new NotImplementedException();
 
             //return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitLiteral(LiteralExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            throw new NotImplementedException();
+
+            //return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitNull(NullExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            builder.Append("null");
+
+            return expression;
         }
 
         /// <summary>

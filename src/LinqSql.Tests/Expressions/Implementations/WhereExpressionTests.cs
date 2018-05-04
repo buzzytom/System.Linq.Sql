@@ -9,19 +9,21 @@ namespace System.Linq.Sql.Expressions.Tests
     [TestClass]
     public class WhereExpressionTests
     {
+        private APredicateExpression predicate = null;
         private readonly TableExpression table = new TableExpression("Table", "Alias", new string[] { "FieldA", "FieldB" });
         private WhereExpression expression = null;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            expression = new WhereExpression(table);
+            expression = new WhereExpression(table, predicate);
         }
 
         [TestMethod]
         public void WhereExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new WhereExpression(null));
+            Assert.ThrowsException<ArgumentNullException>(() => new WhereExpression(null, predicate));
+            Assert.ThrowsException<ArgumentNullException>(() => new WhereExpression(table, null));
         }
 
         [TestMethod]
@@ -30,6 +32,7 @@ namespace System.Linq.Sql.Expressions.Tests
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             Assert.AreSame(table, expression.Source);
+            Assert.AreSame(predicate, expression.Predicate);
             Assert.AreSame(table.Fields, expression.Fields);
         }
 

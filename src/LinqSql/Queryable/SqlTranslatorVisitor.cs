@@ -33,17 +33,18 @@ namespace System.Linq.Sql.Queryable
         /// <returns>The expression modified to an <see cref="AExpression"/>, otherwise a thrown exception.</returns>
         public override Expression Visit(Expression node)
         {
-            if (node is ASourceExpression)
+            if (node is AExpression)
                 return node;
             else
                 return base.Visit(node);
         }
 
-        private ASourceExpression VisitSource(Expression expression)
+        private T Visit<T>(Expression expression)
+            where T : AExpression
         {
-            ASourceExpression source = Visit(expression) as ASourceExpression;
+            T source = Visit(StripQuotes(expression)) as T;
             if (source == null)
-                throw new NotSupportedException($"Could not convert the expression to an {nameof(ASourceExpression)}.");
+                throw new NotSupportedException($"Could not convert the expression to an {nameof(T)}.");
             return source;
         }
 
@@ -62,14 +63,45 @@ namespace System.Linq.Sql.Queryable
             // Decode specific method node handling
             if (method.Name == "Where")
             {
-                ASourceExpression source = VisitSource(node.Arguments[0]);
-
-                // TODO - Convert the LambdaExpression (node.Arguments[1]) to an APredicateExpression?
-
-                return new WhereExpression(source);
+                ASourceExpression source = Visit<ASourceExpression>(node.Arguments[0]);
+                APredicateExpression predicate = Visit<APredicateExpression>(node.Arguments[1]);
+                return new WhereExpression(source, predicate);
             }
 
             throw new NotSupportedException($"Cannot translate the method '{method.Name}' because it's not known by the sql translator.");
+        }
+
+        /// <summary>
+        /// Visits the System.Linq.Expressions.ConstantExpression and converts it into either a <see cref="NullExpression"/> if the value is null otherwise a <see cref="LiteralExpression"/>.
+        /// </summary>
+        /// <param name="node">The expression to visit.</param>
+        /// <returns>The specified expression converted to either a <see cref="NullExpression"/> or <see cref="LiteralExpression"/>.</returns>
+        protected override Expression VisitConstant(ConstantExpression node)
+        {
+            if (node.Value == null)
+                return new NullExpression();
+            else
+                return new LiteralExpression(node.Value);
+        }
+
+        /// <summary>
+        /// Visits the expression represented by the lambda and converts it into an <see cref="APredicateExpression"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of the delegate.</typeparam>
+        /// <param name="node">The expression to visit.</param>
+        /// <returns>The modified expression; an <see cref="APredicateExpression"/>.</returns>
+        protected override Expression VisitLambda<T>(Expression<T> node)
+        {
+            // TODO - Evaluate the subtree
+
+            throw new NotImplementedException();
+        }
+
+        private static Expression StripQuotes(Expression expression)
+        {
+            while (expression.NodeType == ExpressionType.Quote)
+                expression = ((UnaryExpression)expression).Operand;
+            return expression;
         }
     }
 }
