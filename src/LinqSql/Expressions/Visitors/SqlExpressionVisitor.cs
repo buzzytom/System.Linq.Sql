@@ -42,9 +42,18 @@ namespace System.Linq.Sql.Expressions
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            throw new NotImplementedException();
+            Visit(expression.Left);
 
-            //return expression;
+            if (expression.Operator == CompositeOperator.And)
+                builder.Append(" and ");
+            else if (expression.Operator == CompositeOperator.Or)
+                builder.Append(" or");
+            else
+                throw new NotSupportedException($"Cannot generate sql for '{expression.Operator}' operator of {nameof(CompositeExpression)}.");
+
+            Visit(expression.Right);
+
+            return expression;
         }
 
         /// <summary>
@@ -56,6 +65,7 @@ namespace System.Linq.Sql.Expressions
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
+            // TODO - Possibly remove VisitField, it will be handled differently in each usage.
             throw new NotImplementedException();
 
             //return expression;
@@ -70,9 +80,10 @@ namespace System.Linq.Sql.Expressions
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            throw new NotImplementedException();
+            string key = context.CreateParameter(expression.Value);
+            builder.Append($"@{key}");
 
-            //return expression;
+            return expression;
         }
 
         /// <summary>
@@ -102,7 +113,7 @@ namespace System.Linq.Sql.Expressions
             VisitFields(expression, expression.Fields);
             builder.Append(" from ");
             Visit(expression.Source);
-            builder.Append($")as[{context.GetSource(expression)}]");
+            builder.Append($") as [{context.GetSource(expression)}]");
 
             return expression;
         }
@@ -130,9 +141,13 @@ namespace System.Linq.Sql.Expressions
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            throw new NotImplementedException();
+            builder.Append("(select * from ");
+            Visit(expression.Source);
+            builder.Append(" where ");
+            Visit(expression.Predicate);
+            builder.Append($") as [{context.GetSource(expression)}]");
 
-            //return expression;
+            return expression;
         }
 
         /// <summary>
