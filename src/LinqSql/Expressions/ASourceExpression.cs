@@ -1,7 +1,5 @@
-﻿namespace System.Linq.Sql.Expressions
+﻿namespace System.Linq.Sql
 {
-    using Queryable;
-
     /// <summary>
     /// <see cref="ASourceExpression"/> provides the base class from which concrete source expressions are derived. This is an abstract class. This class extends <see cref="AExpression"/>.
     /// </summary>

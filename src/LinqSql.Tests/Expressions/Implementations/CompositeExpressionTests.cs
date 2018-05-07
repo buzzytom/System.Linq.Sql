@@ -2,13 +2,13 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.Linq.Sql.Expressions.Tests
+namespace System.Linq.Sql.Tests
 {
     [TestClass]
     public class CompositeExpressionTests
     {
-        private readonly APredicateExpression left = null;
-        private readonly APredicateExpression right = null;
+        private readonly APredicateExpression left = new BooleanExpression(true);
+        private readonly APredicateExpression right = new BooleanExpression(true);
         private CompositeExpression expression = null;
 
         [TestInitialize]

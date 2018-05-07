@@ -1,9 +1,15 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Expressions.Tests
+namespace System.Linq.Sql.Tests
 {
     public class MockExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
+        public Expression VisitBoolean(BooleanExpression expression)
+        {
+            BooleanVisited = true;
+            return expression;
+        }
+
         public Expression VisitComposite(CompositeExpression expression)
         {
             CompositeVisited = true;
@@ -47,6 +53,8 @@ namespace System.Linq.Sql.Expressions.Tests
         }
 
         // ----- Properties ----- //
+
+        public bool BooleanVisited { private set; get; } = false;
 
         public bool CompositeVisited { private set; get; } = false;
 

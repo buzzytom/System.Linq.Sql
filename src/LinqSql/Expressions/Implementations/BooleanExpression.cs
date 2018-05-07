@@ -3,20 +3,17 @@
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="LiteralExpression"/> represents a constant value in the query, these are often translated to query parameters.
+    /// <see cref="BooleanExpression"/> represents a constant boolean value in the query. Unlike the <see cref="LiteralExpression"/>, these are not typically translated to query parameters.
     /// </summary>
-    public class LiteralExpression : AExpression
+    public class BooleanExpression : APredicateExpression
     {
-        private readonly object value = null;
+        private readonly bool value = false;
 
         /// <summary>
         /// Initializes a new instance of <see cref="LiteralExpression"/>, with the specified value.
         /// </summary>
-        public LiteralExpression(object value)
+        public BooleanExpression(bool value)
         {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
             this.value = value;
         }
 
@@ -27,15 +24,15 @@ namespace System.Linq.Sql
         /// <returns>The result of visiting this node.</returns>
         protected override Expression AcceptSql(ISqlExpressionVisitor visitor)
         {
-            return visitor.VisitLiteral(this);
+            return visitor.VisitBoolean(this);
         }
 
         // ----- Properties ----- //
 
         /// <summary>Gets the value of this expression.</summary>
-        public object Value => value;
+        public bool Value => value;
 
         /// <summary>Gets the static type of the expression that this System.Linq.Expressions.Expression represents.</summary>
-        public override Type Type => value.GetType();
+        public override Type Type => typeof(bool);
     }
 }

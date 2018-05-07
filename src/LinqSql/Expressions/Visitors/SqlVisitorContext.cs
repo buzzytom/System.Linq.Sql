@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// Defines a shared data store for use in evaluation of the query syntax tree. This class can be used to track parameter input values for the query and previously evaluated <see cref="ASourceExpression"/> items. 

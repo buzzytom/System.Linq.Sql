@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     public class FieldExpressions : IEnumerable<FieldExpression>
     {

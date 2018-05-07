@@ -2,10 +2,8 @@
 using System.Data;
 using System.Data.Common;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
-    using Expressions;
-
 #if DEBUG
     public
 #else

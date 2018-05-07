@@ -5,19 +5,20 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace System.Linq.Sql.Tests
 {
     [TestClass]
-    public class NullExpressionTests
+    public class BooleanExpressionTests
     {
-        private NullExpression expression = new NullExpression();
+        private readonly BooleanExpression expression = new BooleanExpression(true);
 
         [TestMethod]
-        public void NullExpression_Properties()
+        public void BooleanExpression_Properties()
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
-            Assert.AreEqual(typeof(object), expression.Type);
+            Assert.AreEqual(typeof(bool), expression.Type);
+            Assert.IsTrue(expression.Value);
         }
 
         [TestMethod]
-        public void LiteralExpression_Accept()
+        public void BooleanExpression_Accept()
         {
             // Setup test
             MockExpressionVisitor visitor = new MockExpressionVisitor();
@@ -26,7 +27,7 @@ namespace System.Linq.Sql.Tests
             visitor.Visit(expression);
 
             // Check test result
-            Assert.IsTrue(visitor.NullVisited);
+            Assert.IsTrue(visitor.BooleanVisited);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="RecordItem"/> is a map which represents a single selection from a result record of a query. The map correlates column names to their associated data objects.

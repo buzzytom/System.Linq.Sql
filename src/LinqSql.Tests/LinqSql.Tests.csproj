@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="ConnectionTestHelper.cs" />
     <Compile Include="Expressions\FieldExpressionsTests.cs" />
+    <Compile Include="Expressions\Implementations\BooleanExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\CompositeExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\LiteralExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\NullExpressionTests.cs" />
@@ -73,6 +74,8 @@
     <Compile Include="Queryable\SqlQueryableContextTests.cs" />
     <Compile Include="Queryable\SqlQueryableProviderTests.cs" />
     <Compile Include="Queryable\SqlQueryableTests.cs" />
+    <Compile Include="Sqlite\SqliteExpressionVisitorTests.cs" />
+    <Compile Include="Sqlite\SqliteQueryableProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinqSql\LinqSql.csproj">

@@ -1,12 +1,10 @@
-﻿using System.Data.Common;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
-    using Expressions;
-
     /// <summary>
     /// <see cref="SqlQueryable"/> is an implementation of <see cref="IOrderedQueryable{Record}"/> which is used to execute sql queries in a linq like manner.
     /// </summary>
@@ -33,17 +31,15 @@ namespace System.Linq.Sql.Queryable
         /// <param name="alias">An alias to give the table for use in query filtering.</param>
         /// <param name="fields">The fields that exist on the specified table.</param>
         public SqlQueryable(DbConnection connection, string table, string alias, IEnumerable<string> fields)
-        {
-            expression = new TableExpression(table, alias, fields);
-            provider = new SqlQueryableProvider(connection);
-        }
+            : this(new SqlQueryableProvider(connection), new TableExpression(table, alias, fields))
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="SqlQueryable"/>, with the specified provider and expression.
         /// </summary>
         /// <param name="provider">The provider which the query should use.</param>
         /// <param name="expression">The root expression of the query.</param>
-        internal SqlQueryable(SqlQueryableProvider provider, Expression expression)
+        protected internal SqlQueryable(SqlQueryableProvider provider, Expression expression)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));

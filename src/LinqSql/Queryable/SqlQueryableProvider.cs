@@ -1,10 +1,8 @@
 ﻿using System.Data.Common;
 using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
-    using Expressions;
-
 #if DEBUG
     public
 #else
@@ -30,7 +28,7 @@ namespace System.Linq.Sql.Queryable
             this.visitor = visitor;
         }
 
-        public IQueryable CreateQuery(Expression expression)
+        public virtual IQueryable CreateQuery(Expression expression)
         {
             return new SqlQueryable(this, expression);
         }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.Linq.Sql.Expressions.Tests
+namespace System.Linq.Sql.Tests
 {
     [TestClass]
     public class SqlExpressionVisitorTests
     {
-        private SqlExpressionVisitor visitor = new SqlExpressionVisitor();
+        private readonly SqlExpressionVisitor visitor = new SqlExpressionVisitor();
 
         [TestMethod]
         public void SqlExpressionVisitor_GenerateSql()
@@ -19,13 +19,50 @@ namespace System.Linq.Sql.Expressions.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias])as[t0]", query.Sql);
+            Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", query.Sql);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_Visit_ArgumentNullExceptions()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitBoolean(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitField(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitLiteral(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitNull(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitSelect(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitTable(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitWhere(null));
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitBoolean()
+        {
+            // Prepare the test data
+            BooleanExpression a = new BooleanExpression(true);
+            BooleanExpression b = new BooleanExpression(false);
+
+            // Perform the test operation
+            visitor.VisitBoolean(a);
+            visitor.VisitBoolean(b);
+
+            // Check the test result
+            Assert.AreEqual("truefalse", visitor.SqlState);
         }
 
         [TestMethod]
         public void SqlExpressionVisitor_VisitComposite()
         {
-            Assert.Fail();
+            // Prepare the test data
+            BooleanExpression a = new BooleanExpression(true);
+            BooleanExpression b = new BooleanExpression(false);
+            CompositeExpression expression = new CompositeExpression(a, new CompositeExpression(a, b, CompositeOperator.Or), CompositeOperator.And);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(true and (true or false))", visitor.SqlState);
         }
 
         [TestMethod]
@@ -49,7 +86,7 @@ namespace System.Linq.Sql.Expressions.Tests
             visitor.VisitLiteral(b);
             visitor.VisitLiteral(c);
 
-            // Check the result
+            // Check the test result
             Assert.AreEqual("@p0@p0@p0@p0@p1", visitor.SqlState);
         }
 
@@ -78,7 +115,7 @@ namespace System.Linq.Sql.Expressions.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias])as[t0]", visitor.SqlState);
+            Assert.AreEqual("(select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
