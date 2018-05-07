@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Linq.Expressions;
 
 namespace System.Linq.Sql.Sqlite
 {
@@ -12,5 +13,10 @@ namespace System.Linq.Sql.Sqlite
         public SqliteQueryableProvider(DbConnection connection)
             : base(connection, new SqliteExpressionVisitor())
         { }
+
+        public override IQueryable CreateQuery(Expression expression)
+        {
+            return new SqliteQueryable(this, expression);
+        }
     }
 }

@@ -5,7 +5,7 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class SqlExpressionVisitorTests
     {
-        private SqlExpressionVisitor visitor = new SqlExpressionVisitor();
+        private readonly SqlExpressionVisitor visitor = new SqlExpressionVisitor();
 
         [TestMethod]
         public void SqlExpressionVisitor_GenerateSql()
@@ -20,6 +20,19 @@ namespace System.Linq.Sql.Tests
 
             // Check the result
             Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", query.Sql);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_Visit_ArgumentNullExceptions()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitBoolean(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitField(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitLiteral(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitNull(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitSelect(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitTable(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitWhere(null));
         }
 
         [TestMethod]

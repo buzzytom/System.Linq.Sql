@@ -28,7 +28,7 @@ namespace System.Linq.Sql
             this.visitor = visitor;
         }
 
-        public IQueryable CreateQuery(Expression expression)
+        public virtual IQueryable CreateQuery(Expression expression)
         {
             return new SqlQueryable(this, expression);
         }

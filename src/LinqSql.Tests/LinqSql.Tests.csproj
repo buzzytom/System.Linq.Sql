@@ -74,6 +74,8 @@
     <Compile Include="Queryable\SqlQueryableContextTests.cs" />
     <Compile Include="Queryable\SqlQueryableProviderTests.cs" />
     <Compile Include="Queryable\SqlQueryableTests.cs" />
+    <Compile Include="Sqlite\SqliteExpressionVisitorTests.cs" />
+    <Compile Include="Sqlite\SqliteQueryableProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinqSql\LinqSql.csproj">
