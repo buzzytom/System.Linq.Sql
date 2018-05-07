@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
     using Expressions;
 

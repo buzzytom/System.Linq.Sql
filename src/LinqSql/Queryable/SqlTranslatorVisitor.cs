@@ -1,8 +1,7 @@
 ﻿using System.Linq.Expressions;
-using System.Linq.Sql.Expressions;
 using System.Reflection;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="SqlTranslatorVisitor"/> translates an expression call to an sql expression tree.

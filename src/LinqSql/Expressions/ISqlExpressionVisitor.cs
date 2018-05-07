@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="ISqlExpressionVisitor"/> represents a visitor for expression trees.

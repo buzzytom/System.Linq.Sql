@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="CompositeOperator"/> defines an enumeration of possible comparisons of predicate expressions: And and Or.

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="BooleanExpression"/> represents a constant boolean value in the query. Unlike the <see cref="LiteralExpression"/>, these are not typically translated to query parameters.

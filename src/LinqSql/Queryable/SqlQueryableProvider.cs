@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Queryable
+namespace System.Linq.Sql
 {
     using Expressions;
 

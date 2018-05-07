@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Text;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="ISqlExpressionVisitor"/>, which the visit implementations generate an SQL representation of an expression tree.

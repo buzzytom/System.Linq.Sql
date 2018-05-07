@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="Query"/> represents an sql query to a database as well as any parameters needed by the query.

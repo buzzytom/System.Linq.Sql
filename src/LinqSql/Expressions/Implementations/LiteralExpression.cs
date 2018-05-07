@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql.Expressions
+namespace System.Linq.Sql
 {
     /// <summary>
     /// <see cref="LiteralExpression"/> represents a constant value in the query, these are often translated to query parameters.
