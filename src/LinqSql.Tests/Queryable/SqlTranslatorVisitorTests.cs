@@ -1,48 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Data.Common;
+using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Linq.Sql.Queryable.Tests
 {
+    using Expressions;
+
     [TestClass]
     public class SqlTranslatorVisitorTests
     {
-        [TestMethod]
-        public void SqlTranslatorVisitor_Translate()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void SqlTranslatorVisitor_Visit()
-        {
-            Assert.Fail();
-        }
+        private readonly DbConnection connection = ConnectionTestHelper.CreateConnection();
+        private readonly SqlTranslatorVisitor visitor = new SqlTranslatorVisitor();
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void SqlTranslatorVisitor_Visit_NotSupportedException()
         {
-            Assert.Fail();
+            // Prepare the test data
+            Expression<Action> expression = () => new Record[0]
+                .AsQueryable()
+                .Where(x => true);
+
+            // Perform the test operation
+            visitor.Visit(expression.Body);
         }
 
         [TestMethod]
-        public void SqlTranslatorVisitor_WhereExpression()
+        [ExpectedException(typeof(NotSupportedException))]
+        public void SqlTranslatorVisitor_VisitGeneric_NotSupportedException()
         {
-            Assert.Fail();
-        }
+            // Prepare the test data
+            SqlQueryable queryable = new SqlQueryable(connection, "Table", new string[] { "Field" });
+            Expression<Action> expression = () => queryable.Where(x => true);
 
-        [TestMethod]
-        public void SqlTranslatorVisitor_Constant_Null()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void SqlTranslatorVisitor_Constant_Literal()
-        {
-            Assert.Fail();
+            // Perform the test operation
+            WhereExpression result = (WhereExpression)visitor.Visit(expression.Body);
         }
     }
 }

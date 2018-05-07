@@ -44,7 +44,7 @@ namespace System.Linq.Sql.Queryable
         {
             T source = Visit(StripQuotes(expression)) as T;
             if (source == null)
-                throw new NotSupportedException($"Could not convert the expression to an {nameof(T)}.");
+                throw new NotSupportedException($"Could not convert the expression to an {typeof(T).Name}.");
             return source;
         }
 
