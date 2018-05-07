@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.Linq.Sql.Queryable.Tests
+namespace System.Linq.Sql.Tests
 {
 #if DEBUG
     [TestClass]

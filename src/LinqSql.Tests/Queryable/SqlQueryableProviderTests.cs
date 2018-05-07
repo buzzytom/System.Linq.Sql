@@ -4,10 +4,8 @@ using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.Linq.Sql.Queryable.Tests
+namespace System.Linq.Sql.Tests
 {
-    using Expressions;
-
     [TestClass]
     public class SqlQueryableProviderTests
     {

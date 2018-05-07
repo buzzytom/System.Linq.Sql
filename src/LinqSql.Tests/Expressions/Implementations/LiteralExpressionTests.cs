@@ -2,7 +2,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.Linq.Sql.Expressions.Tests
+namespace System.Linq.Sql.Tests
 {
     [TestClass]
     public class LiteralExpressionTests

@@ -4,8 +4,6 @@ using System.Data.Common;
 
 namespace System.Linq.Sql
 {
-    using Expressions;
-
 #if DEBUG
     public
 #else
