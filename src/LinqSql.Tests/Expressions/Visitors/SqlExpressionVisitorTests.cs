@@ -23,9 +23,33 @@ namespace System.Linq.Sql.Expressions.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitBoolean()
+        {
+            // Prepare the test data
+            BooleanExpression a = new BooleanExpression(true);
+            BooleanExpression b = new BooleanExpression(false);
+
+            // Perform the test operation
+            visitor.VisitBoolean(a);
+            visitor.VisitBoolean(b);
+
+            // Check the test result
+            Assert.AreEqual("truefalse", visitor.SqlState);
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitComposite()
         {
-            Assert.Fail();
+            // Prepare the test data
+            BooleanExpression a = new BooleanExpression(true);
+            BooleanExpression b = new BooleanExpression(false);
+            CompositeExpression expression = new CompositeExpression(a, new CompositeExpression(a, b, CompositeOperator.Or), CompositeOperator.And);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(true and (true or false))", visitor.SqlState);
         }
 
         [TestMethod]
@@ -49,7 +73,7 @@ namespace System.Linq.Sql.Expressions.Tests
             visitor.VisitLiteral(b);
             visitor.VisitLiteral(c);
 
-            // Check the result
+            // Check the test result
             Assert.AreEqual("@p0@p0@p0@p0@p1", visitor.SqlState);
         }
 

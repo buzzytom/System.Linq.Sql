@@ -5,7 +5,7 @@ using System.Text;
 namespace System.Linq.Sql.Expressions
 {
     /// <summary>
-    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="ISqlExpressionVisitor"/>, which the visit implementations generate an SQL representation of .
+    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="ISqlExpressionVisitor"/>, which the visit implementations generate an SQL representation of an expression tree.
     /// </summary>
     public class SqlExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
@@ -59,16 +59,18 @@ namespace System.Linq.Sql.Expressions
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
+            builder.Append("(");
             Visit(expression.Left);
 
             if (expression.Operator == CompositeOperator.And)
                 builder.Append(" and ");
             else if (expression.Operator == CompositeOperator.Or)
-                builder.Append(" or");
+                builder.Append(" or ");
             else
                 throw new NotSupportedException($"Cannot generate sql for '{expression.Operator}' operator of {nameof(CompositeExpression)}.");
 
             Visit(expression.Right);
+            builder.Append(")");
 
             return expression;
         }
