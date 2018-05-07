@@ -1,40 +1,43 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Expressions.Tests
+namespace System.Linq.Sql.Expressions.Tests
 {
+    using Queryable;
+
     [TestClass]
     public class SelectExpressionTests
     {
         private static readonly string[] fields = new string[] { "FieldA", "FieldB" };
-        private ASourceExpression source = new TableExpression("Table", "Alias", fields);
+        private TableExpression source = new TableExpression("Table", "Alias", fields);
         private SelectExpression expression = null;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            expression = new SelectExpression(source, fields);
+            expression = new SelectExpression(source, source.Fields);
         }
 
         [TestMethod]
         public void SelectExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(null, fields));
+            Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(null, source.Fields));
             Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(source, null));
-            Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new string[0]));
+            Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new FieldExpression[0]));
         }
 
         [TestMethod]
         public void SelectExpression_Properties()
         {
             FieldExpression[] expressions = expression.Fields.ToArray();
+            Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
+            Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             Assert.AreSame(source, expression.Source);
             foreach (FieldExpression field in expressions)
             {
-                Assert.AreSame(source, field.Source);
-                Assert.IsTrue(fields.Contains(field.Field));
+                Assert.AreEqual(source.Alias, field.TableName);
+                Assert.IsTrue(fields.Contains(field.FieldName));
             }
         }
 
@@ -45,7 +48,7 @@ namespace LinqSql.Expressions.Tests
             MockExpressionVisitor visitor = new MockExpressionVisitor();
 
             // Perform the test operation
-            expression.Accept(visitor);
+            visitor.Visit(expression);
 
             // Check test result
             Assert.IsTrue(visitor.SelectVisited);

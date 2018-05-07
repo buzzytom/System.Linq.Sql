@@ -1,10 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Expressions.Tests
+namespace System.Linq.Sql.Expressions.Tests
 {
+    using Queryable;
+
     [TestClass]
     public class TableExpressionTests
     {
@@ -23,13 +24,15 @@ namespace LinqSql.Expressions.Tests
         public void TableExpression_Properties()
         {
             FieldExpression[] expressions = expression.Fields.ToArray();
+            Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
+            Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             Assert.AreEqual("Table", expression.Table);
             Assert.AreEqual("Alias", expression.Alias);
             Assert.AreEqual(fields.Length, expressions.Length);
             foreach (FieldExpression field in expressions)
             {
-                Assert.AreSame(expression, field.Source);
-                Assert.IsTrue(fields.Contains(field.Field));
+                Assert.AreEqual(expression.Alias, field.TableName);
+                Assert.IsTrue(fields.Contains(field.FieldName));
             }
         }
 
@@ -40,7 +43,7 @@ namespace LinqSql.Expressions.Tests
             MockExpressionVisitor visitor = new MockExpressionVisitor();
 
             // Perform the test operation
-            expression.Accept(visitor);
+            visitor.Visit(expression);
 
             // Check test result
             Assert.IsTrue(visitor.TableVisited);

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinqSql.Expressions
+namespace System.Linq.Sql.Expressions
 {
     /// <summary>
     /// Defines a shared data store for use in evaluation of the query syntax tree. This class can be used to track parameter input values for the query and previously evaluated <see cref="ASourceExpression"/> items. 
@@ -31,9 +31,15 @@ namespace LinqSql.Expressions
         /// <returns>The unique name for the created input parameter.</returns>
         public string CreateParameter(object value)
         {
-            string name = "p" + parameter++;
-            parameters[name] = value;
-            return name;
+            string key = parameters.FirstOrDefault(x => x.Value == value).Key;
+            if (!string.IsNullOrWhiteSpace(key))
+                return key;
+            else
+            {
+                key = "p" + parameter++;
+                parameters[key] = value;
+                return key;
+            }
         }
 
         /// <summary>

@@ -1,35 +1,28 @@
-﻿using System;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Expressions.Tests
+namespace System.Linq.Sql.Expressions.Tests
 {
     [TestClass]
     public class FieldExpressionTests
     {
-        private ASourceExpression source = new TableExpression("Table", "Alias", new string[] { "FieldName" });
-        private FieldExpression expression = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            expression = new FieldExpression(source, "FieldName", "FieldAlias");
-        }
+        private FieldExpression expression = new FieldExpression("TableName", "FieldName");
 
         [TestMethod]
         public void FieldExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpression(null, "FieldName", "FieldAlias"));
-            Assert.ThrowsException<ArgumentException>(() => new FieldExpression(source, "", "FieldAlias"));
-            Assert.ThrowsException<ArgumentException>(() => new FieldExpression(source, "FieldName", ""));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpression("", "FieldName"));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpression("TableName", ""));
         }
 
         [TestMethod]
         public void FieldExpression_Properties()
         {
-            Assert.AreEqual("FieldName", expression.Field);
-            Assert.AreEqual("FieldAlias", expression.Alias);
-            Assert.AreSame(source, expression.Source);
+            Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
+            Assert.AreEqual(typeof(object), expression.Type);
+            Assert.AreEqual("TableName", expression.TableName);
+            Assert.AreEqual("FieldName", expression.FieldName);
         }
 
         [TestMethod]
@@ -39,7 +32,7 @@ namespace LinqSql.Expressions.Tests
             MockExpressionVisitor visitor = new MockExpressionVisitor();
 
             // Perform the test operation
-            expression.Accept(visitor);
+            visitor.Visit(expression);
 
             // Check test result
             Assert.IsTrue(visitor.FieldVisited);

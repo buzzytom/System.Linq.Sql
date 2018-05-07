@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LinqSql.Expressions.Tests
+namespace System.Linq.Sql.Expressions.Tests
 {
     [TestClass]
     public class SqlExpressionVisitorTests
@@ -13,13 +13,72 @@ namespace LinqSql.Expressions.Tests
             // Prepare the test data
             string[] fields = new string[] { "FieldA", "FieldB" };
             TableExpression table = new TableExpression("Table", "Alias", fields);
-            SelectExpression expression = new SelectExpression(table, fields);
+            SelectExpression expression = new SelectExpression(table);
 
             // Performs the test operation
-            string sql = visitor.GenerateSql(expression);
+            Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from Table as [Alias])as[t1]", sql);
+            Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias])as[t0]", query.Sql);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitField()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitLiteral()
+        {
+            // Prepare the test data
+            LiteralExpression a = new LiteralExpression("Hello World!");
+            LiteralExpression b = new LiteralExpression("Hello World!");
+            LiteralExpression c = new LiteralExpression("Another World!");
+
+            // Perform the test operation
+            visitor.VisitLiteral(a);
+            visitor.VisitLiteral(a);
+            visitor.VisitLiteral(b);
+            visitor.VisitLiteral(b);
+            visitor.VisitLiteral(c);
+
+            // Check the result
+            Assert.AreEqual("@p0@p0@p0@p0@p1", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitNull()
+        {
+            // Prepare the test data
+            NullExpression expression = new NullExpression();
+
+            // Perform the test operation
+            visitor.VisitNull(expression);
+
+            // Check the result
+            Assert.AreEqual("null", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            SelectExpression expression = new SelectExpression(table);
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias])as[t0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -33,22 +92,13 @@ namespace LinqSql.Expressions.Tests
             visitor.VisitTable(expression);
 
             // Check the result
-            Assert.AreEqual("Table as [Alias]", visitor.SqlState);
+            Assert.AreEqual("[Table] as [Alias]", visitor.SqlState);
         }
 
         [TestMethod]
-        public void SqlExpressionVisitor_VisitSelect()
+        public void SqlExpressionVisitor_VisitWhere()
         {
-            // Prepare the test data
-            string[] fields = new string[] { "FieldA", "FieldB" };
-            TableExpression table = new TableExpression("Table", "Alias", fields);
-            SelectExpression expression = new SelectExpression(table, fields);
-
-            // Performs the test operation
-            visitor.VisitSelect(expression);
-
-            // Check the result
-            Assert.AreEqual("(select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from Table as [Alias])as[t1]", visitor.SqlState);
+            Assert.Fail();
         }
     }
 }
