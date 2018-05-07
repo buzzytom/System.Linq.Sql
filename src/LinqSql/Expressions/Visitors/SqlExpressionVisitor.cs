@@ -37,6 +37,23 @@ namespace System.Linq.Sql.Expressions
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitBoolean(BooleanExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            if (expression.Value)
+                builder.Append("true");
+            else
+                builder.Append("false");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         public virtual Expression VisitComposite(CompositeExpression expression)
         {
             if (expression == null)
