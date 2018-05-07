@@ -3,8 +3,6 @@ using System.Linq.Expressions;
 
 namespace System.Linq.Sql
 {
-    using Expressions;
-
 #if DEBUG
     public
 #else

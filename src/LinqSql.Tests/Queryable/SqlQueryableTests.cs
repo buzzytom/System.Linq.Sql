@@ -1,9 +1,10 @@
 ﻿using System.Data.Common;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Linq.Sql.Queryable.Tests
 {
-    using Expressions;
+    using Sqlite;
 
     [TestClass]
     public class SqlQueryableTests
@@ -14,7 +15,7 @@ namespace System.Linq.Sql.Queryable.Tests
         public void SqlQueryable_Properties()
         {
             // Prepare the test data
-            SqlQueryable item = new SqlQueryable(connection, "Table", "Alias", new string[] { "FieldA" });
+            SqlQueryable item = new SqliteQueryable(connection, "Table", "Alias", new string[] { "FieldA" });
 
             // Check the test result
             Assert.AreEqual(typeof(Record), item.ElementType);
@@ -27,7 +28,7 @@ namespace System.Linq.Sql.Queryable.Tests
         {
             // Prepare the test data
             string[] fields = new string[] { "Id", "Name" };
-            IQueryable<Record> queryable = new SqlQueryable(connection, "Course", "Alias", fields);
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
             Record[] records = queryable.ToArray();
@@ -41,7 +42,7 @@ namespace System.Linq.Sql.Queryable.Tests
         {
             // Prepare the test data
             string[] fields = new string[] { "Id", "Name" };
-            IQueryable<Record> queryable = new SqlQueryable(connection, "Course", "Alias", fields);
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
             Record[] records = queryable
