@@ -64,7 +64,8 @@ namespace System.Linq.Sql.Queryable
             if (method.Name == "Where")
             {
                 ASourceExpression source = Visit<ASourceExpression>(node.Arguments[0]);
-                APredicateExpression predicate = Visit<APredicateExpression>(node.Arguments[1]);
+                LambdaExpression lambda = (LambdaExpression)StripQuotes(node.Arguments[1]);
+                APredicateExpression predicate = Visit<APredicateExpression>(lambda.Body);
                 return new WhereExpression(source, predicate);
             }
 
@@ -84,17 +85,6 @@ namespace System.Linq.Sql.Queryable
                 return new BooleanExpression((bool)node.Value);
             else
                 return new LiteralExpression(node.Value);
-        }
-
-        /// <summary>
-        /// Visits the expression represented by the lambda and converts it into an <see cref="APredicateExpression"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of the delegate.</typeparam>
-        /// <param name="node">The expression to visit.</param>
-        /// <returns>The modified expression; an <see cref="APredicateExpression"/>.</returns>
-        protected override Expression VisitLambda<T>(Expression<T> node)
-        {
-            return Visit<APredicateExpression>(node.Body);
         }
 
         private static Expression StripQuotes(Expression expression)
