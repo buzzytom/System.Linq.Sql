@@ -8,7 +8,7 @@ namespace System.Linq.Sql.Expressions.Tests
         private SqlVisitorContext context = new SqlVisitorContext();
 
         [TestMethod]
-        public void CreateParameter()
+        public void SqlVisitorContext_CreateParameter()
         {
             // Prepare test data
             object a = new object();
@@ -17,10 +17,12 @@ namespace System.Linq.Sql.Expressions.Tests
             // Perform test operation
             string keyA = context.CreateParameter(a);
             string keyB = context.CreateParameter(b);
+            string keyC = context.CreateParameter(a);
 
             // Check test result
             Assert.AreEqual("p0", keyA);
             Assert.AreEqual("p1", keyB);
+            Assert.AreEqual(keyA, keyC);
             Assert.AreEqual(a, context.Parameters[keyA]);
             Assert.AreEqual(b, context.Parameters[keyB]);
         }
@@ -41,7 +43,7 @@ namespace System.Linq.Sql.Expressions.Tests
         }
 
         [TestMethod]
-        public void GetSource()
+        public void SqlVisitorContext_GetSource()
         {
             // Prepare test data
             TableExpression expressionA = new TableExpression("Table", "Alias", new string[] { "FieldA" });
@@ -57,7 +59,7 @@ namespace System.Linq.Sql.Expressions.Tests
         }
 
         [TestMethod]
-        public void GetSource_DuplicatedCall()
+        public void SqlVisitorContext_GetSource_DuplicatedCall()
         {
             // Prepare test data
             TableExpression expression = new TableExpression("Table", "Alias", new string[] { "FieldA" });
