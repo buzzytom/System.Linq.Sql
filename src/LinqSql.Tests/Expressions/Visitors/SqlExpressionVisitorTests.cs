@@ -135,7 +135,15 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlExpressionVisitor_VisitWhere()
         {
-            Assert.Fail();
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            WhereExpression expression = new WhereExpression(new TableExpression("Table", "Alias", fields), new BooleanExpression(true));
+
+            // Perform the test operation
+            visitor.VisitWhere(expression);
+
+            // Check the result
+            Assert.AreEqual("(select * from [Table] as [Alias] where true) as [t0]", visitor.SqlState);
         }
     }
 }
