@@ -72,14 +72,16 @@ namespace System.Linq.Sql.Queryable
         }
 
         /// <summary>
-        /// Visits the System.Linq.Expressions.ConstantExpression and converts it into either a <see cref="NullExpression"/> if the value is null otherwise a <see cref="LiteralExpression"/>.
+        /// Visits the System.Linq.Expressions.ConstantExpression and converts it into either a <see cref="NullExpression"/> if the value is null, <see cref="BooleanExpression"/> if the expression is a boolean, otherwise a <see cref="LiteralExpression"/>.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
-        /// <returns>The specified expression converted to either a <see cref="NullExpression"/> or <see cref="LiteralExpression"/>.</returns>
+        /// <returns>The specified expression converted to either a <see cref="NullExpression"/>, <see cref="BooleanExpression"/> or <see cref="LiteralExpression"/>.</returns>
         protected override Expression VisitConstant(ConstantExpression node)
         {
             if (node.Value == null)
                 return new NullExpression();
+            else if (typeof(bool).IsAssignableFrom(node.Value.GetType()))
+                return new BooleanExpression((bool)node.Value);
             else
                 return new LiteralExpression(node.Value);
         }
@@ -92,9 +94,7 @@ namespace System.Linq.Sql.Queryable
         /// <returns>The modified expression; an <see cref="APredicateExpression"/>.</returns>
         protected override Expression VisitLambda<T>(Expression<T> node)
         {
-            // TODO - Evaluate the subtree
-
-            throw new NotImplementedException();
+            return Visit<APredicateExpression>(node.Body);
         }
 
         private static Expression StripQuotes(Expression expression)
