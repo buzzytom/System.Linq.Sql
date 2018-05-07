@@ -9,7 +9,6 @@ namespace System.Linq.Sql.Queryable.Tests
     [TestClass]
     public class SqlQueryableContextTests
     {
-
         [TestMethod]
         public void SqlQueryableContext_Simple()
         {
