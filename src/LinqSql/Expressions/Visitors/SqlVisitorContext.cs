@@ -31,9 +31,15 @@ namespace System.Linq.Sql.Expressions
         /// <returns>The unique name for the created input parameter.</returns>
         public string CreateParameter(object value)
         {
-            string name = "p" + parameter++;
-            parameters[name] = value;
-            return name;
+            string key = parameters.FirstOrDefault(x => x.Value == value).Key;
+            if (!string.IsNullOrWhiteSpace(key))
+                return key;
+            else
+            {
+                key = "p" + parameter++;
+                parameters[key] = value;
+                return key;
+            }
         }
 
         /// <summary>

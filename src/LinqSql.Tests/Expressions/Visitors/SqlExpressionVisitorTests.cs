@@ -23,9 +23,47 @@ namespace System.Linq.Sql.Expressions.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitField()
         {
             Assert.Fail();
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitLiteral()
+        {
+            // Prepare the test data
+            LiteralExpression a = new LiteralExpression("Hello World!");
+            LiteralExpression b = new LiteralExpression("Hello World!");
+            LiteralExpression c = new LiteralExpression("Another World!");
+
+            // Perform the test operation
+            visitor.VisitLiteral(a);
+            visitor.VisitLiteral(a);
+            visitor.VisitLiteral(b);
+            visitor.VisitLiteral(b);
+            visitor.VisitLiteral(c);
+
+            // Check the result
+            Assert.AreEqual("@p0@p0@p0@p0@p1", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitNull()
+        {
+            // Prepare the test data
+            NullExpression expression = new NullExpression();
+
+            // Perform the test operation
+            visitor.VisitNull(expression);
+
+            // Check the result
+            Assert.AreEqual("null", visitor.SqlState);
         }
 
         [TestMethod]
