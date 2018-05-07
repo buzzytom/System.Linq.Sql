@@ -9,7 +9,7 @@ namespace System.Linq.Sql.Expressions.Tests
     [TestClass]
     public class WhereExpressionTests
     {
-        private APredicateExpression predicate = null;
+        private APredicateExpression predicate = new BooleanExpression(true);
         private readonly TableExpression table = new TableExpression("Table", "Alias", new string[] { "FieldA", "FieldB" });
         private WhereExpression expression = null;
 

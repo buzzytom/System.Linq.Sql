@@ -19,7 +19,7 @@ namespace System.Linq.Sql.Expressions.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias])as[t0]", query.Sql);
+            Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", query.Sql);
         }
 
         [TestMethod]
@@ -102,7 +102,7 @@ namespace System.Linq.Sql.Expressions.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias])as[t0]", visitor.SqlState);
+            Assert.AreEqual("(select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
