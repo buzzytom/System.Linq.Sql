@@ -6,3 +6,4 @@ src/LinqSql/obj/
 src/LinqSql.Tests/bin/
 src/LinqSql/bin/
 *.user
+src/.vs/LinqSql/DesignTimeBuild/
