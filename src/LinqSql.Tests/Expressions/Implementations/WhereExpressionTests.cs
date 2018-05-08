@@ -31,7 +31,6 @@ namespace System.Linq.Sql.Tests
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             Assert.AreSame(table, expression.Source);
             Assert.AreSame(predicate, expression.Predicate);
-            Assert.AreSame(table.Fields, expression.Fields);
         }
 
         [TestMethod]

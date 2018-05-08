@@ -115,7 +115,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from [Table] as [t0]) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -129,7 +129,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitTable(expression);
 
             // Check the result
-            Assert.AreEqual("[Table] as [Alias]", visitor.SqlState);
+            Assert.AreEqual("[Table] as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -143,7 +143,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitWhere(expression);
 
             // Check the result
-            Assert.AreEqual("(select * from [Table] as [Alias] where true) as [t0]", visitor.SqlState);
+            Assert.AreEqual("(select * from [Table] as [t0] where true) as [t1]", visitor.SqlState);
         }
     }
 }

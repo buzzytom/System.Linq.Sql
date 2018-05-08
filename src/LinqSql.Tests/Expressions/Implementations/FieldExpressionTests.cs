@@ -7,13 +7,21 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class FieldExpressionTests
     {
-        private FieldExpression expression = new FieldExpression("TableName", "FieldName");
+        private readonly TableExpression source = new TableExpression("Table", "Alias", new string[] { "Field" });
+        private FieldExpression expression = null;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            expression = new FieldExpression(source, "TableName", "FieldName");
+        }
 
         [TestMethod]
         public void FieldExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentException>(() => new FieldExpression("", "FieldName"));
-            Assert.ThrowsException<ArgumentException>(() => new FieldExpression("TableName", ""));
+            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpression(null, "TableName", ""));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpression(source, "", "FieldName"));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpression(source, "TableName", ""));
         }
 
         [TestMethod]
@@ -21,6 +29,7 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(object), expression.Type);
+            Assert.AreSame(source, expression.Source);
             Assert.AreEqual("TableName", expression.TableName);
             Assert.AreEqual("FieldName", expression.FieldName);
         }

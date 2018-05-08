@@ -146,7 +146,7 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append($"[{expression.Table}] as [{expression.Alias}]");
+            builder.Append($"[{expression.Table}] as [{context.GetSource(expression)}]");
 
             return expression;
         }
@@ -181,7 +181,7 @@ namespace System.Linq.Sql
             {
                 if (builder.Length > 0)
                     builder.Append(",");
-                builder.Append($"[{field.TableName}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
+                builder.Append($"[{context.GetSource(field.Source)}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
             }
             this.builder.Append(builder.ToString());
         }

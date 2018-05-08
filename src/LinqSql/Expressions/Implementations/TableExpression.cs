@@ -28,7 +28,7 @@ namespace System.Linq.Sql
 
             this.table = table;
             this.alias = alias;
-            this.fields = new FieldExpressions(alias, fields);
+            this.fields = new FieldExpressions(this, alias, fields);
         }
 
         /// <summary>

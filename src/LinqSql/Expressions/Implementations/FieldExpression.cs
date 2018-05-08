@@ -7,24 +7,24 @@ namespace System.Linq.Sql
     /// </summary>
     public class FieldExpression : AExpression
     {
-        private readonly string table = null;
-        private readonly string field = null;
-
         /// <summary>
         /// Initializes a new instance of <see cref="FieldExpression"/>, selecting the specified field from the specified source.
         /// </summary>
-        /// <param name="source">The source which the field is selecting its data from.</param>
+        /// <param name="source">The source expression which the field is present on.</param>
         /// <param name="table">The table or table alias the field is exposed from.</param>
         /// <param name="field">The name of the field on the source.</param>
-        public FieldExpression(string table, string field)
+        public FieldExpression(ASourceExpression source, string table, string field)
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
             if (string.IsNullOrWhiteSpace(table))
                 throw new ArgumentException("Cannot be whitespace.", nameof(table));
             if (string.IsNullOrWhiteSpace(field))
                 throw new ArgumentException("Cannot be whitespace.", nameof(field));
 
-            this.table = table;
-            this.field = field;
+            Source = source;
+            TableName = table;
+            FieldName = field;
         }
 
         /// <summary>
@@ -39,10 +39,13 @@ namespace System.Linq.Sql
 
         // ----- Properties ----- //
 
+        /// <summary>Gets the source expression this field expression exists on.</summary>
+        public ASourceExpression Source { get; } = null;
+
         /// <summary>Gets the name of the table on the source.</summary>
-        public string TableName => table;
+        public string TableName { get; } = null;
 
         /// <summary>Gets the name of the field on the source.</summary>
-        public string FieldName => field;
+        public string FieldName { get; } = null;
     }
 }

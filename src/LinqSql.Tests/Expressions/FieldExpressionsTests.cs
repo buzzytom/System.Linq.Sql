@@ -7,6 +7,19 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class FieldExpressionsTests
     {
+        private readonly TableExpression source = new TableExpression("Table", "Alias", new string[] { "Field" });
+
+        [TestMethod]
+        public void FieldExpressions_Constructor_Exceptions()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(null));
+            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(null, "Table", new string[0]));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpressions(source, "", new string[0]));
+            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(source, "Table", null));
+            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(null, new FieldExpression[0]));
+            Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(source, null));
+        }
+
         [TestMethod]
         public void FieldExpressions_GetEnumerator_Empty()
         {
@@ -24,7 +37,7 @@ namespace System.Linq.Sql.Tests
         {
             // Prepare test data
             string[] fields = new string[] { "FieldA", "FieldB" };
-            FieldExpressions expressions = new FieldExpressions("Table", fields);
+            FieldExpressions expressions = new FieldExpressions(source, "Table", fields);
 
             // Check test result
             Assert.AreEqual(fields.Length, expressions.Count());
@@ -43,7 +56,7 @@ namespace System.Linq.Sql.Tests
         {
             // Prepare test data
             FieldExpressions expressions = new FieldExpressions();
-            FieldExpression expression = new FieldExpression("Table", "Field");
+            FieldExpression expression = new FieldExpression(source, "Table", "Field");
 
             // Perform the test operation
             string a = expressions.Add(expression);
@@ -58,7 +71,7 @@ namespace System.Linq.Sql.Tests
         {
             FieldExpressions expressions = new FieldExpressions();
             Assert.ThrowsException<ArgumentNullException>(() => expressions.GetKey(null));
-            Assert.ThrowsException<KeyNotFoundException>(() => expressions.GetKey(new FieldExpression("Table", "Field")));
+            Assert.ThrowsException<KeyNotFoundException>(() => expressions.GetKey(new FieldExpression(source, "Table", "Field")));
         }
 
         [TestMethod]

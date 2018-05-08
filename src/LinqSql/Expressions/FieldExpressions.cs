@@ -17,17 +17,36 @@ namespace System.Linq.Sql
         /// <summary>
         /// Initializes a new instance of <see cref="FieldExpression"/> with the specified table and fields names.
         /// </summary>
+        /// <param name="source">The expression which the fields belong to.</param>
         /// <param name="table">The name of the table all the fields are in.</param>
         /// <param name="fields">The fields to add.</param>
-        public FieldExpressions(string table, IEnumerable<string> fields)
+        public FieldExpressions(ASourceExpression source, string table, IEnumerable<string> fields)
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
             if (string.IsNullOrWhiteSpace(table))
                 throw new ArgumentException("Cannot be null or whitespace.", nameof(table));
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
 
             foreach (string field in fields)
-                Add(new FieldExpression(table, field));
+                Add(new FieldExpression(source, table, field));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="FieldExpression"/> with the specified source and fields.
+        /// </summary>
+        /// <param name="source">The expression which the fields belong to.</param>
+        /// <param name="fields">The fields to add.</param>
+        public FieldExpressions(ASourceExpression source, IEnumerable<FieldExpression> fields)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (fields == null)
+                throw new ArgumentNullException(nameof(fields));
+
+            foreach (FieldExpression field in fields)
+                Add(new FieldExpression(source, field.TableName, field.FieldName));
         }
 
         /// <summary>
