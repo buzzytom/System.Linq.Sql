@@ -84,10 +84,9 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            // TODO - Possibly remove VisitField, it will be handled differently in each usage.
-            throw new NotImplementedException();
+            builder.Append($"[{context.GetSource(expression.Source)}].[{expression.Fields.GetKey(expression)}]");
 
-            //return expression;
+            return expression;
         }
 
         /// <summary>

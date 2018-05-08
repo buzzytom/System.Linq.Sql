@@ -30,7 +30,7 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(fields));
 
             foreach (string field in fields)
-                Add(new FieldExpression(source, table, field));
+                Add(new FieldExpression(this, source, table, field));
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(fields));
 
             foreach (FieldExpression field in fields)
-                Add(new FieldExpression(source, field.TableName, field.FieldName));
+                Add(new FieldExpression(this, source, field.TableName, field.FieldName));
         }
 
         /// <summary>
@@ -62,16 +62,13 @@ namespace System.Linq.Sql
                 Add(field);
         }
 
-        /// <summary>
-        /// Adds a <see cref="FieldExpression"/> to the collection.
-        /// </summary>
-        /// <param name="field">The field to add.</param>
-        /// <returns>The alias identifier of the added field.</returns>
-        public string Add(FieldExpression field)
+#if DEBUG
+        public
+#else
+        private
+#endif
+        string Add(FieldExpression field)
         {
-            if (field == null)
-                throw new ArgumentNullException(nameof(field));
-
             if (fields.TryGetValue(field, out string key))
                 return key;
             else
@@ -88,7 +85,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="field">The field to get the key for.</param>
         /// <returns>The key assigned to the field</returns>
-        /// <remarks>Unlike <see cref="Add(FieldExpression)"/>, this method will throw an <see cref="KeyNotFoundException"/> if the field does not exist.</remarks>
+        /// <remarks>This method will throw an <see cref="KeyNotFoundException"/> if the field does not exist.</remarks>
         public string GetKey(FieldExpression field)
         {
             if (field == null)

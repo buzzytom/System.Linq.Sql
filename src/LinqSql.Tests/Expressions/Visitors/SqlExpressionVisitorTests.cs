@@ -19,7 +19,7 @@ namespace System.Linq.Sql.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [Alias].[FieldA]as[f0],[Alias].[FieldB]as[f1] from [Table] as [Alias]) as [t0]", query.Sql);
+            Assert.AreEqual("select * from (select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from [Table] as [t0]) as [t1]", query.Sql);
         }
 
         [TestMethod]
@@ -68,7 +68,15 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlExpressionVisitor_VisitField()
         {
-            Assert.Fail();
+            // Prepare the test data
+            SelectExpression source = new SelectExpression(new TableExpression("Table", "Alias", new string[] { "Field" }));
+            FieldExpression expression = source.Fields.FirstOrDefault();
+
+            // Perform the test operation
+            visitor.VisitField(expression);
+
+            // Check the test result
+            Assert.AreEqual("[t0].[f0]", visitor.SqlState);
         }
 
         [TestMethod]
