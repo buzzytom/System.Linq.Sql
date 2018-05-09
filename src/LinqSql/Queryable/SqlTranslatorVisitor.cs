@@ -56,8 +56,8 @@ namespace System.Linq.Sql
         {
             // Get the associated method
             MethodInfo method = node.Method;
-            if (method.DeclaringType != typeof(Linq.Queryable))
-                throw new InvalidOperationException("Cannot translate the method '{method.Name}' unless the source is a System.Linq.Queryable instance.");
+            if (method.DeclaringType != typeof(Queryable))
+                throw new InvalidOperationException($"Cannot translate the method '{method.Name}' unless the source is a System.Linq.Queryable instance.");
 
             // Decode specific method node handling
             if (method.Name == "Where")
@@ -84,6 +84,45 @@ namespace System.Linq.Sql
                 return new BooleanExpression((bool)node.Value);
             else
                 return new LiteralExpression(node.Value);
+        }
+
+        /// <summary>
+        /// Visits the children of the System.Linq.Expressions.BinaryExpression. This implementation converts the expression into a <see cref="CompositeExpression"/>.
+        /// </summary>
+        /// <param name="node">The expression to visit</param>
+        /// <returns>The specified binary expression converted to a <see cref="CompositeExpression"/>.</returns>
+        protected override Expression VisitBinary(BinaryExpression node)
+        {
+            AExpression left = Visit<AExpression>(node.Left);
+            AExpression right = Visit<AExpression>(node.Right);
+            return new CompositeExpression(left, right, GetCompositeOperator(node.NodeType));
+        }
+
+        private CompositeOperator GetCompositeOperator(ExpressionType type)
+        {
+            switch (type)
+            {
+                case ExpressionType.And:
+                case ExpressionType.AndAlso:
+                    return CompositeOperator.And;
+                case ExpressionType.Or:
+                case ExpressionType.OrElse:
+                    return CompositeOperator.Or;
+                case ExpressionType.GreaterThan:
+                    return CompositeOperator.GreaterThan;
+                case ExpressionType.GreaterThanOrEqual:
+                    return CompositeOperator.GreaterThanOrEqual;
+                case ExpressionType.LessThan:
+                    return CompositeOperator.LessThan;
+                case ExpressionType.LessThanOrEqual:
+                    return CompositeOperator.LessThanOrEqual;
+                case ExpressionType.Equal:
+                    return CompositeOperator.Equal;
+                case ExpressionType.NotEqual:
+                    return CompositeOperator.NotEqual;
+                default:
+                    throw new NotSupportedException($"Cannot convert {type.ToString()} to a {nameof(CompositeOperator)}.");
+            }
         }
 
         private static Expression StripQuotes(Expression expression)
