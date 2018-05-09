@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace System.Linq.Sql
@@ -54,21 +55,15 @@ namespace System.Linq.Sql
         /// <returns>The specified expression converted to an <see cref="ASourceExpression"/>; otherwise a thrown exception.</returns>
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            // Get the associated method
-            MethodInfo method = node.Method;
-            if (method.DeclaringType != typeof(Queryable))
-                throw new InvalidOperationException($"Cannot translate the method '{method.Name}' unless the source is a System.Linq.Queryable instance.");
-
-            // Decode specific method node handling
-            if (method.Name == "Where")
+            switch (node.Method.Name)
             {
-                ASourceExpression source = Visit<ASourceExpression>(node.Arguments[0]);
-                LambdaExpression lambda = (LambdaExpression)StripQuotes(node.Arguments[1]);
-                APredicateExpression predicate = Visit<APredicateExpression>(lambda.Body);
-                return new WhereExpression(source, predicate);
+                case "get_Item":
+                    return VisitField(node);
+                case "Where":
+                    return VisitWhere(node);
+                default:
+                    throw new NotSupportedException($"Cannot translate the method '{node.Method.Name}' because it's not known by the sql translator.");
             }
-
-            throw new NotSupportedException($"Cannot translate the method '{method.Name}' because it's not known by the sql translator.");
         }
 
         /// <summary>
@@ -123,6 +118,54 @@ namespace System.Linq.Sql
                 default:
                     throw new NotSupportedException($"Cannot convert {type.ToString()} to a {nameof(CompositeOperator)}.");
             }
+        }
+
+        private WhereExpression VisitWhere(MethodCallExpression expression)
+        {
+            if (expression.Method.DeclaringType != typeof(Queryable))
+                throw new InvalidOperationException("The declaring type for a Where expression must be a Queryable.");
+
+            ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+            LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+            APredicateExpression predicate = Visit<APredicateExpression>(lambda.Body);
+            return new WhereExpression(source, predicate);
+        }
+
+        private FieldExpression VisitField(MethodCallExpression expression)
+        {
+            // Resolve the field name
+            ConstantExpression fieldNameExpression = expression.Arguments.FirstOrDefault() as ConstantExpression;
+            if (!expression.Method.DeclaringType.IsAssignableFrom(typeof(Dictionary<string, object>)))
+                throw new InvalidOperationException("The declaring type for a field expression must be a Dictionary<string, object>.");
+            if (expression.Method.ReturnType != typeof(object))
+                throw new InvalidOperationException("The return type for a field expression must be type of object.");
+            if (expression.Arguments.Count != 1 || fieldNameExpression?.Type != typeof(string))
+                throw new InvalidOperationException("The field name indexer for the field expression must contain exactly one string parameter.");
+
+            // Resolve the table name
+            MethodCallExpression source = expression.Object as MethodCallExpression;
+            ConstantExpression tableNameExpression = source?.Arguments.FirstOrDefault() as ConstantExpression;
+            if (source == null)
+                throw new InvalidOperationException($"The table instance object could not be resolved for the field: {fieldNameExpression.Value.ToString()}");
+            if (source.Method.Name != "get_Item")
+                throw new NotSupportedException("Only an array indexer can be used to resolve a fields table name.");
+            if (!source.Method.ReturnType.IsAssignableFrom(typeof(RecordItem)))
+                throw new InvalidOperationException($"When mapping a field, the table name must map to a {nameof(RecordItem)}.");
+            if (source.Arguments.Count != 1 || tableNameExpression?.Type != typeof(string))
+                throw new InvalidOperationException("The table name indexer for the field expression must contain exactly one string parameter.");
+
+            // Resolve the indexer values
+            string tableName = tableNameExpression.Value as string;
+            string fieldName = fieldNameExpression.Value as string;
+            if (string.IsNullOrWhiteSpace(tableName))
+                throw new InvalidOperationException("The table name cannot be empty.");
+            if (string.IsNullOrWhiteSpace(fieldName))
+                throw new InvalidOperationException("The field name cannot be empty.");
+
+            // TODO - Uhhh, how do we create a FieldExpresion here, the FieldExpressions of the source won't exist until this completes!
+            //        Maybe a "FieldExpressionPromise" which just contains a Table and Field name.
+
+            throw new NotImplementedException();
         }
 
         private static Expression StripQuotes(Expression expression)
