@@ -66,6 +66,110 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_GreaterThan()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.GreaterThan);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 > @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_GreaterThanOrEqual()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.GreaterThanOrEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 >= @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_LessThan()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.LessThan);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 < @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_LessThanOrEqual()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.LessThanOrEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 <= @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_Equal()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.Equal);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 = @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_Equal_Null()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new NullExpression(), CompositeOperator.Equal);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 is null)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_NotEqual()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.NotEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 <> @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_NotEqual_Null()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new NullExpression(), CompositeOperator.NotEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 is not null)", visitor.SqlState);
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitField()
         {
             // Prepare the test data

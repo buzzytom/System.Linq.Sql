@@ -66,6 +66,28 @@ namespace System.Linq.Sql
                 builder.Append(" and ");
             else if (expression.Operator == CompositeOperator.Or)
                 builder.Append(" or ");
+            else if (expression.Operator == CompositeOperator.GreaterThan)
+                builder.Append(" > ");
+            else if (expression.Operator == CompositeOperator.GreaterThanOrEqual)
+                builder.Append(" >= ");
+            else if (expression.Operator == CompositeOperator.LessThan)
+                builder.Append(" < ");
+            else if (expression.Operator == CompositeOperator.LessThanOrEqual)
+                builder.Append(" <= ");
+            else if (expression.Operator == CompositeOperator.Equal)
+            {
+                if (expression.Right is NullExpression)
+                    builder.Append(" is ");
+                else
+                    builder.Append(" = ");
+            }
+            else if (expression.Operator == CompositeOperator.NotEqual)
+            {
+                if (expression.Right is NullExpression)
+                    builder.Append(" is not ");
+                else
+                    builder.Append(" <> ");
+            }
             else
                 throw new NotSupportedException($"Cannot generate sql for '{expression.Operator}' operator of {nameof(CompositeExpression)}.");
 
