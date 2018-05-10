@@ -9,9 +9,6 @@ namespace System.Linq.Sql
     /// </summary>
     public class SqlExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
-        private readonly StringBuilder builder = new StringBuilder();
-        private readonly SqlVisitorContext context = new SqlVisitorContext();
-
         /// <summary>
         /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
         /// </summary>
@@ -26,11 +23,11 @@ namespace System.Linq.Sql
         /// <remarks>This method will clear any state currently executing on the visitor.</remarks>
         public Query GenerateQuery(SelectExpression expression)
         {
-            builder.Clear();
-            context.Clear();
-            builder.Append("select * from ");
+            Builder.Clear();
+            Context.Clear();
+            Builder.Append("select * from ");
             Visit(expression);
-            return new Query(builder.ToString(), context.Parameters);
+            return new Query(Builder.ToString(), Context.Parameters);
         }
 
         /// <summary>
@@ -43,9 +40,9 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(expression));
 
             if (expression.Value)
-                builder.Append("true");
+                Builder.Append("true");
             else
-                builder.Append("false");
+                Builder.Append("false");
 
             return expression;
         }
@@ -59,40 +56,40 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append("(");
+            Builder.Append("(");
             Visit(expression.Left);
 
             if (expression.Operator == CompositeOperator.And)
-                builder.Append(" and ");
+                Builder.Append(" and ");
             else if (expression.Operator == CompositeOperator.Or)
-                builder.Append(" or ");
+                Builder.Append(" or ");
             else if (expression.Operator == CompositeOperator.GreaterThan)
-                builder.Append(" > ");
+                Builder.Append(" > ");
             else if (expression.Operator == CompositeOperator.GreaterThanOrEqual)
-                builder.Append(" >= ");
+                Builder.Append(" >= ");
             else if (expression.Operator == CompositeOperator.LessThan)
-                builder.Append(" < ");
+                Builder.Append(" < ");
             else if (expression.Operator == CompositeOperator.LessThanOrEqual)
-                builder.Append(" <= ");
+                Builder.Append(" <= ");
             else if (expression.Operator == CompositeOperator.Equal)
             {
                 if (expression.Right is NullExpression)
-                    builder.Append(" is ");
+                    Builder.Append(" is ");
                 else
-                    builder.Append(" = ");
+                    Builder.Append(" = ");
             }
             else if (expression.Operator == CompositeOperator.NotEqual)
             {
                 if (expression.Right is NullExpression)
-                    builder.Append(" is not ");
+                    Builder.Append(" is not ");
                 else
-                    builder.Append(" <> ");
+                    Builder.Append(" <> ");
             }
             else
                 throw new NotSupportedException($"Cannot generate sql for '{expression.Operator}' operator of {nameof(CompositeExpression)}.");
 
             Visit(expression.Right);
-            builder.Append(")");
+            Builder.Append(")");
 
             return expression;
         }
@@ -106,7 +103,7 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append($"[{context.GetSource(expression.Source)}].[{expression.Fields.GetKey(expression)}]");
+            Builder.Append($"[{Context.GetSource(expression.Source)}].[{expression.Fields.GetKey(expression)}]");
 
             return expression;
         }
@@ -120,8 +117,8 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            string key = context.CreateParameter(expression.Value);
-            builder.Append($"@{key}");
+            string key = Context.CreateParameter(expression.Value);
+            Builder.Append($"@{key}");
 
             return expression;
         }
@@ -135,7 +132,7 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append("null");
+            Builder.Append("null");
 
             return expression;
         }
@@ -149,11 +146,11 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append("(select ");
+            Builder.Append("(select ");
             VisitFields(expression, expression.Fields);
-            builder.Append(" from ");
+            Builder.Append(" from ");
             Visit(expression.Source);
-            builder.Append($") as [{context.GetSource(expression)}]");
+            Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
         }
@@ -167,7 +164,7 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append($"[{expression.Table}] as [{context.GetSource(expression)}]");
+            Builder.Append($"[{expression.Table}] as [{Context.GetSource(expression)}]");
 
             return expression;
         }
@@ -181,11 +178,11 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            builder.Append("(select * from ");
+            Builder.Append("(select * from ");
             Visit(expression.Source);
-            builder.Append(" where ");
+            Builder.Append(" where ");
             Visit(expression.Predicate);
-            builder.Append($") as [{context.GetSource(expression)}]");
+            Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
         }
@@ -202,20 +199,20 @@ namespace System.Linq.Sql
             {
                 if (builder.Length > 0)
                     builder.Append(",");
-                builder.Append($"[{context.GetSource(field.Source)}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
+                builder.Append($"[{Context.GetSource(field.Source)}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
             }
-            this.builder.Append(builder.ToString());
+            this.Builder.Append(builder.ToString());
         }
 
         // ----- Properties ----- //
 
         /// <summary>Gets the string builder used to form the query.</summary>
-        protected StringBuilder Builder => builder;
+        protected StringBuilder Builder { get; } = new StringBuilder();
 
         /// <summary>Gets the vistor context used during the visitation of expressions.</summary>
-        protected SqlVisitorContext Context => context;
+        protected SqlVisitorContext Context { get; } = new SqlVisitorContext();
 
         /// <summary>Gets the current sql state of the visitor.</summary>
-        public string SqlState => builder.ToString();
+        public string SqlState => Builder.ToString();
     }
 }
