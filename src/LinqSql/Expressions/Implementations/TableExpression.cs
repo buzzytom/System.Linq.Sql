@@ -8,10 +8,6 @@ namespace System.Linq.Sql
     /// </summary>
     public class TableExpression : ASourceExpression
     {
-        private readonly string table = null;
-        private readonly string alias = null;
-        private readonly FieldExpressions fields = null;
-
         /// <summary>
         /// Initializes a new instance of <see cref="TableExpression"/>, selecting the specified fields from the specified table.
         /// </summary>
@@ -26,9 +22,9 @@ namespace System.Linq.Sql
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
 
-            this.table = table;
-            this.alias = alias;
-            this.fields = new FieldExpressions(this, alias, fields);
+            Table = table;
+            Alias = alias;
+            Fields = new FieldExpressions(this, alias, fields);
         }
 
         /// <summary>
@@ -44,12 +40,12 @@ namespace System.Linq.Sql
         // ----- Properties ----- //
 
         /// <summary>Gets the physical name of table.</summary>
-        public string Table => table;
+        public string Table { get; } = null;
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
-        public string Alias => alias;
+        public string Alias { get; } = null;
 
         /// <summary>Gets the fields exposed by the table.</summary>
-        public override FieldExpressions Fields => fields;
+        public override FieldExpressions Fields { get; } = null;
     }
 }

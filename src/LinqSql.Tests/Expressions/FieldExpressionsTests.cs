@@ -56,7 +56,7 @@ namespace System.Linq.Sql.Tests
         {
             // Prepare test data
             FieldExpressions expressions = new FieldExpressions();
-            FieldExpression expression = new FieldExpression(expressions, source, "Table", "Field");
+            FieldExpression expression = new FieldExpression(source, "Table", "Field");
 
             // Perform the test operation
             string a = expressions.Add(expression);
@@ -71,7 +71,7 @@ namespace System.Linq.Sql.Tests
         {
             FieldExpressions expressions = new FieldExpressions();
             Assert.ThrowsException<ArgumentNullException>(() => expressions.GetKey(null));
-            Assert.ThrowsException<KeyNotFoundException>(() => expressions.GetKey(new FieldExpression(expressions, source, "Table", "Field")));
+            Assert.ThrowsException<KeyNotFoundException>(() => expressions.GetKey(new FieldExpression(source, "Table", "Field")));
         }
 
         [TestMethod]

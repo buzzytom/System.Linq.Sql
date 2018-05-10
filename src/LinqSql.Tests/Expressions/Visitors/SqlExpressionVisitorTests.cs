@@ -19,7 +19,7 @@ namespace System.Linq.Sql.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from [Table] as [t0]) as [t1]", query.Sql);
+            Assert.AreEqual("select * from (select [t0].[f0]as[f0],[t0].[f1]as[f1] from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]) as [t1]", query.Sql);
         }
 
         [TestMethod]
@@ -66,7 +66,128 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_GreaterThan()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.GreaterThan);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 > @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_GreaterThanOrEqual()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.GreaterThanOrEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 >= @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_LessThan()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.LessThan);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 < @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_LessThanOrEqual()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.LessThanOrEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 <= @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_Equal()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.Equal);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 = @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_Equal_Null()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new NullExpression(), CompositeOperator.Equal);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 is null)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_NotEqual()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new LiteralExpression(2), CompositeOperator.NotEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 <> @p1)", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitComposite_NotEqual_Null()
+        {
+            // Prepare the test data
+            CompositeExpression expression = new CompositeExpression(new LiteralExpression(1), new NullExpression(), CompositeOperator.NotEqual);
+
+            // Perform the test operation
+            visitor.VisitComposite(expression);
+
+            // Check the test result
+            Assert.AreEqual("(@p0 is not null)", visitor.SqlState);
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitField()
+        {
+            // Prepare the test data
+            TableExpression table = new TableExpression("Table", "Alias", new string[] { "Field" });
+            APredicateExpression predicate = new CompositeExpression(table.Fields.First(), new NullExpression(), CompositeOperator.Equal);
+            WhereExpression expression = new WhereExpression(table, predicate);
+
+            // Perform the test operation
+            visitor.VisitWhere(expression);
+
+            // Check the test result
+            // Note: The important part of this check is the "[t0].[f0]"
+            Assert.AreEqual("(select * from (select [Field]as[f0] from [Table]) as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlExpressionVisitor_VisitField_InvalidOperationException()
         {
             // Prepare the test data
             SelectExpression source = new SelectExpression(new TableExpression("Table", "Alias", new string[] { "Field" }));
@@ -74,9 +195,6 @@ namespace System.Linq.Sql.Tests
 
             // Perform the test operation
             visitor.VisitField(expression);
-
-            // Check the test result
-            Assert.AreEqual("[t0].[f0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -123,7 +241,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from [Table] as [t0]) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[f0]as[f0],[t0].[f1]as[f1] from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -137,7 +255,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitTable(expression);
 
             // Check the result
-            Assert.AreEqual("[Table] as [t0]", visitor.SqlState);
+            Assert.AreEqual("(select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -151,7 +269,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitWhere(expression);
 
             // Check the result
-            Assert.AreEqual("(select * from [Table] as [t0] where true) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select * from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0] where true) as [t1]", visitor.SqlState);
         }
     }
 }

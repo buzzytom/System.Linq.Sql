@@ -8,9 +8,6 @@ namespace System.Linq.Sql
     /// </summary>
     public class SelectExpression : ASourceExpression
     {
-        private readonly ASourceExpression source = null;
-        private readonly FieldExpressions fields = null;
-
         /// <summary>
         /// Initializes a new instance of <see cref="SelectExpression"/> selecting all the fields from the specified source.
         /// </summary>
@@ -33,8 +30,8 @@ namespace System.Linq.Sql
             if (!fields.Any())
                 throw new ArgumentException("There must be at least one field specified in a select query.", nameof(fields));
 
-            this.source = source;
-            this.fields = new FieldExpressions(source, fields);
+            Source = source;
+            Fields = new FieldExpressions(this, fields);
         }
 
         /// <summary>
@@ -50,9 +47,9 @@ namespace System.Linq.Sql
         // ----- Properties ----- //
 
         /// <summary>Gets inner source of the expression.</summary>
-        public ASourceExpression Source => source;
+        public ASourceExpression Source { get; } = null;
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
-        public override FieldExpressions Fields => fields;
+        public override FieldExpressions Fields { get; } = null;
     }
 }

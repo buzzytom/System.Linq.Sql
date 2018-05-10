@@ -38,7 +38,7 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
-        public void SqlQueryable_Where()
+        public void SqlQueryable_WhereBoolean()
         {
             // Prepare the test data
             string[] fields = new string[] { "Id", "Name" };
@@ -51,6 +51,22 @@ namespace System.Linq.Sql.Tests
 
             // Check the test result
             Assert.AreEqual(4, records.Length);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_WhereComparison()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record[] records = queryable
+                .Where(x => (int)x["Alias"]["Id"] == 1)
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(1, records.Length);
         }
     }
 }
