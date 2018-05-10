@@ -7,14 +7,12 @@ namespace System.Linq.Sql
     /// </summary>
     public class BooleanExpression : APredicateExpression
     {
-        private readonly bool value = false;
-
         /// <summary>
         /// Initializes a new instance of <see cref="LiteralExpression"/>, with the specified value.
         /// </summary>
         public BooleanExpression(bool value)
         {
-            this.value = value;
+            Value = value;
         }
 
         /// <summary>
@@ -30,7 +28,7 @@ namespace System.Linq.Sql
         // ----- Properties ----- //
 
         /// <summary>Gets the value of this expression.</summary>
-        public bool Value => value;
+        public bool Value { get; } = false;
 
         /// <summary>Gets the static type of the expression that this System.Linq.Expressions.Expression represents.</summary>
         public override Type Type => typeof(bool);

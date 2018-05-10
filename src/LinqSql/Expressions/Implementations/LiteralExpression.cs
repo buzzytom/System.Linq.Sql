@@ -7,8 +7,6 @@ namespace System.Linq.Sql
     /// </summary>
     public class LiteralExpression : AExpression
     {
-        private readonly object value = null;
-
         /// <summary>
         /// Initializes a new instance of <see cref="LiteralExpression"/>, with the specified value.
         /// </summary>
@@ -17,7 +15,7 @@ namespace System.Linq.Sql
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            this.value = value;
+            Value = value;
         }
 
         /// <summary>
@@ -33,9 +31,9 @@ namespace System.Linq.Sql
         // ----- Properties ----- //
 
         /// <summary>Gets the value of this expression.</summary>
-        public object Value => value;
+        public object Value { get; } = null;
 
         /// <summary>Gets the static type of the expression that this System.Linq.Expressions.Expression represents.</summary>
-        public override Type Type => value.GetType();
+        public override Type Type => Value.GetType();
     }
 }

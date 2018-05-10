@@ -7,10 +7,6 @@ namespace System.Linq.Sql
     /// </summary>
     public class WhereExpression : ASourceExpression
     {
-        private readonly FieldExpressions fields = null;
-        private readonly ASourceExpression source = null;
-        private readonly APredicateExpression predicate = null;
-
         /// <summary>
         /// Initializes a new instance of <see cref="WhereExpression"/> filtering the specified source.
         /// </summary>
@@ -22,10 +18,10 @@ namespace System.Linq.Sql
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
 
-            this.source = source;
-            this.predicate = predicate;
+            Source = source;
+            Predicate = predicate;
 
-            fields = new FieldExpressions(source, source.Fields);
+            Fields = new FieldExpressions(source, source.Fields);
         }
 
         /// <summary>
@@ -41,12 +37,12 @@ namespace System.Linq.Sql
         // ----- Properties ----- //
 
         /// <summary>Gets inner source of the expression.</summary>
-        public ASourceExpression Source => source;
+        public ASourceExpression Source { get; } = null;
 
         /// <summary>Gets the predicate of this epxression.</summary>
-        public APredicateExpression Predicate => predicate;
+        public APredicateExpression Predicate { get; } = null;
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
-        public override FieldExpressions Fields => fields;
+        public override FieldExpressions Fields { get; } = null;
     }
 }
