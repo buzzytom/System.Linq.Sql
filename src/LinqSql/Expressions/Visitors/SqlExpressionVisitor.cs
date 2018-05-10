@@ -113,7 +113,9 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
-            Builder.Append($"[{Context.GetSource(expression.Source)}].[{Context.Source.Fields.GetKey(expression)}]");
+            string table = Context.GetSource(expression.Source);
+            string field = Context.Source.Fields.GetKey(expression);
+            Builder.Append($"[{table}].[{field}]");
 
             return expression;
         }
@@ -174,7 +176,9 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            Builder.Append($"[{expression.Table}] as [{Context.GetSource(expression)}]");
+            Builder.Append("(select ");
+            VisitFields(expression, expression.Fields);
+            Builder.Append($" from [{expression.Table}]) as [{Context.GetSource(expression)}]");
 
             return expression;
         }
@@ -209,7 +213,9 @@ namespace System.Linq.Sql
             {
                 if (builder.Length > 0)
                     builder.Append(",");
-                builder.Append($"[{Context.GetSource(field.Source)}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
+                if (!(field.Source is TableExpression))
+                    builder.Append($"[{Context.GetSource(field.Source)}].");
+                builder.Append($"[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
             }
             Builder.Append(builder.ToString());
         }
