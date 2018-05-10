@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace System.Linq.Sql
 {
@@ -9,6 +8,8 @@ namespace System.Linq.Sql
     /// </summary>
     public class SqlTranslatorVisitor : ExpressionVisitor
     {
+        private ASourceExpression source = null;
+
         /// <summary>
         /// Initializes a new instance of <see cref="SqlTranslatorVisitor"/>.
         /// </summary>
@@ -45,6 +46,8 @@ namespace System.Linq.Sql
             T source = Visit(StripQuotes(expression)) as T;
             if (source == null)
                 throw new NotSupportedException($"Could not convert the expression to an {typeof(T).Name}.");
+            if (source is ASourceExpression)
+                this.source = source as ASourceExpression;
             return source;
         }
 
@@ -79,6 +82,19 @@ namespace System.Linq.Sql
                 return new BooleanExpression((bool)node.Value);
             else
                 return new LiteralExpression(node.Value);
+        }
+
+        /// <summary>
+        /// Visits the children of the <see cref="UnaryExpression"/> converting the expression to an <see cref="AExpression"/> if the expression is a known convertible type.
+        /// </summary>
+        /// <param name="node">The expression to visit.</param>
+        /// <returns>The modified expression, if it or any subexpression was modified; otherwise, a <see cref="NotSupportedException"/> exception is thrown.</returns>
+        protected override Expression VisitUnary(UnaryExpression node)
+        {
+            if (node.NodeType == ExpressionType.Convert)
+                return Visit(node.Operand);
+            else
+                throw new NotSupportedException("That unary expression is not supported.");
         }
 
         /// <summary>
@@ -133,6 +149,9 @@ namespace System.Linq.Sql
 
         private FieldExpression VisitField(MethodCallExpression expression)
         {
+            if (this.source == null)
+                throw new InvalidOperationException($"A field can only be visited if an {nameof(ASourceExpression)} has previously been visited.");
+
             // Resolve the field name
             ConstantExpression fieldNameExpression = expression.Arguments.FirstOrDefault() as ConstantExpression;
             if (!expression.Method.DeclaringType.IsAssignableFrom(typeof(Dictionary<string, object>)))
@@ -162,10 +181,12 @@ namespace System.Linq.Sql
             if (string.IsNullOrWhiteSpace(fieldName))
                 throw new InvalidOperationException("The field name cannot be empty.");
 
-            // TODO - Uhhh, how do we create a FieldExpresion here, the FieldExpressions of the source won't exist until this completes!
-            //        Maybe a "FieldExpressionPromise" which just contains a Table and Field name.
+            // Get the field from the current source
+            FieldExpression found = this.source?.Fields.FirstOrDefault(x => x.TableName == tableName && x.FieldName == fieldName);
+            if (found == null)
+                throw new KeyNotFoundException($"The field [{tableName}].[{fieldName}] could not be found on the current source expression.");
 
-            throw new NotImplementedException();
+            return found;
         }
 
         private static Expression StripQuotes(Expression expression)
