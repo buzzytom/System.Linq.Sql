@@ -19,7 +19,7 @@ namespace System.Linq.Sql.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from [Table] as [t0]) as [t1]", query.Sql);
+            Assert.AreEqual("select * from (select [t0].[f0]as[f0],[t0].[f1]as[f1] from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]) as [t1]", query.Sql);
         }
 
         [TestMethod]
@@ -182,7 +182,7 @@ namespace System.Linq.Sql.Tests
 
             // Check the test result
             // Note: The important part of this check is the "[t0].[f0]"
-            Assert.AreEqual("(select * from [Table] as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select * from (select [Field]as[f0] from [Table]) as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -241,7 +241,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [t0].[FieldA]as[f0],[t0].[FieldB]as[f1] from [Table] as [t0]) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[f0]as[f0],[t0].[f1]as[f1] from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -255,7 +255,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitTable(expression);
 
             // Check the result
-            Assert.AreEqual("[Table] as [t0]", visitor.SqlState);
+            Assert.AreEqual("(select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -269,7 +269,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitWhere(expression);
 
             // Check the result
-            Assert.AreEqual("(select * from [Table] as [t0] where true) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select * from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0] where true) as [t1]", visitor.SqlState);
         }
     }
 }

@@ -10,18 +10,20 @@ namespace System.Linq.Sql
         /// <summary>
         /// Initializes a new instance of <see cref="FieldExpression"/>, selecting the specified field from the specified source.
         /// </summary>
-        /// <param name="source">The source expression which the field is present on.</param>
+        /// <param name="expression">The fields <see cref="ASourceExpression"/>.</param>
         /// <param name="table">The table or table alias the field is exposed from.</param>
         /// <param name="field">The name of the field on the source.</param>
-        public FieldExpression(ASourceExpression source, string table, string field)
+        /// <param name="source">The optional field expression this instance is mapping.</param>
+        public FieldExpression(ASourceExpression expression, string table, string field, FieldExpression source = null)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
             if (string.IsNullOrWhiteSpace(table))
                 throw new ArgumentException("Cannot be whitespace.", nameof(table));
             if (string.IsNullOrWhiteSpace(field))
                 throw new ArgumentException("Cannot be whitespace.", nameof(field));
 
+            Expression = expression;
             Source = source;
             TableName = table;
             FieldName = field;
@@ -39,8 +41,11 @@ namespace System.Linq.Sql
 
         // ----- Properties ----- //
 
-        /// <summary>Gets the source expression this field expression exists on.</summary>
-        public ASourceExpression Source { get; } = null;
+        /// <summary>Gets the fields <see cref="ASourceExpression"/>.</summary>
+        public ASourceExpression Expression { get; } = null;
+
+        /// <summary>Gets the optional source field this field is mapping.</summary>
+        public FieldExpression Source { get; } = null;
 
         /// <summary>Gets the name of the table on the source.</summary>
         public string TableName { get; } = null;

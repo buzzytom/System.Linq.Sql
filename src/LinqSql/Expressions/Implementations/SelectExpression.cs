@@ -31,7 +31,7 @@ namespace System.Linq.Sql
                 throw new ArgumentException("There must be at least one field specified in a select query.", nameof(fields));
 
             Source = source;
-            Fields = new FieldExpressions(source, fields);
+            Fields = new FieldExpressions(this, fields);
         }
 
         /// <summary>

@@ -46,7 +46,7 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(fields));
 
             foreach (FieldExpression field in fields)
-                Add(new FieldExpression(source, field.TableName, field.FieldName));
+                Add(new FieldExpression(source, field.TableName, field.FieldName, field));
         }
 
         /// <summary>

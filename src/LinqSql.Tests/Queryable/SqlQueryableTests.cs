@@ -66,7 +66,7 @@ namespace System.Linq.Sql.Tests
                 .ToArray();
 
             // Check the test result
-            Assert.AreEqual(4, records.Length);
+            Assert.AreEqual(1, records.Length);
         }
     }
 }

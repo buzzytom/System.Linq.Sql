@@ -8,12 +8,14 @@ namespace System.Linq.Sql.Tests
     public class FieldExpressionTests
     {
         private readonly TableExpression source = new TableExpression("Table", "Alias", new string[] { "Field" });
+        private FieldExpression field = null;
         private FieldExpression expression = null;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            expression = new FieldExpression(source, "TableName", "FieldName");
+            field = new FieldExpression(source, "TableNameB", "FieldNameB");
+            expression = new FieldExpression(source, "TableName", "FieldName", field);
         }
 
         [TestMethod]
@@ -29,7 +31,8 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(object), expression.Type);
-            Assert.AreSame(source, expression.Source);
+            Assert.AreSame(source, expression.Expression);
+            Assert.AreSame(field, expression.Source);
             Assert.AreEqual("TableName", expression.TableName);
             Assert.AreEqual("FieldName", expression.FieldName);
         }

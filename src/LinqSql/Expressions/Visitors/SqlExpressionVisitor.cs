@@ -113,7 +113,7 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
-            string table = Context.GetSource(expression.Source);
+            string table = Context.GetSource(expression.Expression);
             string field = Context.Source.Fields.GetKey(expression);
             Builder.Append($"[{table}].[{field}]");
 
@@ -211,11 +211,19 @@ namespace System.Linq.Sql
             StringBuilder builder = new StringBuilder();
             foreach (FieldExpression field in fields)
             {
+                // Punctuation
                 if (builder.Length > 0)
                     builder.Append(",");
-                if (!(field.Source is TableExpression))
-                    builder.Append($"[{Context.GetSource(field.Source)}].");
-                builder.Append($"[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
+
+                // Render the table
+                if (field.Source != null)
+                    builder.Append($"[{Context.GetSource(field.Source.Expression)}].");
+
+                // Decode the field name
+                string name = field.Source?.Expression.Fields.GetKey(field.Source) ?? field.FieldName;
+
+                // Render the field
+                builder.Append($"[{name}]as[{expression.Fields.GetKey(field)}]");
             }
             Builder.Append(builder.ToString());
         }

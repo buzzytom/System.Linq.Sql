@@ -21,7 +21,7 @@ namespace System.Linq.Sql
             Source = source;
             Predicate = predicate;
 
-            Fields = new FieldExpressions(source, source.Fields);
+            Fields = new FieldExpressions(this, source.Fields);
         }
 
         /// <summary>
