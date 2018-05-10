@@ -64,5 +64,9 @@ namespace System.Linq.Sql
         /// <summary>Gets the Parameters value of this object.</summary>
         /// <remarks>This is a collection of all the query input parameters that needed to be passed to the SQL execution engine.</remarks>
         public Dictionary<string, object> Parameters => parameters;
+
+        /// <summary>Sets or gets the Source value of this object.</summary>
+        /// <remarks>This value should store the currently container source expression.</remarks>
+        public ASourceExpression Source { set; get; } = null;
     }
 }

@@ -173,14 +173,28 @@ namespace System.Linq.Sql.Tests
         public void SqlExpressionVisitor_VisitField()
         {
             // Prepare the test data
+            TableExpression table = new TableExpression("Table", "Alias", new string[] { "Field" });
+            APredicateExpression predicate = new CompositeExpression(table.Fields.First(), new NullExpression(), CompositeOperator.Equal);
+            WhereExpression expression = new WhereExpression(table, predicate);
+
+            // Perform the test operation
+            visitor.VisitWhere(expression);
+
+            // Check the test result
+            // Note: The important part of this check is the "[t0].[f0]"
+            Assert.AreEqual("(select * from [Table] as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlExpressionVisitor_VisitField_InvalidOperationException()
+        {
+            // Prepare the test data
             SelectExpression source = new SelectExpression(new TableExpression("Table", "Alias", new string[] { "Field" }));
             FieldExpression expression = source.Fields.FirstOrDefault();
 
             // Perform the test operation
             visitor.VisitField(expression);
-
-            // Check the test result
-            Assert.AreEqual("[t0].[f0]", visitor.SqlState);
         }
 
         [TestMethod]

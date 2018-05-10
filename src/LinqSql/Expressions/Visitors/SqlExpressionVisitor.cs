@@ -30,6 +30,14 @@ namespace System.Linq.Sql
             return new Query(Builder.ToString(), Context.Parameters);
         }
 
+        public override Expression Visit(Expression node)
+        {
+            if (node is ASourceExpression source)
+                Context.Source = source;
+
+            return base.Visit(node);
+        }
+
         /// <summary>
         /// Visits the specified expression.
         /// </summary>
@@ -102,8 +110,10 @@ namespace System.Linq.Sql
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
+            if (Context.Source == null)
+                throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
-            Builder.Append($"[{Context.GetSource(expression.Source)}].[{expression.Fields.GetKey(expression)}]");
+            Builder.Append($"[{Context.GetSource(expression.Source)}].[{Context.Source.Fields.GetKey(expression)}]");
 
             return expression;
         }
@@ -201,7 +211,7 @@ namespace System.Linq.Sql
                     builder.Append(",");
                 builder.Append($"[{Context.GetSource(field.Source)}].[{field.FieldName}]as[{expression.Fields.GetKey(field)}]");
             }
-            this.Builder.Append(builder.ToString());
+            Builder.Append(builder.ToString());
         }
 
         // ----- Properties ----- //

@@ -30,7 +30,7 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(fields));
 
             foreach (string field in fields)
-                Add(new FieldExpression(this, source, table, field));
+                Add(new FieldExpression(source, table, field));
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(fields));
 
             foreach (FieldExpression field in fields)
-                Add(new FieldExpression(this, source, field.TableName, field.FieldName));
+                Add(new FieldExpression(source, field.TableName, field.FieldName));
         }
 
         /// <summary>
