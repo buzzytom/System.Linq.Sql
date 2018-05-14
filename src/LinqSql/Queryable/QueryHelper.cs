@@ -9,7 +9,7 @@ namespace System.Linq.Sql
             if (records == null)
                 throw new ArgumentNullException(nameof(records));
 
-            return records.Select(x => x.Values.FirstOrDefault());
+            return records.Select(x => x.Values.Single());
         }
 
         public static IEnumerable<RecordItem> SelectRecordItems(this IEnumerable<Record> records, string table)
@@ -22,16 +22,16 @@ namespace System.Linq.Sql
             return records.Select(x => x[table]);
         }
 
-        public static IEnumerable<ILookup<string, object>> Flatten(this IEnumerable<Record> records)
+        public static IEnumerable<Dictionary<string, object>> Flatten(this IEnumerable<Record> records)
         {
             if (records == null)
                 throw new ArgumentNullException(nameof(records));
 
-            return records.Select((Record record) =>
+            return records.Select(record =>
             {
                 return record
                     .SelectMany(x => x.Value)
-                    .ToLookup(x => x.Key, x => x.Value);
+                    .ToDictionary(x => x.Key, x => x.Value);
             });
         }
     }
