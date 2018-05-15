@@ -19,6 +19,13 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void JoinExpression_Exceptions()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => new JoinExpression(null, inner));
+            Assert.ThrowsException<ArgumentNullException>(() => new JoinExpression(outer, null));
+        }
+
+        [TestMethod]
         public void JoinExpression_Properties()
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
