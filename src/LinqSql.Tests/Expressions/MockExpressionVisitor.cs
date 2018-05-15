@@ -22,6 +22,12 @@ namespace System.Linq.Sql.Tests
             return expression;
         }
 
+        public Expression VisitJoin(JoinExpression expression)
+        {
+            JoinVisited = true;
+            return expression;
+        }
+
         public Expression VisitLiteral(LiteralExpression expression)
         {
             LiteralVisited = true;
@@ -59,6 +65,8 @@ namespace System.Linq.Sql.Tests
         public bool CompositeVisited { private set; get; } = false;
 
         public bool FieldVisited { private set; get; } = false;
+
+        public bool JoinVisited { private set; get; } = false;
 
         public bool LiteralVisited { private set; get; } = false;
 
