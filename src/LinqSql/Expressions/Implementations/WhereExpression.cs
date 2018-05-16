@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace System.Linq.Sql
 {
@@ -22,6 +23,7 @@ namespace System.Linq.Sql
             Predicate = predicate;
 
             Fields = new FieldExpressions(this, source.Fields);
+            Expressions = new[] { source };
         }
 
         /// <summary>
@@ -44,5 +46,8 @@ namespace System.Linq.Sql
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
         public override FieldExpressions Fields { get; } = null;
+
+        /// <summary>Gets the child expressions of this source.</summary>
+        public override IEnumerable<ASourceExpression> Expressions { get; } = null;
     }
 }

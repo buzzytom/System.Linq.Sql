@@ -24,6 +24,7 @@ namespace System.Linq.Sql.Tests
             FieldExpression[] expressions = expression.Fields.ToArray();
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
+            CollectionAssert.AreEquivalent(new ASourceExpression[0], expression.Expressions.ToArray());
             Assert.AreEqual("Table", expression.Table);
             Assert.AreEqual("Alias", expression.Alias);
             Assert.AreEqual(fields.Length, expressions.Length);

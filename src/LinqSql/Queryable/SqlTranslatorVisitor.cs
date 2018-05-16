@@ -8,7 +8,7 @@ namespace System.Linq.Sql
     /// </summary>
     public class SqlTranslatorVisitor : ExpressionVisitor
     {
-        private ASourceExpression source = null;
+        private ASourceExpression[] sources = null;
 
         /// <summary>
         /// Initializes a new instance of <see cref="SqlTranslatorVisitor"/>.
@@ -47,7 +47,7 @@ namespace System.Linq.Sql
             if (source == null)
                 throw new NotSupportedException($"Could not convert the expression to an {typeof(T).Name}.");
             if (source is ASourceExpression)
-                this.source = source as ASourceExpression;
+                sources = new[] { source as ASourceExpression };
             return source;
         }
 
@@ -64,6 +64,8 @@ namespace System.Linq.Sql
                     return VisitField(node);
                 case "Where":
                     return VisitWhere(node);
+                case "Join":
+                    return VisitJoin(node);
                 default:
                     throw new NotSupportedException($"Cannot translate the method '{node.Method.Name}' because it's not known by the sql translator.");
             }
@@ -147,9 +149,32 @@ namespace System.Linq.Sql
             return new WhereExpression(source, predicate);
         }
 
+        private JoinExpression VisitJoin(MethodCallExpression expression)
+        {
+            if (expression.Method.DeclaringType != typeof(Queryable))
+                throw new InvalidOperationException("The declaring type for a Where expression must be a Queryable.");
+
+            // Resolve the sources
+            ASourceExpression outer = Visit<ASourceExpression>(expression.Arguments[0]);
+            ASourceExpression inner = Visit<ASourceExpression>(expression.Arguments[1]);
+
+            // Set the active expressions (so fields calls can find their expression)
+            sources = new[] { outer, inner };
+
+            // Create the predicate
+            LambdaExpression outerLambda = (LambdaExpression)StripQuotes(expression.Arguments[2]);
+            LambdaExpression innerLambda = (LambdaExpression)StripQuotes(expression.Arguments[3]);
+            FieldExpression outerField = Visit<FieldExpression>(outerLambda.Body);
+            FieldExpression innerField = Visit<FieldExpression>(innerLambda.Body);
+            APredicateExpression predicate = new CompositeExpression(outerField, innerField, CompositeOperator.Equal);
+
+            // Create the expression
+            return new JoinExpression(outer, inner, predicate, JoinType.Inner);
+        }
+
         private FieldExpression VisitField(MethodCallExpression expression)
         {
-            if (this.source == null)
+            if (this.sources == null)
                 throw new InvalidOperationException($"A field can only be visited if an {nameof(ASourceExpression)} has previously been visited.");
 
             // Resolve the field name
@@ -182,7 +207,9 @@ namespace System.Linq.Sql
                 throw new InvalidOperationException("The field name cannot be empty.");
 
             // Get the field from the current source
-            FieldExpression found = this.source?.Fields.FirstOrDefault(x => x.TableName == tableName && x.FieldName == fieldName);
+            FieldExpression found = sources?
+                .SelectMany(x => x.Fields)
+                .FirstOrDefault(x => x.TableName == tableName && x.FieldName == fieldName);
             if (found == null)
                 throw new KeyNotFoundException($"The field [{tableName}].[{fieldName}] could not be found on the current source expression.");
 

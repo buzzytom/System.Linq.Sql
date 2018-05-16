@@ -25,6 +25,7 @@ namespace System.Linq.Sql
             Table = table;
             Alias = alias;
             Fields = new FieldExpressions(this, alias, fields);
+            Expressions = new ASourceExpression[0];
         }
 
         /// <summary>
@@ -47,5 +48,8 @@ namespace System.Linq.Sql
 
         /// <summary>Gets the fields exposed by the table.</summary>
         public override FieldExpressions Fields { get; } = null;
+
+        /// <summary>Gets the child expressions of this source.</summary>
+        public override IEnumerable<ASourceExpression> Expressions { get; } = null;
     }
 }

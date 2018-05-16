@@ -31,6 +31,7 @@ namespace System.Linq.Sql.Tests
             FieldExpression[] expressions = expression.Fields.ToArray();
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
+            CollectionAssert.AreEquivalent(new[] { source }, expression.Expressions.ToArray());
             Assert.AreSame(source, expression.Source);
             foreach (FieldExpression field in expressions)
             {

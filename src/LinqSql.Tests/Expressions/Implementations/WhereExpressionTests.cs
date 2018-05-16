@@ -7,7 +7,7 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class WhereExpressionTests
     {
-        private APredicateExpression predicate = new BooleanExpression(true);
+        private readonly APredicateExpression predicate = new BooleanExpression(true);
         private readonly TableExpression table = new TableExpression("Table", "Alias", new string[] { "FieldA", "FieldB" });
         private WhereExpression expression = null;
 
@@ -29,6 +29,7 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
+            CollectionAssert.AreEquivalent(new[] { table }, expression.Expressions.ToArray());
             Assert.AreSame(table, expression.Source);
             Assert.AreSame(predicate, expression.Predicate);
         }

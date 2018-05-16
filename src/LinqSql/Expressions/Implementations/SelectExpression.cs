@@ -32,6 +32,7 @@ namespace System.Linq.Sql
 
             Source = source;
             Fields = new FieldExpressions(this, fields);
+            Expressions = new[] { source };
         }
 
         /// <summary>
@@ -51,5 +52,8 @@ namespace System.Linq.Sql
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
         public override FieldExpressions Fields { get; } = null;
+
+        /// <summary>Gets the child expressions of this source.</summary>
+        public override IEnumerable<ASourceExpression> Expressions { get; } = null;
     }
 }

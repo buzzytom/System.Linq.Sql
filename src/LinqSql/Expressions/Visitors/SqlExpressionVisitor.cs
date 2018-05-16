@@ -113,9 +113,58 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
+            // Get the source associated with field
+            ASourceExpression source = Context.Source.Expressions.First(x => x.Fields.Contains(expression));
+
+            // Render the field
             string table = Context.GetSource(expression.Expression);
-            string field = Context.Source.Fields.GetKey(expression);
+            string field = source.Fields.GetKey(expression);
             Builder.Append($"[{table}].[{field}]");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitJoin(JoinExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            // Build the outer selector
+            Builder.Append("(select ");
+            VisitFields(expression, expression.Fields);
+            Builder.Append(" from ");
+            Visit(expression.Outer);
+
+            // Add the join keyword
+            switch (expression.JoinType)
+            {
+                case JoinType.Inner:
+                    Builder.Append("join");
+                    break;
+                case JoinType.Left:
+                    Builder.Append("left join");
+                    break;
+                case JoinType.Right:
+                    Builder.Append("right join");
+                    break;
+                default:
+                    throw new NotSupportedException($"The {nameof(JoinType)} {expression.JoinType.ToString()} is not supported by {nameof(SqlExpressionVisitor)}.");
+            }
+
+            // Build the inner selector
+            Visit(expression.Inner);
+
+            // Build the predicate
+            Builder.Append("on");
+            Context.Source = expression;
+            Visit(expression.Predicate);
+
+            // Finalize the join
+            Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
         }
@@ -195,6 +244,7 @@ namespace System.Linq.Sql
             Builder.Append("(select * from ");
             Visit(expression.Source);
             Builder.Append(" where ");
+            Context.Source = expression;
             Visit(expression.Predicate);
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
