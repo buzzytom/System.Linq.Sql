@@ -28,6 +28,7 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitBoolean(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitField(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitJoin(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitLiteral(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitNull(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitSelect(null));
@@ -195,6 +196,22 @@ namespace System.Linq.Sql.Tests
 
             // Perform the test operation
             visitor.VisitField(expression);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitJoin()
+        {
+            // Prepare the test data
+            TableExpression outer = new TableExpression("Outer", "OuterAlias", new string[] { "OuterField" });
+            TableExpression inner = new TableExpression("Inner", "InnerAlias", new string[] { "InnerField" });
+            APredicateExpression predicate = new CompositeExpression(outer.Fields.First(), inner.Fields.First(), CompositeOperator.Equal);
+            JoinExpression expression = new JoinExpression(outer, inner, predicate, JoinType.Left);
+
+            // Perform the test operation
+            visitor.VisitJoin(expression);
+
+            // Check the test result
+            Assert.AreEqual("", visitor.SqlState);
         }
 
         [TestMethod]

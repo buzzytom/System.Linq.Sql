@@ -129,7 +129,39 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            throw new NotImplementedException();
+            // Build the outer selector
+            Builder.Append("(select ");
+            VisitFields(expression, expression.Fields);
+            Builder.Append(" from ");
+            Visit(expression.Outer);
+
+            // Add the join keyword
+            switch (expression.JoinType)
+            {
+                case JoinType.Inner:
+                    Builder.Append("join");
+                    break;
+                case JoinType.Left:
+                    Builder.Append("left join");
+                    break;
+                case JoinType.Right:
+                    Builder.Append("right join");
+                    break;
+                default:
+                    throw new NotSupportedException($"The {nameof(JoinType)} {expression.JoinType.ToString()} is not supported by {nameof(SqlExpressionVisitor)}.");
+            }
+
+            // Build the inner selector
+            Visit(expression.Inner);
+
+            // Build the predicate
+            Builder.Append("on");
+            Visit(expression.Predicate);
+
+            // Finalize the join
+            Builder.Append($") as [{Context.GetSource(expression)}]");
+
+            return expression;
         }
 
         /// <summary>
