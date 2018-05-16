@@ -211,7 +211,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitJoin(expression);
 
             // Check the test result
-            Assert.AreEqual("", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[f0]as[f0],[t1].[f0]as[f1] from (select [OuterField]as[f0] from [Outer]) as [t0]left join(select [InnerField]as[f0] from [Inner]) as [t1]on([t0].[f0] = [t1].[f0])) as [t2]", visitor.SqlState);
         }
 
         [TestMethod]

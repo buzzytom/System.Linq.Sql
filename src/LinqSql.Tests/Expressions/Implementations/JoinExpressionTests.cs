@@ -30,6 +30,7 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
+            CollectionAssert.AreEquivalent(new[] { outer, inner }, expression.Expressions.ToArray());
             Assert.AreSame(outer, expression.Outer);
             Assert.AreSame(inner, expression.Inner);
             Assert.AreSame(predicate, expression.Predicate);

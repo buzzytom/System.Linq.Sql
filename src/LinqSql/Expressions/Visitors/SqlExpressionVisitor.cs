@@ -113,8 +113,12 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
+            // Get the source associated with field
+            ASourceExpression source = Context.Source.Expressions.First(x => x.Fields.Contains(expression));
+
+            // Render the field
             string table = Context.GetSource(expression.Expression);
-            string field = Context.Source.Fields.GetKey(expression);
+            string field = source.Fields.GetKey(expression);
             Builder.Append($"[{table}].[{field}]");
 
             return expression;
@@ -156,6 +160,7 @@ namespace System.Linq.Sql
 
             // Build the predicate
             Builder.Append("on");
+            Context.Source = expression;
             Visit(expression.Predicate);
 
             // Finalize the join
@@ -239,6 +244,7 @@ namespace System.Linq.Sql
             Builder.Append("(select * from ");
             Visit(expression.Source);
             Builder.Append(" where ");
+            Context.Source = expression;
             Visit(expression.Predicate);
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
