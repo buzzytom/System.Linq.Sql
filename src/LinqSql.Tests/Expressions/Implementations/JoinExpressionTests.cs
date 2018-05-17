@@ -10,12 +10,16 @@ namespace System.Linq.Sql.Tests
         private readonly ASourceExpression outer = new TableExpression("Outer", "OuterAlias", new string[] { "OuterField" });
         private readonly ASourceExpression inner = new TableExpression("Inner", "InnerAlias", new string[] { "InnerField" });
         private readonly APredicateExpression predicate = new BooleanExpression(true);
+        private FieldExpression[] fields = null;
         private JoinExpression expression = null;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            expression = new JoinExpression(outer, inner, predicate, JoinType.Right);
+            fields = outer.Fields
+                .Concat(inner.Fields)
+                .ToArray();
+            expression = new JoinExpression(outer, inner, predicate, fields, JoinType.Right);
         }
 
         [TestMethod]
@@ -35,6 +39,9 @@ namespace System.Linq.Sql.Tests
             Assert.AreSame(inner, expression.Inner);
             Assert.AreSame(predicate, expression.Predicate);
             Assert.AreEqual(JoinType.Right, expression.JoinType);
+            Assert.AreEqual(fields.Length, expression.Fields.Count());
+            foreach (FieldExpression field in fields)
+                Assert.IsNotNull(expression.Fields.SingleOrDefault(x => x.Expression == expression && x.TableName == field.TableName && x.FieldName == field.FieldName));
         }
 
         [TestMethod]

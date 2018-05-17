@@ -174,7 +174,7 @@ namespace System.Linq.Sql
                 // TODO - Handle the result selector
 
                 // Create the expression
-                return new JoinExpression(outer, inner, predicate, JoinType.Inner);
+                return new JoinExpression(outer, inner, predicate, null, JoinType.Inner);
             }
 
             // Handle the default SqlQueryableHelper extension Join
@@ -197,7 +197,7 @@ namespace System.Linq.Sql
                 ConstantExpression joinType = (ConstantExpression)expression.Arguments[4];
 
                 // Create the expression
-                return new JoinExpression(outer, inner, predicate, (JoinType)joinType.Value);
+                return new JoinExpression(outer, inner, predicate, null, (JoinType)joinType.Value);
             }
 
             throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Join is not supported by the translator.");
