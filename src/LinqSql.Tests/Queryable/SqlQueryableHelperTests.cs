@@ -8,7 +8,6 @@ namespace System.Linq.Sql.Tests
     public class SqlQueryableHelperTests
     {
         private readonly DbConnection connection = ConnectionTestHelper.CreateConnection();
-        private APredicateExpression predicate = new BooleanExpression(true);
         private SqlQueryable outer = null;
         private SqlQueryable inner = null;
 
@@ -22,10 +21,20 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlQueryableHelper_Join_ArgumentExceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(null, inner, (i, o) => true, (i, o) => i, JoinType.Inner));
-            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(outer, null, (i, o) => true, (i, o) => i, JoinType.Inner));
-            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(outer, inner, null, (i, o) => i, JoinType.Inner));
-            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(outer, inner, (i, o) => true, null, JoinType.Inner));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(null, inner, (o, i) => true, (o, i) => i, JoinType.Inner));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(outer, null, (o, i) => true, (o, i) => i, JoinType.Inner));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(outer, inner, null, (o, i) => i, JoinType.Inner));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Join(outer, inner, (o, i) => true, null, JoinType.Inner));
+        }
+
+        [TestMethod]
+        public void SqlQueryableHelper_Join()
+        {
+            // Perform the test operation
+            IQueryable<Record> query = SqlQueryableHelper.Join(outer, inner, (o, i) => true, (o, i) => i);
+
+            // Check the test result
+            Assert.AreSame(outer.Provider, query.Provider);
         }
     }
 }
