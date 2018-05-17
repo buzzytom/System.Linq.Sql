@@ -140,36 +140,67 @@ namespace System.Linq.Sql
 
         private WhereExpression VisitWhere(MethodCallExpression expression)
         {
-            if (expression.Method.DeclaringType != typeof(Queryable))
-                throw new InvalidOperationException("The declaring type for a Where expression must be a Queryable.");
+            // Handle the default Queryable extension Where
+            if (expression.Method.DeclaringType == typeof(Queryable))
+            {
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+                LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                APredicateExpression predicate = Visit<APredicateExpression>(lambda.Body);
+                return new WhereExpression(source, predicate);
+            }
 
-            ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
-            LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
-            APredicateExpression predicate = Visit<APredicateExpression>(lambda.Body);
-            return new WhereExpression(source, predicate);
+            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Where is not supported by the translator.");
         }
 
         private JoinExpression VisitJoin(MethodCallExpression expression)
         {
-            if (expression.Method.DeclaringType != typeof(Queryable))
-                throw new InvalidOperationException("The declaring type for a Where expression must be a Queryable.");
+            // Handle the default Queryable extension Join
+            if (expression.Method.DeclaringType == typeof(Queryable))
+            {
+                // Resolve the sources
+                ASourceExpression outer = Visit<ASourceExpression>(expression.Arguments[0]);
+                ASourceExpression inner = Visit<ASourceExpression>(expression.Arguments[1]);
 
-            // Resolve the sources
-            ASourceExpression outer = Visit<ASourceExpression>(expression.Arguments[0]);
-            ASourceExpression inner = Visit<ASourceExpression>(expression.Arguments[1]);
+                // Set the active expressions (so fields calls can find their expression)
+                sources = new[] { outer, inner };
 
-            // Set the active expressions (so fields calls can find their expression)
-            sources = new[] { outer, inner };
+                // Create the predicate
+                LambdaExpression outerLambda = (LambdaExpression)StripQuotes(expression.Arguments[2]);
+                LambdaExpression innerLambda = (LambdaExpression)StripQuotes(expression.Arguments[3]);
+                FieldExpression outerField = Visit<FieldExpression>(outerLambda.Body);
+                FieldExpression innerField = Visit<FieldExpression>(innerLambda.Body);
+                APredicateExpression predicate = new CompositeExpression(outerField, innerField, CompositeOperator.Equal);
 
-            // Create the predicate
-            LambdaExpression outerLambda = (LambdaExpression)StripQuotes(expression.Arguments[2]);
-            LambdaExpression innerLambda = (LambdaExpression)StripQuotes(expression.Arguments[3]);
-            FieldExpression outerField = Visit<FieldExpression>(outerLambda.Body);
-            FieldExpression innerField = Visit<FieldExpression>(innerLambda.Body);
-            APredicateExpression predicate = new CompositeExpression(outerField, innerField, CompositeOperator.Equal);
+                // TODO - Handle the result selector
 
-            // Create the expression
-            return new JoinExpression(outer, inner, predicate, JoinType.Inner);
+                // Create the expression
+                return new JoinExpression(outer, inner, predicate, JoinType.Inner);
+            }
+
+            // Handle the default SqlQueryableHelper extension Join
+            if (expression.Method.DeclaringType == typeof(SqlQueryableHelper))
+            {
+                // Resolve the sources
+                ASourceExpression outer = Visit<ASourceExpression>(expression.Arguments[0]);
+                ASourceExpression inner = Visit<ASourceExpression>(expression.Arguments[1]);
+
+                // Set the active expressions (so fields calls can find their expression)
+                sources = new[] { outer, inner };
+
+                // Create the predicate
+                LambdaExpression predicateLambda = (LambdaExpression)StripQuotes(expression.Arguments[2]);
+                APredicateExpression predicate = Visit<APredicateExpression>(predicateLambda.Body);
+
+                // TODO - Handle the result selector
+
+                // Resolve the join type
+                ConstantExpression joinType = (ConstantExpression)expression.Arguments[4];
+
+                // Create the expression
+                return new JoinExpression(outer, inner, predicate, (JoinType)joinType.Value);
+            }
+
+            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Join is not supported by the translator.");
         }
 
         private FieldExpression VisitField(MethodCallExpression expression)
