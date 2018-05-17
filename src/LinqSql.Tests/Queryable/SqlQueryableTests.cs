@@ -78,7 +78,7 @@ namespace System.Linq.Sql.Tests
 
             // Perform the test operation
             Record[] records = outer
-                .Join(inner, x => x["Course"]["Id"], x => x["CourseStudent"]["CourseId"], (o, i) => o)
+                .Join(inner, x => x["Course"]["Id"], x => x["CourseStudent"]["CourseId"], (o, i) => o | i)
                 .ToArray();
 
             // Check the test result
@@ -104,7 +104,7 @@ namespace System.Linq.Sql.Tests
 
             // Perform the test operation
             Record[] records = outer
-                .Join(inner, (o, i) => o["Course"]["Id"] == i["CourseStudent"]["CourseId"], (o, i) => o)
+                .Join(inner, (o, i) => o["Course"]["Id"] == i["CourseStudent"]["CourseId"], (o, i) => o | i)
                 .ToArray();
 
             // Check the test result
