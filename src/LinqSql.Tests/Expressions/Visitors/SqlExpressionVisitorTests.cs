@@ -70,7 +70,16 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlExpressionVisitor_VisitContains()
         {
-            Assert.Fail();
+            // Prepare the test data
+            LiteralExpression values = new LiteralExpression(new[] { 1, 2 });
+            LiteralExpression value = new LiteralExpression(1);
+            ContainsExpression expression = new ContainsExpression(values, value);
+
+            // Perform the test operation
+            visitor.VisitContains(expression);
+
+            // Check the test result
+            Assert.AreEqual("(1 in (1, 2))", visitor.SqlState);
         }
 
         [TestMethod]

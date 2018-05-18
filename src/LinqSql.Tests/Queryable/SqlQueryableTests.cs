@@ -70,6 +70,25 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlQueryable_Contains()
+        {
+            // Prepare the test data
+            int[] values = new[] { 1, 3 };
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perfor the test operation
+            Record[] records = queryable
+                .Where(x => values.Contains((int)x["Alias"]["Id"]))
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(values.Length, records.Length);
+            foreach (Record record in records)
+                Assert.IsTrue(values.Contains(Convert.ToInt32(record["Alias"]["Id"])));
+        }
+
+        [TestMethod]
         public void SqlQueryable_Join_SelectBoth()
         {
             // Prepare the test data

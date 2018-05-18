@@ -60,6 +60,8 @@ namespace System.Linq.Sql
         {
             switch (node.Method.Name)
             {
+                case "Contains":
+                    return VisitContains(node);
                 case "get_Item":
                     return VisitField(node);
                 case "Where":
@@ -92,7 +94,7 @@ namespace System.Linq.Sql
             if (typeof(SqlQueryable).IsAssignableFrom(type))
                 return ((SqlQueryable)value).Expression;
 
-                return new LiteralExpression(node.Value);
+            return new LiteralExpression(node.Value);
         }
 
         /// <summary>
@@ -163,6 +165,18 @@ namespace System.Linq.Sql
                 default:
                     throw new NotSupportedException($"Cannot convert {type.ToString()} to a {nameof(CompositeOperator)}.");
             }
+        }
+
+        private ContainsExpression VisitContains(MethodCallExpression expression)
+        {
+            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            {
+                AExpression values = Visit<AExpression>(expression.Arguments[0]);
+                AExpression value = Visit<AExpression>(expression.Arguments[1]);
+                return new ContainsExpression(values, value);
+            }
+
+            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Contains is not supported by the translator.");
         }
 
         private WhereExpression VisitWhere(MethodCallExpression expression)
