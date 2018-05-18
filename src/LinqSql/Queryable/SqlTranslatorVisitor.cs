@@ -78,11 +78,20 @@ namespace System.Linq.Sql
         /// <returns>The specified expression converted to either a <see cref="NullExpression"/>, <see cref="BooleanExpression"/> or <see cref="LiteralExpression"/>.</returns>
         protected override Expression VisitConstant(ConstantExpression node)
         {
-            if (node.Value == null)
+            // Detect null value
+            object value = node.Value;
+            if (value == null)
                 return new NullExpression();
-            else if (typeof(bool).IsAssignableFrom(node.Value.GetType()))
-                return new BooleanExpression((bool)node.Value);
-            else
+
+            // Detect boolean constants
+            Type type = value.GetType();
+            if (typeof(bool).IsAssignableFrom(type))
+                return new BooleanExpression((bool)value);
+
+            // Detect sub queries
+            if (typeof(SqlQueryable).IsAssignableFrom(type))
+                return ((SqlQueryable)value).Expression;
+
                 return new LiteralExpression(node.Value);
         }
 
@@ -106,16 +115,15 @@ namespace System.Linq.Sql
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
         protected override Expression VisitMember(MemberExpression node)
         {
-            // Build the accessor for the expression
-            UnaryExpression objectMember = Expression.Convert(node, typeof(object));
-            Expression<Func<object>> getterLambda = Expression.Lambda<Func<object>>(objectMember);
-            Func<object> getter = getterLambda.Compile();
+            // Get the member value
+            object value = Expression
+                .Lambda<Func<object>>(Expression.Convert(node, typeof(object)))
+                .Compile()
+                .Invoke();
 
-            // Get the value as an SqlQueryable
-            if (getter.Invoke() is SqlQueryable query)
-                return query.Expression;
-
-            return base.VisitMember(node);
+            // Create a constant expression from the value
+            // This allows VisitConstant to define decoding logic
+            return VisitConstant(Expression.Constant(value));
         }
 
         /// <summary>

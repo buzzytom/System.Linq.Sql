@@ -27,7 +27,7 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_Simple()
         {
             // Prepare the test data
-            string[] fields = new string[] { "Id", "Name" };
+            string[] fields = new[] { "Id", "Name" };
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
@@ -41,7 +41,7 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_WhereBoolean()
         {
             // Prepare the test data
-            string[] fields = new string[] { "Id", "Name" };
+            string[] fields = new[] { "Id", "Name" };
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
@@ -57,7 +57,7 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_WhereComparison()
         {
             // Prepare the test data
-            string[] fields = new string[] { "Id", "Name" };
+            string[] fields = new[] { "Id", "Name" };
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
