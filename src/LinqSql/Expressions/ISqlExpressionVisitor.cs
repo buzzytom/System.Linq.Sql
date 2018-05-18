@@ -26,6 +26,13 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
+        Expression VisitContains(ContainsExpression expression);
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
         Expression VisitField(FieldExpression expression);
 
         /// <summary>

@@ -106,6 +106,18 @@ namespace System.Linq.Sql
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitContains(ContainsExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         public virtual Expression VisitField(FieldExpression expression)
         {
             if (expression == null)

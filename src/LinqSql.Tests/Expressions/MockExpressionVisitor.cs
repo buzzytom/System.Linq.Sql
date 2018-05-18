@@ -16,6 +16,12 @@ namespace System.Linq.Sql.Tests
             return expression;
         }
 
+        public Expression VisitContains(ContainsExpression expression)
+        {
+            ContainsVisited = true;
+            return expression;
+        }
+
         public Expression VisitField(FieldExpression expression)
         {
             FieldVisited = true;
@@ -63,6 +69,8 @@ namespace System.Linq.Sql.Tests
         public bool BooleanVisited { private set; get; } = false;
 
         public bool CompositeVisited { private set; get; } = false;
+
+        public bool ContainsVisited { private set; get; } = false;
 
         public bool FieldVisited { private set; get; } = false;
 
