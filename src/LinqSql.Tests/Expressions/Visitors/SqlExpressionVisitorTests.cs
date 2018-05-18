@@ -79,7 +79,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitContains(expression);
 
             // Check the test result
-            Assert.AreEqual("(1 in (1, 2))", visitor.SqlState);
+            Assert.AreEqual("@p0 in (@p0, @p1)", visitor.SqlState);
         }
 
         [TestMethod]

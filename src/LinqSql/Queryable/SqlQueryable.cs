@@ -10,9 +10,6 @@ namespace System.Linq.Sql
     /// </summary>
     public class SqlQueryable : IOrderedQueryable<Record>
     {
-        private readonly SqlQueryableProvider provider = null;
-        private readonly Expression expression = null;
-
         /// <summary>
         /// Initializes a new instance of <see cref="SqlQueryable"/> from the specified table information.
         /// </summary>
@@ -46,8 +43,8 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            this.provider = provider;
-            this.expression = expression;
+            Provider = provider;
+            Expression = expression;
         }
 
         /// <summary>
@@ -57,7 +54,7 @@ namespace System.Linq.Sql
         public IEnumerator<Record> GetEnumerator()
         {
             return Provider
-                .Execute<IEnumerable<Record>>(expression)
+                .Execute<IEnumerable<Record>>(Expression)
                 .GetEnumerator();
         }
 
@@ -79,9 +76,9 @@ namespace System.Linq.Sql
         public Type ElementType => typeof(Record);
 
         /// <summary>Gets the query provider that is associated with this data source.</summary>
-        public IQueryProvider Provider => provider;
+        public IQueryProvider Provider { get; } = null;
 
         /// <summary>Gets the expression tree that is associated with the instance this <see cref="SqlQueryable"/>.</summary>
-        public Expression Expression => expression;
+        public Expression Expression { get; } = null;
     }
 }

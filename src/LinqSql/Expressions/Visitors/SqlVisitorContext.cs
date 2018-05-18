@@ -31,7 +31,7 @@ namespace System.Linq.Sql
         /// <returns>The unique name for the created input parameter.</returns>
         public string CreateParameter(object value)
         {
-            string key = parameters.FirstOrDefault(x => x.Value == value).Key;
+            string key = parameters.FirstOrDefault(x => x.Value.Equals(value)).Key;
             if (!string.IsNullOrWhiteSpace(key))
                 return key;
             else

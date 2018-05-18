@@ -111,7 +111,12 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            throw new NotImplementedException();
+            Visit(expression.Value);
+            Builder.Append(" in (");
+            Visit(expression.Values);
+            Builder.Append(")");
+
+            return expression;
         }
 
         /// <summary>
@@ -190,8 +195,17 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            string key = Context.CreateParameter(expression.Value);
-            Builder.Append($"@{key}");
+            if (!(expression.Value is Array collection))
+                Builder.Append($"@{Context.CreateParameter(expression.Value)}");
+            else
+            {
+                for (int i = 0; i < collection.Length; i++)
+                {
+                    if (i > 0)
+                        Builder.Append(", ");
+                    Builder.Append($"@{Context.CreateParameter(collection.GetValue(i))}");
+                }
+            }
 
             return expression;
         }
