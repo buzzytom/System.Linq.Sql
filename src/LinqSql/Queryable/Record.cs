@@ -14,5 +14,19 @@ namespace System.Linq.Sql
         public Record(Dictionary<string, RecordItem> record)
             : base(record)
         { }
+
+        // ----- Operators ----- //
+
+        public static Record operator |(Record a, Record b)
+        {
+            if (a == null)
+                throw new ArgumentNullException(nameof(a));
+            if (b == null)
+                throw new ArgumentNullException(nameof(b));
+
+            return new Record(a
+                .Concat(b)
+                .ToDictionary(x => x.Key, x => x.Value));
+        }
     }
 }

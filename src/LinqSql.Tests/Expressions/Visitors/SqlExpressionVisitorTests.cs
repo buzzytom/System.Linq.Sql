@@ -205,7 +205,7 @@ namespace System.Linq.Sql.Tests
             TableExpression outer = new TableExpression("Outer", "OuterAlias", new string[] { "OuterField" });
             TableExpression inner = new TableExpression("Inner", "InnerAlias", new string[] { "InnerField" });
             APredicateExpression predicate = new CompositeExpression(outer.Fields.First(), inner.Fields.First(), CompositeOperator.Equal);
-            JoinExpression expression = new JoinExpression(outer, inner, predicate, JoinType.Left);
+            JoinExpression expression = new JoinExpression(outer, inner, predicate, null, JoinType.Left);
 
             // Perform the test operation
             visitor.VisitJoin(expression);

@@ -27,7 +27,9 @@ namespace System.Linq.Sql
         /// <param name="outer">The outer source expression to aggregate.</param>
         /// <param name="inner">The inner source expression to aggregate.</param>
         /// <param name="predicate">The optional predicate to condition the join on.</param>
-        public JoinExpression(ASourceExpression outer, ASourceExpression inner, APredicateExpression predicate = null, JoinType joinType = JoinType.Inner)
+        /// <param name="fields">The fields to select from the sources. If null, all fields are selected.</param>
+        /// <param name="joinType">The type of join to perform.</param>
+        public JoinExpression(ASourceExpression outer, ASourceExpression inner, APredicateExpression predicate = null, IEnumerable<FieldExpression> fields = null, JoinType joinType = JoinType.Inner)
         {
             if (outer == null)
                 throw new ArgumentNullException(nameof(outer));
@@ -39,7 +41,8 @@ namespace System.Linq.Sql
             Predicate = predicate ?? new BooleanExpression(true);
             JoinType = joinType;
 
-            Fields = new FieldExpressions(this, outer.Fields.Concat(inner.Fields));
+            fields = fields ?? outer.Fields.Concat(inner.Fields);
+            Fields = new FieldExpressions(this, fields);
             Expressions = new[] { outer, inner };
         }
 
