@@ -70,7 +70,7 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
-        public void SqlQueryable_Contains()
+        public void SqlQueryable_Contains_IntArray()
         {
             // Prepare the test data
             int[] values = new[] { 1, 3 };
@@ -86,6 +86,33 @@ namespace System.Linq.Sql.Tests
             Assert.AreEqual(values.Length, records.Length);
             foreach (Record record in records)
                 Assert.IsTrue(values.Contains(Convert.ToInt32(record["Alias"]["Id"])));
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Contains_StringArray()
+        {
+            // Prepare the test data
+            string[] values = new[] { "1", "3" };
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perfor the test operation
+            Record[] records = queryable
+                .Where(x => values.Contains((string)x["Alias"]["Id"]))
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(values.Length, records.Length);
+            foreach (Record record in records)
+                Assert.IsTrue(values.Contains(Convert.ToInt32(record["Alias"]["Id"]).ToString()));
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Contains_SubQuery()
+        {
+            // TODO - Create a Contains extension method that accepts a value. The Queryable one expects a Record (not very useful).
+
+            Assert.Fail();
         }
 
         [TestMethod]
