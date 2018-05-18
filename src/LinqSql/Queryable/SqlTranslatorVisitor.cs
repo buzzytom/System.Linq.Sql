@@ -100,6 +100,25 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
+        /// Visits the children of the <see cref="MemberExpression"/>. If the value of the member is an <see cref="SqlQueryable"/>, the queries <see cref="SqlQueryable.Expression"/> will be returned.
+        /// </summary>
+        /// <param name="node">The expression to visit.</param>
+        /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
+        protected override Expression VisitMember(MemberExpression node)
+        {
+            // Build the accessor for the expression
+            UnaryExpression objectMember = Expression.Convert(node, typeof(object));
+            Expression<Func<object>> getterLambda = Expression.Lambda<Func<object>>(objectMember);
+            Func<object> getter = getterLambda.Compile();
+
+            // Get the value as an SqlQueryable
+            if (getter.Invoke() is SqlQueryable query)
+                return query.Expression;
+
+            return base.VisitMember(node);
+        }
+
+        /// <summary>
         /// Visits the children of the System.Linq.Expressions.BinaryExpression. This implementation converts the expression into a <see cref="CompositeExpression"/>.
         /// </summary>
         /// <param name="node">The expression to visit</param>
@@ -172,7 +191,7 @@ namespace System.Linq.Sql
                 APredicateExpression predicate = new CompositeExpression(outerField, innerField, CompositeOperator.Equal);
 
                 // Decode the result selector
-                IEnumerable<FieldExpression> fields = DecodeJoinSelector(expression.Arguments[3], outer.Fields, inner.Fields);
+                IEnumerable<FieldExpression> fields = DecodeJoinSelector(expression.Arguments[4], outer.Fields, inner.Fields);
 
                 // Create the expression
                 return new JoinExpression(outer, inner, predicate, fields, JoinType.Inner);
