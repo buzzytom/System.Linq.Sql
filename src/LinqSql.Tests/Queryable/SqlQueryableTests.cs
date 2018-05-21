@@ -110,9 +110,17 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlQueryable_Contains_SubQuery()
         {
-            // TODO - Create a Contains extension method that accepts a value. The Queryable one expects a Record (not very useful).
+            // Prepare the test data
+            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> inner = new SqliteQueryable(connection, "CourseStudent", new[] { "Id" });
 
-            Assert.Fail();
+            // Perfor the test operation
+            Record[] records = outer
+                .Where(x => inner.Contains(y => y["CourseStudent"]["CourseId"], x["Course"]["Id"]))
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountCourses, records.Length);
         }
 
         [TestMethod]
