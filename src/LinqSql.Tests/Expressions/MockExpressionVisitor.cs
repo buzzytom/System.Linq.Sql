@@ -46,6 +46,12 @@ namespace System.Linq.Sql.Tests
             return expression;
         }
 
+        public Expression VisitScalar(ScalarExpression expression)
+        {
+            ScalarVisited = true;
+            return expression;
+        }
+
         public Expression VisitSelect(SelectExpression expression)
         {
             SelectVisited = true;
@@ -79,6 +85,8 @@ namespace System.Linq.Sql.Tests
         public bool LiteralVisited { private set; get; } = false;
 
         public bool NullVisited { private set; get; } = false;
+
+        public bool ScalarVisited { private set; get; } = false;
 
         public bool SelectVisited { private set; get; } = false;
 

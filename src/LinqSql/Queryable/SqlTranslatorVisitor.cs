@@ -189,7 +189,7 @@ namespace System.Linq.Sql
                 FieldExpression field = Visit<FieldExpression>(fieldLambda.Body);
 
                 // Create the expression
-                return new ContainsExpression(new SelectExpression(source, new[] { field }), value);
+                return new ContainsExpression(new ScalarExpression(source, field), value);
             }
 
             throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Contains is not supported by the translator.");

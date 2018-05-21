@@ -228,6 +228,23 @@ namespace System.Linq.Sql
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitScalar(ScalarExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            Builder.Append("select ");
+            VisitFields(expression, expression.Fields);
+            Builder.Append(" from ");
+            Visit(expression.Source);
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         public virtual Expression VisitSelect(SelectExpression expression)
         {
             if (expression == null)
