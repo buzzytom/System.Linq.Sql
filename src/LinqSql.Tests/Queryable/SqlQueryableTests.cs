@@ -124,6 +124,19 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlQueryable_Contains_Chained()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perfor the test operation
+            bool result = query.Contains(x => x["Course"]["Id"], 1);
+
+            // Check the test result
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
         public void SqlQueryable_Join_SelectBoth()
         {
             // Prepare the test data
