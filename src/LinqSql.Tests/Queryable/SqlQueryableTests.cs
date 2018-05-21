@@ -112,7 +112,7 @@ namespace System.Linq.Sql.Tests
         {
             // Prepare the test data
             IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
-            IQueryable<Record> inner = new SqliteQueryable(connection, "CourseStudent", new[] { "Id" });
+            IQueryable<Record> inner = new SqliteQueryable(connection, "CourseStudent", new[] { "Id", "CourseId" });
 
             // Perfor the test operation
             Record[] records = outer
