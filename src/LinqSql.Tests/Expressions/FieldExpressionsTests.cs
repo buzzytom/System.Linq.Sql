@@ -18,6 +18,8 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(source, "Table", null));
             Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(null, new FieldExpression[0]));
             Assert.ThrowsException<ArgumentNullException>(() => new FieldExpressions(source, null));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpressions(source, "Table", new[] { "" }));
+            Assert.ThrowsException<ArgumentException>(() => new FieldExpressions(source, new FieldExpression[] { null }));
         }
 
         [TestMethod]

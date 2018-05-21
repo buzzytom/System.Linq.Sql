@@ -21,7 +21,7 @@ namespace System.Linq.Sql
         /// <param name="source">The source expression to select from.</param>
         /// <param name="field">The field to select from the source.</param>
         public ScalarExpression(ASourceExpression source, FieldExpression field)
-            : base(source, new[] { field })
+            : base(source, field != null ? new[] { field } : throw new ArgumentNullException(nameof(field)))
         { }
 
         /// <summary>

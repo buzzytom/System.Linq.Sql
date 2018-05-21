@@ -14,7 +14,7 @@ namespace System.Linq.Sql
         public override Expression VisitBoolean(BooleanExpression expression)
         {
             if (expression == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(expression));
 
             if (expression.Value)
                 Builder.Append("1");
