@@ -54,11 +54,13 @@
   <ItemGroup>
     <Compile Include="ConnectionTestHelper.cs" />
     <Compile Include="Expressions\FieldExpressionsTests.cs" />
+    <Compile Include="Expressions\Implementations\ContainsExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\JoinExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\BooleanExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\CompositeExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\LiteralExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\NullExpressionTests.cs" />
+    <Compile Include="Expressions\Implementations\ScalarExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\SelectExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\FieldExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\WhereExpressionTests.cs" />

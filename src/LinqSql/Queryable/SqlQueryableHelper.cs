@@ -42,5 +42,31 @@ namespace System.Linq.Sql
                         Expression.Constant(joinType)
                     }));
         }
+
+        /// <summary>
+        /// Determines whether a sequence contains a specified element by using the default equality comparer.
+        /// </summary>
+        /// <param name="source">A sequence in which to locate a value.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <returns>true if the source sequence contains an element that has the specified value; otherwise, false.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static bool Contains(this IQueryable<Record> source, Expression<Func<Record, object>> selector, object value)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Provider.Execute<bool>(
+                Expression.Call(
+                    null,
+                    (MethodInfo)MethodBase.GetCurrentMethod(),
+                    new Expression[]
+                    {
+                        source.Expression,
+                        selector,
+                        Expression.Constant(value)
+                    }));
+        }
     }
 }

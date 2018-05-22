@@ -106,6 +106,23 @@ namespace System.Linq.Sql
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitContains(ContainsExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            Visit(expression.Value);
+            Builder.Append(" in (");
+            Visit(expression.Values);
+            Builder.Append(")");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         public virtual Expression VisitField(FieldExpression expression)
         {
             if (expression == null)
@@ -178,8 +195,17 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
-            string key = Context.CreateParameter(expression.Value);
-            Builder.Append($"@{key}");
+            if (!(expression.Value is Array collection))
+                Builder.Append($"@{Context.CreateParameter(expression.Value)}");
+            else
+            {
+                for (int i = 0; i < collection.Length; i++)
+                {
+                    if (i > 0)
+                        Builder.Append(", ");
+                    Builder.Append($"@{Context.CreateParameter(collection.GetValue(i))}");
+                }
+            }
 
             return expression;
         }
@@ -194,6 +220,23 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(expression));
 
             Builder.Append("null");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitScalar(ScalarExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            Builder.Append("select ");
+            VisitFields(expression, expression.Fields);
+            Builder.Append(" from ");
+            Visit(expression.Source);
 
             return expression;
         }

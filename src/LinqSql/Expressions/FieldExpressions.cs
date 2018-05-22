@@ -28,6 +28,8 @@ namespace System.Linq.Sql
                 throw new ArgumentException("Cannot be null or whitespace.", nameof(table));
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
+            if (fields.Any(x => string.IsNullOrWhiteSpace(x)))
+                throw new ArgumentException("One or more field was whitespace.", nameof(fields));
 
             foreach (string field in fields)
                 Add(new FieldExpression(source, table, field));
@@ -44,6 +46,8 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(source));
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
+            if (fields.Any(x => x == null))
+                throw new ArgumentException("One or more field was null.", nameof(fields));
 
             foreach (FieldExpression field in fields)
                 Add(new FieldExpression(source, field.TableName, field.FieldName, field));

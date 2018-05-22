@@ -60,6 +60,8 @@ namespace System.Linq.Sql
         {
             switch (node.Method.Name)
             {
+                case "Contains":
+                    return VisitContains(node);
                 case "get_Item":
                     return VisitField(node);
                 case "Where":
@@ -78,12 +80,21 @@ namespace System.Linq.Sql
         /// <returns>The specified expression converted to either a <see cref="NullExpression"/>, <see cref="BooleanExpression"/> or <see cref="LiteralExpression"/>.</returns>
         protected override Expression VisitConstant(ConstantExpression node)
         {
-            if (node.Value == null)
+            // Detect null value
+            object value = node.Value;
+            if (value == null)
                 return new NullExpression();
-            else if (typeof(bool).IsAssignableFrom(node.Value.GetType()))
-                return new BooleanExpression((bool)node.Value);
-            else
-                return new LiteralExpression(node.Value);
+
+            // Detect boolean constants
+            Type type = value.GetType();
+            if (typeof(bool).IsAssignableFrom(type))
+                return new BooleanExpression((bool)value);
+
+            // Detect sub queries
+            if (typeof(SqlQueryable).IsAssignableFrom(type))
+                return ((SqlQueryable)value).Expression;
+
+            return new LiteralExpression(node.Value);
         }
 
         /// <summary>
@@ -106,16 +117,15 @@ namespace System.Linq.Sql
         /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
         protected override Expression VisitMember(MemberExpression node)
         {
-            // Build the accessor for the expression
-            UnaryExpression objectMember = Expression.Convert(node, typeof(object));
-            Expression<Func<object>> getterLambda = Expression.Lambda<Func<object>>(objectMember);
-            Func<object> getter = getterLambda.Compile();
+            // Get the member value
+            object value = Expression
+                .Lambda<Func<object>>(Expression.Convert(node, typeof(object)))
+                .Compile()
+                .Invoke();
 
-            // Get the value as an SqlQueryable
-            if (getter.Invoke() is SqlQueryable query)
-                return query.Expression;
-
-            return base.VisitMember(node);
+            // Create a constant expression from the value
+            // This allows VisitConstant to define decoding logic
+            return VisitConstant(Expression.Constant(value));
         }
 
         /// <summary>
@@ -155,6 +165,34 @@ namespace System.Linq.Sql
                 default:
                     throw new NotSupportedException($"Cannot convert {type.ToString()} to a {nameof(CompositeOperator)}.");
             }
+        }
+
+        private ContainsExpression VisitContains(MethodCallExpression expression)
+        {
+            // Handle extension methods defined by Linqs
+            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            {
+                AExpression values = Visit<AExpression>(expression.Arguments[0]);
+                AExpression value = Visit<AExpression>(expression.Arguments[1]);
+                return new ContainsExpression(values, value);
+            }
+
+            // Handle custom extension method
+            if (expression.Method.DeclaringType == typeof(SqlQueryableHelper))
+            {
+                // Get value expression first, because the source will change to the subquery making the value out of scope
+                AExpression value = Visit<AExpression>(expression.Arguments[2]);
+                
+                // Evaluate the subquery expressions
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+                LambdaExpression fieldLambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                FieldExpression field = Visit<FieldExpression>(fieldLambda.Body);
+
+                // Create the expression
+                return new ContainsExpression(new ScalarExpression(source, field), value);
+            }
+
+            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Contains is not supported by the translator.");
         }
 
         private WhereExpression VisitWhere(MethodCallExpression expression)

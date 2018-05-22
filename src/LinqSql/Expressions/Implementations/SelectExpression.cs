@@ -24,9 +24,9 @@ namespace System.Linq.Sql
         public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields)
         {
             if (source == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(source));
             if (fields == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(fields));
             if (!fields.Any())
                 throw new ArgumentException("There must be at least one field specified in a select query.", nameof(fields));
 

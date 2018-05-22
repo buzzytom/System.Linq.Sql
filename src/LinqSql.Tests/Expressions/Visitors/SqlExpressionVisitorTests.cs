@@ -27,6 +27,7 @@ namespace System.Linq.Sql.Tests
         {
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitBoolean(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitContains(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitField(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitJoin(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitLiteral(null));
@@ -64,6 +65,21 @@ namespace System.Linq.Sql.Tests
 
             // Check the test result
             Assert.AreEqual("(true and (true or false))", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitContains()
+        {
+            // Prepare the test data
+            LiteralExpression values = new LiteralExpression(new[] { 1, 2 });
+            LiteralExpression value = new LiteralExpression(1);
+            ContainsExpression expression = new ContainsExpression(values, value);
+
+            // Perform the test operation
+            visitor.VisitContains(expression);
+
+            // Check the test result
+            Assert.AreEqual("@p0 in (@p0, @p1)", visitor.SqlState);
         }
 
         [TestMethod]
