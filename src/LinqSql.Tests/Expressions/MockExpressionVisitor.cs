@@ -28,6 +28,12 @@ namespace System.Linq.Sql.Tests
             return expression;
         }
 
+        public Expression VisitFieldDeclaration(FieldExpression expression)
+        {
+            FieldDeclarationVisited = true;
+            return expression;
+        }
+
         public Expression VisitJoin(JoinExpression expression)
         {
             JoinVisited = true;
@@ -79,6 +85,8 @@ namespace System.Linq.Sql.Tests
         public bool ContainsVisited { private set; get; } = false;
 
         public bool FieldVisited { private set; get; } = false;
+
+        public bool FieldDeclarationVisited { private set; get; } = false;
 
         public bool JoinVisited { private set; get; } = false;
 

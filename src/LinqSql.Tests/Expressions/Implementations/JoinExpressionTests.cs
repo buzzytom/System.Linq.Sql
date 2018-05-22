@@ -10,7 +10,7 @@ namespace System.Linq.Sql.Tests
         private readonly ASourceExpression outer = new TableExpression("Outer", "OuterAlias", new string[] { "OuterField" });
         private readonly ASourceExpression inner = new TableExpression("Inner", "InnerAlias", new string[] { "InnerField" });
         private readonly APredicateExpression predicate = new BooleanExpression(true);
-        private FieldExpression[] fields = null;
+        private AFieldExpression[] fields = null;
         private JoinExpression expression = null;
 
         [TestInitialize]

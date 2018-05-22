@@ -21,7 +21,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="source">The source expression to select from.</param>
         /// <param name="fields">The fields to select from the source.</param>
-        public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields)
+        public SelectExpression(ASourceExpression source, IEnumerable<AFieldExpression> fields)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));

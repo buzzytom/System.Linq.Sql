@@ -229,7 +229,7 @@ namespace System.Linq.Sql
                 APredicateExpression predicate = new CompositeExpression(outerField, innerField, CompositeOperator.Equal);
 
                 // Decode the result selector
-                IEnumerable<FieldExpression> fields = DecodeJoinSelector(expression.Arguments[4], outer.Fields, inner.Fields);
+                IEnumerable<AFieldExpression> fields = DecodeJoinSelector(expression.Arguments[4], outer.Fields, inner.Fields);
 
                 // Create the expression
                 return new JoinExpression(outer, inner, predicate, fields, JoinType.Inner);
@@ -250,7 +250,7 @@ namespace System.Linq.Sql
                 APredicateExpression predicate = Visit<APredicateExpression>(predicateLambda.Body);
 
                 // Decode the result selector
-                IEnumerable<FieldExpression> fields = DecodeJoinSelector(expression.Arguments[3], outer.Fields, inner.Fields);
+                IEnumerable<AFieldExpression> fields = DecodeJoinSelector(expression.Arguments[3], outer.Fields, inner.Fields);
 
                 // Resolve the join type
                 ConstantExpression joinType = (ConstantExpression)expression.Arguments[4];
@@ -262,7 +262,7 @@ namespace System.Linq.Sql
             throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Join is not supported by the translator.");
         }
 
-        private IEnumerable<FieldExpression> DecodeJoinSelector(Expression expression, FieldExpressions outer, FieldExpressions inner)
+        private IEnumerable<AFieldExpression> DecodeJoinSelector(Expression expression, FieldExpressions outer, FieldExpressions inner)
         {
             // Get the associated lambda
             LambdaExpression lambda = StripQuotes(expression) as LambdaExpression;
@@ -304,7 +304,7 @@ namespace System.Linq.Sql
             throw new NotSupportedException($"The Join result selctor does not know how to translate '{expression}' to SQL. The supported expressions are: '(o, i) => o', '(o, i) => i', '(o, i) => o | i' and '(o, i) => i | o'.");
         }
 
-        private FieldExpression VisitField(MethodCallExpression expression)
+        private AFieldExpression VisitField(MethodCallExpression expression)
         {
             if (sources == null)
                 throw new InvalidOperationException($"A field can only be visited if an {nameof(ASourceExpression)} has previously been visited.");
@@ -339,7 +339,7 @@ namespace System.Linq.Sql
                 throw new InvalidOperationException("The field name cannot be empty.");
 
             // Get the field from the current source
-            FieldExpression found = sources?
+            AFieldExpression found = sources?
                 .SelectMany(x => x.Fields)
                 .FirstOrDefault(x => x.TableName == tableName && x.FieldName == fieldName);
             if (found == null)

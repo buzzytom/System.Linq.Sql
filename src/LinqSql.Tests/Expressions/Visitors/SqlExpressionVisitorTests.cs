@@ -208,7 +208,7 @@ namespace System.Linq.Sql.Tests
         {
             // Prepare the test data
             SelectExpression source = new SelectExpression(new TableExpression("Table", "Alias", new string[] { "Field" }));
-            FieldExpression expression = source.Fields.FirstOrDefault();
+            FieldExpression expression = (FieldExpression)source.Fields.FirstOrDefault();
 
             // Perform the test operation
             visitor.VisitField(expression);

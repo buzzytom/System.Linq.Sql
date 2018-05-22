@@ -28,7 +28,7 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void ScalarExpression_Properties()
         {
-            FieldExpression[] expressions = expression.Fields.ToArray();
+            AFieldExpression[] expressions = expression.Fields.ToArray();
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             CollectionAssert.AreEquivalent(new[] { source }, expression.Expressions.ToArray());

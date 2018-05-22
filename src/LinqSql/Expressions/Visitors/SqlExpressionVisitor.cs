@@ -145,6 +145,30 @@ namespace System.Linq.Sql
         /// Visits the specified expression.
         /// </summary>
         /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitFieldDeclaration(FieldExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+            if (Context.Source == null)
+                throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
+
+            // Render the table
+            if (expression.Source != null)
+                Builder.Append($"[{Context.GetSource(expression.Source.Expression)}].");
+
+            // Decode the field name
+            string name = expression.Source?.Expression.Fields.GetKey(expression.Source) ?? expression.FieldName;
+
+            // Render the field
+            Builder.Append($"[{name}]as[{Context.Source.Fields.GetKey(expression)}]");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
         public virtual Expression VisitJoin(JoinExpression expression)
         {
             if (expression == null)
@@ -299,26 +323,21 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="expression">The expression the fields are being rendered for.</param>
         /// <param name="fields">A collection of expressions to visit.</param>
-        protected virtual void VisitFields(ASourceExpression expression, IEnumerable<FieldExpression> fields)
+        protected virtual void VisitFields(ASourceExpression expression, IEnumerable<AFieldExpression> fields)
         {
-            StringBuilder builder = new StringBuilder();
-            foreach (FieldExpression field in fields)
+            Context.Source = expression;
+            bool first = true;
+            foreach (AFieldExpression field in fields)
             {
                 // Punctuation
-                if (builder.Length > 0)
-                    builder.Append(",");
+                if (!first)
+                    Builder.Append(",");
+                first = false;
 
-                // Render the table
-                if (field.Source != null)
-                    builder.Append($"[{Context.GetSource(field.Source.Expression)}].");
-
-                // Decode the field name
-                string name = field.Source?.Expression.Fields.GetKey(field.Source) ?? field.FieldName;
-
-                // Render the field
-                builder.Append($"[{name}]as[{expression.Fields.GetKey(field)}]");
+                // Render the declaration
+                // Note: Have to use accept because Visit is protected
+                field.AcceptDeclarationSql(this);
             }
-            Builder.Append(builder.ToString());
         }
 
         // ----- Properties ----- //
