@@ -49,5 +49,18 @@ namespace System.Linq.Sql.Tests
             // Check test result
             Assert.IsTrue(visitor.FieldVisited);
         }
+
+        [TestMethod]
+        public void FieldExpression_AcceptDeclarationSql()
+        {
+            // Setup test
+            MockExpressionVisitor visitor = new MockExpressionVisitor();
+
+            // Perform the test operation
+            expression.AcceptDeclarationSql(visitor);
+
+            // Check test result
+            Assert.IsTrue(visitor.FieldDeclarationVisited);
+        }
     }
 }

@@ -29,6 +29,7 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitContains(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitField(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitFieldDeclaration(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitJoin(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitLiteral(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitNull(null));
@@ -187,7 +188,7 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
-        public void SqlExpressionVisitor_VisitField()
+        public void SqlExpressionVisitor_VisitField_VisitFieldDeclaration()
         {
             // Prepare the test data
             TableExpression table = new TableExpression("Table", "Alias", new string[] { "Field" });
@@ -198,7 +199,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitWhere(expression);
 
             // Check the test result
-            // Note: The important part of this check is the "[t0].[f0]"
+            // Note: The important part of this check is the "[t0].[f0]" and the "[Field]as[f0]". The test is identical for the declaration and accessor.
             Assert.AreEqual("(select * from (select [Field]as[f0] from [Table]) as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
         }
 
