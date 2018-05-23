@@ -20,7 +20,6 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SelectExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(null, source.Fields));
             Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(source, null));
             Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new FieldExpression[0]));
         }

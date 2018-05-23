@@ -20,7 +20,6 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void ScalarExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new ScalarExpression(null, source.Fields.Single()));
             Assert.ThrowsException<ArgumentNullException>(() => new ScalarExpression(source, null));
             Assert.ThrowsException<InvalidOperationException>(() => new ScalarExpression(new TableExpression("Table", "Alias", new[] { "Field1", "Field2" })));
         }
