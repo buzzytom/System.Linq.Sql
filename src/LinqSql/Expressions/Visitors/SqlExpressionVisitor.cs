@@ -160,7 +160,7 @@ namespace System.Linq.Sql
             string name = expression.Source?.Expression.Fields.GetKey(expression.Source) ?? expression.FieldName;
 
             // Render the field
-            Builder.Append($"[{name}]as[{Context.Source.Fields.GetKey(expression)}]");
+            Builder.Append($"[{name}] as [{Context.Source.Fields.GetKey(expression)}]");
 
             return expression;
         }
@@ -261,8 +261,8 @@ namespace System.Linq.Sql
             VisitFields(expression, expression.Fields);
             if (expression.Source != null)
             {
-            Builder.Append(" from ");
-            Visit(expression.Source);
+                Builder.Append(" from ");
+                Visit(expression.Source);
             }
 
             return expression;
@@ -281,8 +281,8 @@ namespace System.Linq.Sql
             VisitFields(expression, expression.Fields);
             if (expression.Source != null)
             {
-            Builder.Append(" from ");
-            Visit(expression.Source);
+                Builder.Append(" from ");
+                Visit(expression.Source);
             }
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
