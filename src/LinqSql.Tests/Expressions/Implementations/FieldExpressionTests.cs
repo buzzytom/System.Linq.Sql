@@ -31,8 +31,8 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(object), expression.Type);
-            Assert.AreSame(source, expression.Expression);
-            Assert.AreSame(field, expression.Source);
+            Assert.AreSame(source, expression.ValueExpression);
+            Assert.AreSame(field, expression.SourceExpression);
             Assert.AreEqual("TableName", expression.TableName);
             Assert.AreEqual("FieldName", expression.FieldName);
         }

@@ -29,7 +29,7 @@ namespace System.Linq.Sql
         /// <param name="predicate">The optional predicate to condition the join on.</param>
         /// <param name="fields">The fields to select from the sources. If null, all fields are selected.</param>
         /// <param name="joinType">The type of join to perform.</param>
-        public JoinExpression(ASourceExpression outer, ASourceExpression inner, APredicateExpression predicate = null, IEnumerable<AFieldExpression> fields = null, JoinType joinType = JoinType.Inner)
+        public JoinExpression(ASourceExpression outer, ASourceExpression inner, APredicateExpression predicate = null, IEnumerable<FieldExpression> fields = null, JoinType joinType = JoinType.Inner)
         {
             if (outer == null)
                 throw new ArgumentNullException(nameof(outer));

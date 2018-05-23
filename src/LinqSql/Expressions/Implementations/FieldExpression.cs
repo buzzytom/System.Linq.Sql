@@ -5,19 +5,28 @@ namespace System.Linq.Sql
     /// <summary>
     /// Represents a column selection of a database table.
     /// </summary>
-    public class FieldExpression : AFieldExpression
+    public class FieldExpression : AExpression
     {
         /// <summary>
         /// Initializes a new instance of <see cref="FieldExpression"/>, selecting the specified field from the specified source.
         /// </summary>
-        /// <param name="expression">The fields <see cref="ASourceExpression"/>.</param>
+        /// <param name="valueExpression">The fields <see cref="AExpression"/> representing the value of the field.</param>
         /// <param name="table">The table or table alias the field is exposed from.</param>
         /// <param name="field">The name of the field on the source.</param>
-        /// <param name="source">The optional field expression this instance is mapping.</param>
-        public FieldExpression(ASourceExpression expression, string table, string field, AFieldExpression source = null)
-            : base(expression, table, field)
+        /// <param name="sourceExpression">The optional field expression this instance is mapping.</param>
+        public FieldExpression(AExpression valueExpression, string table, string field, FieldExpression sourceExpression = null)
         {
-            Source = source;
+            if (valueExpression == null)
+                throw new ArgumentNullException(nameof(valueExpression));
+            if (string.IsNullOrWhiteSpace(table))
+                throw new ArgumentException("Cannot be whitespace.", nameof(table));
+            if (string.IsNullOrWhiteSpace(field))
+                throw new ArgumentException("Cannot be whitespace.", nameof(field));
+
+            ValueExpression = valueExpression;
+            TableName = table;
+            FieldName = field;
+            SourceExpression = sourceExpression;
         }
 
         /// <summary>
@@ -35,14 +44,23 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
         /// <returns>The result of visiting this node.</returns>
-        public override Expression AcceptDeclarationSql(ISqlExpressionVisitor visitor)
+        public virtual Expression AcceptDeclarationSql(ISqlExpressionVisitor visitor)
         {
             return visitor.VisitFieldDeclaration(this);
         }
 
         // ----- Properties ----- //
 
+        /// <summary>Gets the fields <see cref="AExpression"/> which provides its value.</summary>
+        public AExpression ValueExpression { get; } = null;
+
+        /// <summary>Gets the name of the table on the source.</summary>
+        public string TableName { get; } = null;
+
+        /// <summary>Gets the name of the field on the source.</summary>
+        public string FieldName { get; } = null;
+
         /// <summary>Gets the optional source field this field is mapping.</summary>
-        public AFieldExpression Source { get; } = null;
+        public FieldExpression SourceExpression { get; } = null;
     }
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace System.Linq.Sql
 {
-    public class FieldExpressions : IEnumerable<AFieldExpression>
+    public class FieldExpressions : IEnumerable<FieldExpression>
     {
         private int next = 0;
-        private Dictionary<AFieldExpression, string> fields = new Dictionary<AFieldExpression, string>();
+        private Dictionary<FieldExpression, string> fields = new Dictionary<FieldExpression, string>();
 
         /// <summary>
         /// Initializes a new empty instance of <see cref="FieldExpressions"/>.
@@ -40,7 +40,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="source">The expression which the fields belong to.</param>
         /// <param name="fields">The fields to add.</param>
-        public FieldExpressions(ASourceExpression source, IEnumerable<AFieldExpression> fields)
+        public FieldExpressions(ASourceExpression source, IEnumerable<FieldExpression> fields)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -49,7 +49,7 @@ namespace System.Linq.Sql
             if (fields.Any(x => x == null))
                 throw new ArgumentException("One or more field was null.", nameof(fields));
 
-            foreach (AFieldExpression field in fields)
+            foreach (FieldExpression field in fields)
                 Add(new FieldExpression(source, field.TableName, field.FieldName, field));
         }
 
@@ -57,12 +57,12 @@ namespace System.Linq.Sql
         /// Initializes a new instance of <see cref="FieldExpression"/> with the specified fields.
         /// </summary>
         /// <param name="fields">The fields to add.</param>
-        public FieldExpressions(IEnumerable<AFieldExpression> fields)
+        public FieldExpressions(IEnumerable<FieldExpression> fields)
         {
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
 
-            foreach (AFieldExpression field in fields)
+            foreach (FieldExpression field in fields)
                 Add(field);
         }
 
@@ -71,7 +71,7 @@ namespace System.Linq.Sql
 #else
         private
 #endif
-        string Add(AFieldExpression field)
+        string Add(FieldExpression field)
         {
             if (fields.TryGetValue(field, out string key))
                 return key;
@@ -90,7 +90,7 @@ namespace System.Linq.Sql
         /// <param name="field">The field to get the key for.</param>
         /// <returns>The key assigned to the field</returns>
         /// <remarks>This method will throw an <see cref="KeyNotFoundException"/> if the field does not exist.</remarks>
-        public string GetKey(AFieldExpression field)
+        public string GetKey(FieldExpression field)
         {
             if (field == null)
                 throw new ArgumentNullException(nameof(field));
@@ -104,7 +104,7 @@ namespace System.Linq.Sql
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<AFieldExpression> GetEnumerator()
+        public IEnumerator<FieldExpression> GetEnumerator()
         {
             return fields.Keys.GetEnumerator();
         }

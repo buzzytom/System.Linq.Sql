@@ -130,13 +130,18 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
-            // Get the source associated with field
-            ASourceExpression source = Context.Source.Expressions.First(x => x.Fields.Contains(expression));
+            if (!(expression.ValueExpression is ASourceExpression sourceValueExpression))
+                throw new InvalidOperationException($"A field exposed from a source expression must itself have an {nameof(ASourceExpression)}.");
+            else
+            {
+                // Get the source associated with field
+                ASourceExpression source = Context.Source.Expressions.First(x => x.Fields.Contains(expression));
 
-            // Render the field
-            string table = Context.GetSource(expression.Expression);
-            string field = source.Fields.GetKey(expression);
-            Builder.Append($"[{table}].[{field}]");
+                // Render the field
+                string table = Context.GetSource(sourceValueExpression);
+                string field = source.Fields.GetKey(expression);
+                Builder.Append($"[{table}].[{field}]");
+            }
 
             return expression;
         }
@@ -152,15 +157,23 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
-            // Render the table
-            if (expression.Source != null)
-                Builder.Append($"[{Context.GetSource(expression.Source.Expression)}].");
+            // Render the field source value, detecting if the source is a referenable source
+            ASourceExpression sourceExpression = expression.SourceExpression?.ValueExpression as ASourceExpression;
+            if (expression.SourceExpression != null && sourceExpression == null)
+                Visit(expression.SourceExpression.ValueExpression);
+            else
+            {
+                // Render the table
+                if (sourceExpression != null)
+                    Builder.Append($"[{Context.GetSource(sourceExpression)}].");
 
-            // Decode the field name
-            string name = expression.Source?.Expression.Fields.GetKey(expression.Source) ?? expression.FieldName;
+                // Decode the field name
+                string name = sourceExpression?.Fields.GetKey(expression.SourceExpression) ?? expression.FieldName;
+                Builder.Append($"[{name}]");
+            }
 
             // Render the field
-            Builder.Append($"[{name}] as [{Context.Source.Fields.GetKey(expression)}]");
+            Builder.Append($" as [{Context.Source.Fields.GetKey(expression)}]");
 
             return expression;
         }
@@ -329,11 +342,11 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="expression">The expression the fields are being rendered for.</param>
         /// <param name="fields">A collection of expressions to visit.</param>
-        protected virtual void VisitFields(ASourceExpression expression, IEnumerable<AFieldExpression> fields)
+        protected virtual void VisitFields(ASourceExpression expression, IEnumerable<FieldExpression> fields)
         {
             Context.Source = expression;
             bool first = true;
-            foreach (AFieldExpression field in fields)
+            foreach (FieldExpression field in fields)
             {
                 // Punctuation
                 if (!first)

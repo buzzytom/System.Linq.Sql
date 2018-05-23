@@ -21,14 +21,13 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void TableExpression_Properties()
         {
-            AFieldExpression[] expressions = expression.Fields.ToArray();
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             CollectionAssert.AreEquivalent(new ASourceExpression[0], expression.Expressions.ToArray());
             Assert.AreEqual("Table", expression.Table);
             Assert.AreEqual("Alias", expression.Alias);
-            Assert.AreEqual(fields.Length, expressions.Length);
-            foreach (FieldExpression field in expressions)
+            Assert.AreEqual(fields.Length, expression.Fields.Count());
+            foreach (FieldExpression field in expression.Fields)
             {
                 Assert.AreEqual(expression.Alias, field.TableName);
                 Assert.IsTrue(fields.Contains(field.FieldName));
