@@ -50,6 +50,7 @@ namespace System.Linq.Sql
         /// <param name="value">The value to locate in the sequence.</param>
         /// <returns>true if the source sequence contains an element that has the specified value; otherwise, false.</returns>
         /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        /// <remarks>If more than one row, table or column is returned, they will be ignored.</remarks>
         public static bool Contains(this IQueryable<Record> source, Expression<Func<Record, object>> selector, object value)
         {
             if (source == null)
@@ -57,7 +58,8 @@ namespace System.Linq.Sql
             if (selector == null)
                 throw new ArgumentNullException(nameof(selector));
 
-            return source.Provider.Execute<bool>(
+            // Create and execute the query
+            IQueryable<Record> records = source.Provider.CreateQuery<Record>(
                 Expression.Call(
                     null,
                     (MethodInfo)MethodBase.GetCurrentMethod(),
@@ -67,6 +69,9 @@ namespace System.Linq.Sql
                         selector,
                         Expression.Convert(Expression.Constant(value), typeof(object))
                     }));
+
+            // Get the scalar value
+            return records.GetScalar<bool>();
         }
     }
 }

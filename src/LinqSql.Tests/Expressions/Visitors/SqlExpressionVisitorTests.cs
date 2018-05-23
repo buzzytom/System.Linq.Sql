@@ -19,7 +19,7 @@ namespace System.Linq.Sql.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0]) as [t1]", query.Sql);
+            Assert.AreEqual("select * from ((select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0]) as [t1])", query.Sql);
         }
 
         [TestMethod]

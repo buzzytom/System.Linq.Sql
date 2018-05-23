@@ -53,5 +53,54 @@ namespace System.Linq.Sql
                     .ToDictionary(x => x.Key, x => x.Value);
             });
         }
+
+        /// <summary>
+        /// Gets the first value of the first table of the first row and converts it to the specified generic type.
+        /// </summary>
+        /// <typeparam name="TResult">The type to convert the result to.</typeparam>
+        /// <param name="records">The source sequence to get the value from.</param>
+        /// <returns>The value converted to the specified type.</returns>
+        /// <remarks>Additional rows, tables and columns are ignored.</remarks>
+        /// <exception cref="InvalidOperationException">Thrown if there is not at least one value available to get.</exception>
+        /// <exception cref="Exception">Thrown if the result scalar value could not be converted to the generic type.</exception>
+        public static TResult GetScalar<TResult>(this IEnumerable<Record> records)
+        {
+            // Get the single row
+            Record row = records.FirstOrDefault();
+            if (row == null)
+                throw new InvalidOperationException($"To get a scalar value the {nameof(Record)} sequence must contain at least one row.");
+
+            // Get the single table
+            RecordItem item = row.Values.FirstOrDefault();
+            if (item == null)
+                throw new InvalidOperationException($"To get a scalar value the {nameof(Record)} sequence must contain at least one table on its first row.");
+
+            // Get the value from the item
+            object result = item.Values.FirstOrDefault();
+            if (result == null)
+                throw new InvalidOperationException($"To get a scalar value the {nameof(Record)} sequence must contain at least one column on the first table on its first row.");
+
+            // Check for null
+            if (result == null)
+            {
+                if (typeof(TResult).IsValueType)
+                    throw new InvalidOperationException($"The scalar value of the sequence is null, this is not allowed with the value type '{typeof(TResult).Name}'.");
+                return default(TResult);
+            }
+
+            // Attempt cast
+            if (result is TResult)
+                return (TResult)result;
+
+            // Attempt convert
+            try
+            {
+                return (TResult)Convert.ChangeType(result, typeof(TResult));
+            }
+            catch
+            {
+                throw new Exception($"{nameof(GetScalar)} failed to convert the result of type '{result.GetType().Name}' to '{typeof(TResult).Name}'.");
+            }
+        }
     }
 }
