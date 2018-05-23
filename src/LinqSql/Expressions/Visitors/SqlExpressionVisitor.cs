@@ -259,8 +259,11 @@ namespace System.Linq.Sql
 
             Builder.Append("select ");
             VisitFields(expression, expression.Fields);
+            if (expression.Source != null)
+            {
             Builder.Append(" from ");
             Visit(expression.Source);
+            }
 
             return expression;
         }
@@ -276,8 +279,11 @@ namespace System.Linq.Sql
 
             Builder.Append("(select ");
             VisitFields(expression, expression.Fields);
+            if (expression.Source != null)
+            {
             Builder.Append(" from ");
             Visit(expression.Source);
+            }
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
