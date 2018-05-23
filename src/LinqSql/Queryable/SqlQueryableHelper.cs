@@ -65,7 +65,7 @@ namespace System.Linq.Sql
                     {
                         source.Expression,
                         selector,
-                        Expression.Constant(value)
+                        Expression.Convert(Expression.Constant(value), typeof(object))
                     }));
         }
     }
