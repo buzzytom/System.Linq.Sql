@@ -132,7 +132,7 @@ namespace System.Linq.Sql
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
             if (!(expression.ValueExpression is ASourceExpression sourceValueExpression))
-                throw new InvalidOperationException($"A field exposed from a source expression must itself have an {nameof(ASourceExpression)}.");
+                throw new InvalidOperationException($"A field exposed from a source expression must itself have an {nameof(ASourceExpression)}. Did you mean to call VisitFieldDeclaration?");
             else
             {
                 // Get the source associated with field
