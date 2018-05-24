@@ -15,7 +15,7 @@ namespace System.Linq.Sql
         { }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="FieldExpression"/> with the specified table and fields names.
+        /// Initializes a new instance of <see cref="FieldExpressions"/> with the specified table and fields names.
         /// </summary>
         /// <param name="source">The expression which the fields belong to.</param>
         /// <param name="table">The name of the table all the fields are in.</param>
@@ -36,7 +36,7 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="FieldExpression"/> with the specified source and fields.
+        /// Initializes a new instance of <see cref="FieldExpressions"/> with the specified source and fields.
         /// </summary>
         /// <param name="source">The expression which the fields belong to.</param>
         /// <param name="fields">The fields to add.</param>

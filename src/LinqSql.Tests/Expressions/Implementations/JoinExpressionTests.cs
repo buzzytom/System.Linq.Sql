@@ -41,7 +41,7 @@ namespace System.Linq.Sql.Tests
             Assert.AreEqual(JoinType.Right, expression.JoinType);
             Assert.AreEqual(fields.Length, expression.Fields.Count());
             foreach (FieldExpression field in fields)
-                Assert.IsNotNull(expression.Fields.SingleOrDefault(x => x.Expression == expression && x.TableName == field.TableName && x.FieldName == field.FieldName));
+                Assert.IsNotNull(expression.Fields.SingleOrDefault(x => x.ValueExpression == expression && x.TableName == field.TableName && x.FieldName == field.FieldName));
         }
 
         [TestMethod]

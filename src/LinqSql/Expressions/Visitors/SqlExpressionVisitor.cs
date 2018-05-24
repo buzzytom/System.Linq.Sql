@@ -25,8 +25,9 @@ namespace System.Linq.Sql
         {
             Builder.Clear();
             Context.Clear();
-            Builder.Append("select * from ");
+            Builder.Append("select * from (");
             Visit(expression);
+            Builder.Append(")");
             return new Query(Builder.ToString(), Context.Parameters);
         }
 
@@ -130,13 +131,54 @@ namespace System.Linq.Sql
             if (Context.Source == null)
                 throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
 
-            // Get the source associated with field
-            ASourceExpression source = Context.Source.Expressions.First(x => x.Fields.Contains(expression));
+            if (!(expression.ValueExpression is ASourceExpression sourceValueExpression))
+                throw new InvalidOperationException($"A field exposed from a source expression must itself have an {nameof(ASourceExpression)}. Did you mean to call VisitFieldDeclaration?");
+            else
+            {
+                // Get the source associated with field
+                ASourceExpression source = Context.Source.Expressions.First(x => x.Fields.Contains(expression));
+
+                // Render the field
+                string table = Context.GetSource(sourceValueExpression);
+                string field = source.Fields.GetKey(expression);
+                Builder.Append($"[{table}].[{field}]");
+            }
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitFieldDeclaration(FieldExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+            if (Context.Source == null)
+                throw new InvalidOperationException($"A field cannot be visited unless an {nameof(ASourceExpression)} has been visited.");
+
+            // Resolve the fields alias
+            // Note: Must be calculated before the field is rendered because child visitation will change the Context.Source value.
+            string alias = Context.Source.Fields.GetKey(expression);
+
+            // Render the field source value, detecting if the source is a referenable source
+            ASourceExpression sourceExpression = expression.SourceExpression?.ValueExpression as ASourceExpression;
+            if (expression.SourceExpression != null && sourceExpression == null)
+                Visit(expression.SourceExpression.ValueExpression);
+            else
+            {
+                // Render the table
+                if (sourceExpression != null)
+                    Builder.Append($"[{Context.GetSource(sourceExpression)}].");
+
+                // Decode the field name
+                string name = sourceExpression?.Fields.GetKey(expression.SourceExpression) ?? expression.FieldName;
+                Builder.Append($"[{name}]");
+            }
 
             // Render the field
-            string table = Context.GetSource(expression.Expression);
-            string field = source.Fields.GetKey(expression);
-            Builder.Append($"[{table}].[{field}]");
+            Builder.Append($" as [{alias}]");
 
             return expression;
         }
@@ -235,8 +277,11 @@ namespace System.Linq.Sql
 
             Builder.Append("select ");
             VisitFields(expression, expression.Fields);
-            Builder.Append(" from ");
-            Visit(expression.Source);
+            if (expression.Source != null)
+            {
+                Builder.Append(" from ");
+                Visit(expression.Source);
+            }
 
             return expression;
         }
@@ -252,8 +297,11 @@ namespace System.Linq.Sql
 
             Builder.Append("(select ");
             VisitFields(expression, expression.Fields);
-            Builder.Append(" from ");
-            Visit(expression.Source);
+            if (expression.Source != null)
+            {
+                Builder.Append(" from ");
+                Visit(expression.Source);
+            }
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
@@ -301,24 +349,19 @@ namespace System.Linq.Sql
         /// <param name="fields">A collection of expressions to visit.</param>
         protected virtual void VisitFields(ASourceExpression expression, IEnumerable<FieldExpression> fields)
         {
-            StringBuilder builder = new StringBuilder();
+            Context.Source = expression;
+            bool first = true;
             foreach (FieldExpression field in fields)
             {
                 // Punctuation
-                if (builder.Length > 0)
-                    builder.Append(",");
+                if (!first)
+                    Builder.Append(",");
+                first = false;
 
-                // Render the table
-                if (field.Source != null)
-                    builder.Append($"[{Context.GetSource(field.Source.Expression)}].");
-
-                // Decode the field name
-                string name = field.Source?.Expression.Fields.GetKey(field.Source) ?? field.FieldName;
-
-                // Render the field
-                builder.Append($"[{name}]as[{expression.Fields.GetKey(field)}]");
+                // Render the declaration
+                // Note: Have to use accept because Visit is protected
+                field.AcceptDeclarationSql(this);
             }
-            Builder.Append(builder.ToString());
         }
 
         // ----- Properties ----- //

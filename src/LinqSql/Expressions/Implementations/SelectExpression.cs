@@ -23,8 +23,6 @@ namespace System.Linq.Sql
         /// <param name="fields">The fields to select from the source.</param>
         public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
             if (!fields.Any())

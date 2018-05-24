@@ -20,7 +20,6 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SelectExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(null, source.Fields));
             Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(source, null));
             Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new FieldExpression[0]));
         }
@@ -28,12 +27,11 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SelectExpression_Properties()
         {
-            FieldExpression[] expressions = expression.Fields.ToArray();
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
             CollectionAssert.AreEquivalent(new[] { source }, expression.Expressions.ToArray());
             Assert.AreSame(source, expression.Source);
-            foreach (FieldExpression field in expressions)
+            foreach (FieldExpression field in expression.Fields)
             {
                 Assert.AreEqual(source.Alias, field.TableName);
                 Assert.IsTrue(fields.Contains(field.FieldName));

@@ -31,8 +31,8 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(object), expression.Type);
-            Assert.AreSame(source, expression.Expression);
-            Assert.AreSame(field, expression.Source);
+            Assert.AreSame(source, expression.ValueExpression);
+            Assert.AreSame(field, expression.SourceExpression);
             Assert.AreEqual("TableName", expression.TableName);
             Assert.AreEqual("FieldName", expression.FieldName);
         }
@@ -48,6 +48,19 @@ namespace System.Linq.Sql.Tests
 
             // Check test result
             Assert.IsTrue(visitor.FieldVisited);
+        }
+
+        [TestMethod]
+        public void FieldExpression_AcceptDeclarationSql()
+        {
+            // Setup test
+            MockExpressionVisitor visitor = new MockExpressionVisitor();
+
+            // Perform the test operation
+            expression.AcceptDeclarationSql(visitor);
+
+            // Check test result
+            Assert.IsTrue(visitor.FieldDeclarationVisited);
         }
     }
 }

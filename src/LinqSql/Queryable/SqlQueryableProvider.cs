@@ -43,6 +43,13 @@ namespace System.Linq.Sql
             // Translate the expression tree
             expression = SqlTranslatorVisitor.Translate(expression);
 
+            // Covert prediate (scalar) expressions to a source query
+            if (expression is APredicateExpression predicate)
+            {
+                FieldExpression value = new FieldExpression(predicate, "Scalar", "Value");
+                expression = new ScalarExpression(null, value);
+            }
+
             // Execute the query
             if (expression is ASourceExpression source)
                 return connection.ExecuteQuery(source, visitor);

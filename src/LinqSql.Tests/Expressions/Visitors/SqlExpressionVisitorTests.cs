@@ -19,7 +19,7 @@ namespace System.Linq.Sql.Tests
             Query query = visitor.GenerateQuery(expression);
 
             // Check the result
-            Assert.AreEqual("select * from (select [t0].[f0]as[f0],[t0].[f1]as[f1] from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]) as [t1]", query.Sql);
+            Assert.AreEqual("select * from ((select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0]) as [t1])", query.Sql);
         }
 
         [TestMethod]
@@ -29,9 +29,11 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitContains(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitField(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitFieldDeclaration(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitJoin(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitLiteral(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitNull(null));
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitScalar(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitSelect(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitTable(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitWhere(null));
@@ -187,7 +189,7 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
-        public void SqlExpressionVisitor_VisitField()
+        public void SqlExpressionVisitor_VisitField_VisitFieldDeclaration()
         {
             // Prepare the test data
             TableExpression table = new TableExpression("Table", "Alias", new string[] { "Field" });
@@ -198,8 +200,8 @@ namespace System.Linq.Sql.Tests
             visitor.VisitWhere(expression);
 
             // Check the test result
-            // Note: The important part of this check is the "[t0].[f0]"
-            Assert.AreEqual("(select * from (select [Field]as[f0] from [Table]) as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
+            // Note: The important part of this check is the "[t0].[f0]" and the "[Field]as[f0]". The test is identical for the declaration and accessor.
+            Assert.AreEqual("(select * from (select [Field] as [f0] from [Table]) as [t0] where ([t0].[f0] is null)) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -209,6 +211,26 @@ namespace System.Linq.Sql.Tests
             // Prepare the test data
             SelectExpression source = new SelectExpression(new TableExpression("Table", "Alias", new string[] { "Field" }));
             FieldExpression expression = source.Fields.FirstOrDefault();
+
+            // Perform the test operation
+            visitor.VisitField(expression);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlExpressionVisitor_VisitField_InvalidOperationException_ValueExpressionNotSource()
+        {
+            // Setup the pre-test state
+            // Required to make sure there is a valid source on the context
+            TableExpression table = new TableExpression("Table", "Alias", new string[] { "Field" });
+            APredicateExpression predicate = new CompositeExpression(table.Fields.First(), new NullExpression(), CompositeOperator.Equal);
+            WhereExpression whereExpression = new WhereExpression(table, predicate);
+
+            // Perform the pre-test state operation
+            visitor.VisitWhere(whereExpression);
+
+            // Prepare the test data
+            FieldExpression expression = new FieldExpression(new BooleanExpression(true), "Table", "Field");
 
             // Perform the test operation
             visitor.VisitField(expression);
@@ -227,7 +249,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitJoin(expression);
 
             // Check the test result
-            Assert.AreEqual("(select [t0].[f0]as[f0],[t1].[f0]as[f1] from (select [OuterField]as[f0] from [Outer]) as [t0]left join(select [InnerField]as[f0] from [Inner]) as [t1]on([t0].[f0] = [t1].[f0])) as [t2]", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t1].[f0] as [f1] from (select [OuterField] as [f0] from [Outer]) as [t0]left join(select [InnerField] as [f0] from [Inner]) as [t1]on([t0].[f0] = [t1].[f0])) as [t2]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -263,6 +285,35 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitScalar()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            ScalarExpression expression = new ScalarExpression(table, table.Fields.FirstOrDefault());
+
+            // Performs the test operation
+            visitor.VisitScalar(expression);
+
+            // Check the result
+            Assert.AreEqual("select [t0].[f0] as [f0] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitScalar_NullSource()
+        {
+            // Prepare the test data
+            FieldExpression field = new FieldExpression(new LiteralExpression(42), "Table", "Alias");
+            ScalarExpression expression = new ScalarExpression(null, field);
+
+            // Performs the test operation
+            visitor.VisitScalar(expression);
+
+            // Check the result
+            Assert.AreEqual("select @p0 as [f0]", visitor.SqlState);
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitSelect()
         {
             // Prepare the test data
@@ -274,7 +325,21 @@ namespace System.Linq.Sql.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [t0].[f0]as[f0],[t0].[f1]as[f1] from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0]) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_NullSource()
+        {
+            // Prepare the test data
+            FieldExpression[] fields = new[] { new FieldExpression(new LiteralExpression(42), "Table", "Alias") };
+            SelectExpression expression = new SelectExpression(null, fields);
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select @p0 as [f0]) as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -288,7 +353,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitTable(expression);
 
             // Check the result
-            Assert.AreEqual("(select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0]", visitor.SqlState);
+            Assert.AreEqual("(select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0]", visitor.SqlState);
         }
 
         [TestMethod]
@@ -302,7 +367,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitWhere(expression);
 
             // Check the result
-            Assert.AreEqual("(select * from (select [FieldA]as[f0],[FieldB]as[f1] from [Table]) as [t0] where true) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select * from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] where true) as [t1]", visitor.SqlState);
         }
     }
 }

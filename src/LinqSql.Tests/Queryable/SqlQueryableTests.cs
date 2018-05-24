@@ -38,6 +38,26 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlQueryable_NullSource()
+        {
+            // Prepare the test data
+            FieldExpression literal = new FieldExpression(new LiteralExpression(42), "Table", "Literal");
+            FieldExpression boolean = new FieldExpression(new BooleanExpression(true), "Table", "Boolean");
+            SelectExpression expression = new SelectExpression(null, new[] { literal, boolean });
+            SqliteQueryableProvider provider = new SqliteQueryableProvider(connection);
+
+            // Perform the test operation
+            Record[] result = provider
+                .CreateQuery<Record>(expression)
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(1, result.Length);
+            Assert.AreEqual(42L, result[0]["Table"]["Literal"]);
+            Assert.AreEqual(1L, result[0]["Table"]["Boolean"]);
+        }
+
+        [TestMethod]
         public void SqlQueryable_WhereBoolean()
         {
             // Prepare the test data
