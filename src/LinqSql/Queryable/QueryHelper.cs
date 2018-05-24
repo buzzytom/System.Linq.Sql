@@ -55,16 +55,17 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
-        /// Gets the first value of the first table of the first row and converts it to the specified generic type.
+        /// Gets the first value of the first table of the first row.
         /// </summary>
-        /// <typeparam name="TResult">The type to convert the result to.</typeparam>
         /// <param name="records">The source sequence to get the value from.</param>
         /// <returns>The value converted to the specified type.</returns>
         /// <remarks>Additional rows, tables and columns are ignored.</remarks>
-        /// <exception cref="InvalidOperationException">Thrown if there is not at least one value available to get.</exception>
-        /// <exception cref="Exception">Thrown if the result scalar value could not be converted to the generic type.</exception>
-        public static TResult GetScalar<TResult>(this IEnumerable<Record> records)
+        /// <exception cref="InvalidOperationException">Thrown if there is not at least one value to read from the supplied records.</exception>
+        public static object GetScalar(this IEnumerable<Record> records)
         {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+
             // Get the single row
             Record row = records.FirstOrDefault();
             if (row == null)
@@ -75,12 +76,29 @@ namespace System.Linq.Sql
             if (item == null)
                 throw new InvalidOperationException($"To get a scalar value the {nameof(Record)} sequence must contain at least one table on its first row.");
 
-            // Get the value from the item
-            object result = item.Values.FirstOrDefault();
-            if (result == null)
+            // Check there is a column to read from
+            if (item.Count == 0)
                 throw new InvalidOperationException($"To get a scalar value the {nameof(Record)} sequence must contain at least one column on the first table on its first row.");
 
-            // Check for null
+            // Get the value from the item
+            return item.Values.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the first value of the first table of the first row and converts it to the specified generic type.
+        /// </summary>
+        /// <typeparam name="TResult">The type to convert the result to.</typeparam>
+        /// <param name="records">The source sequence to get the value from.</param>
+        /// <returns>The value converted to the specified type.</returns>
+        /// <remarks>Additional rows, tables and columns are ignored.</remarks>
+        /// <exception cref="InvalidOperationException">Thrown if there is not at least one value to read from the supplied records.</exception>
+        /// <exception cref="Exception">Thrown if the result scalar value could not be converted to the generic type.</exception>
+        public static TResult GetScalar<TResult>(this IEnumerable<Record> records)
+        {
+            // Get the value from the item
+            object result = records.GetScalar();
+
+            // Check the values null state
             if (result == null)
             {
                 if (typeof(TResult).IsValueType)

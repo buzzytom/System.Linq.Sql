@@ -11,7 +11,7 @@ namespace System.Linq.Sql.Tests
     {
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void QueryHelper_SelectRecordItems_NullReferenceException()
+        public void QueryHelper_SelectRecordItems_ArgumentNullException()
         {
             QueryHelper.SelectRecordItems(null);
         }
@@ -85,7 +85,7 @@ namespace System.Linq.Sql.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void QueryHelper_Flatten_NullReferenceException()
+        public void QueryHelper_Flatten_ArgumentNullException()
         {
             QueryHelper.Flatten(null);
         }
@@ -166,6 +166,159 @@ namespace System.Linq.Sql.Tests
             };
             Assert.AreEqual(1, lookups.Length);
             CollectionAssert.AreEquivalent(expected, lookups.FirstOrDefault());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void QueryHelper_GetScalar_ArgumentNullException()
+        {
+            QueryHelper.GetScalar<int>(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void QueryHelper_GetScalar_InvalidOperationException_RecordCount()
+        {
+            QueryHelper.GetScalar<int>(new Record[0]);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void QueryHelper_GetScalar_InvalidOperationException_RecordItemCount()
+        {
+            // Prepare the test data
+            Record[] records = new Record[]
+            {
+                new Record(new Dictionary<string, RecordItem>())
+            };
+
+            // Perform the test operation
+            QueryHelper.GetScalar<int>(records);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void QueryHelper_GetScalar_InvalidOperationException_ColumnCount()
+        {
+            // Prepare the test data
+            Record[] records = new Record[]
+            {
+                new Record(new Dictionary<string, RecordItem>()
+                {
+                    {
+                        "TableA",
+                        new RecordItem("TableA", new Dictionary<string, object>())
+                    }
+                })
+            };
+
+            // Perform the test operation
+            QueryHelper.GetScalar<int>(records);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void QueryHelper_GetScalar_InvalidOperationException_NullVaueType()
+        {
+            // Prepare the test data
+            Record[] records = new Record[]
+            {
+                new Record(new Dictionary<string, RecordItem>()
+                {
+                    {
+                        "TableA",
+                        new RecordItem("TableA", new Dictionary<string, object>()
+                        {
+                            { "A", null }
+                        })
+                    }
+                })
+            };
+
+            // Perform the test operation
+            QueryHelper.GetScalar<int>(records);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void QueryHelper_GetScalar_Exception_Conversion()
+        {
+            // Prepare the test data
+            Record[] records = new Record[]
+            {
+                new Record(new Dictionary<string, RecordItem>()
+                {
+                    {
+                        "TableA",
+                        new RecordItem("TableA", new Dictionary<string, object>()
+                        {
+                            { "A", "Hello World!" }
+                        })
+                    }
+                })
+            };
+
+            // Perform the test operation
+            QueryHelper.GetScalar<int>(records);
+        }
+
+        [TestMethod]
+        public void QueryHelper_GetScalar_Null()
+        {
+            // Prepare the test data
+            Record[] records = new Record[]
+            {
+                new Record(new Dictionary<string, RecordItem>()
+                {
+                    {
+                        "TableA",
+                        new RecordItem("TableA", new Dictionary<string, object>()
+                        {
+                            { "A", null }
+                        })
+                    }
+                })
+            };
+
+            // Perform the test operation
+            string result = QueryHelper.GetScalar<string>(records);
+
+            // Check the test result
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void QueryHelper_GetScalar()
+        {
+            // Prepare the test data
+            Record[] records = new Record[]
+            {
+                new Record(new Dictionary<string, RecordItem>()
+                {
+                    {
+                        "TableA",
+                        new RecordItem("TableA", new Dictionary<string, object>()
+                        {
+                            { "A", "some thing 1" },
+                            { "B", "some name 1" }
+                        })
+                    },
+                    {
+                        "TableB",
+                        new RecordItem("TableB", new Dictionary<string, object>()
+                        {
+                            { "C", 2 },
+                            { "D", "some name 2" }
+                        })
+                    }
+                })
+            };
+
+            // Perform the test operation
+            string result = records.GetScalar<string>();
+
+            // Check the test result
+            Assert.AreEqual("some thing 1", result);
         }
     }
 }
