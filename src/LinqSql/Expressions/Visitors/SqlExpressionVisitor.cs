@@ -9,6 +9,8 @@ namespace System.Linq.Sql
     /// </summary>
     public class SqlExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
     {
+        private const ulong takeMax = 18446744073709551615L;
+
         /// <summary>
         /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
         /// </summary>
@@ -302,9 +304,25 @@ namespace System.Linq.Sql
                 Builder.Append(" from ");
                 Visit(expression.Source);
             }
+            if (expression.Skip > 0 || expression.Take >= 0)
+                RenderLimit(expression.Skip < 0 ? 0 : expression.Skip, expression.Take);
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
+        }
+
+        /// <summary>
+        /// Renders the specified limit options.
+        /// </summary>
+        /// <param name="skip">The number of result rows to skip before reading.</param>
+        /// <param name="take"></param>
+        protected virtual void RenderLimit(int skip, int take)
+        {
+            Builder.Append(" offset ");
+            Builder.Append(skip);
+            Builder.Append(" rows fetch next ");
+            Builder.Append(take < 0 ? takeMax : (ulong)take);
+            Builder.Append(" rows only");
         }
 
         /// <summary>
