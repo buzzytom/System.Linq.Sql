@@ -12,8 +12,10 @@ namespace System.Linq.Sql
         /// Initializes a new instance of <see cref="SelectExpression"/> selecting all the fields from the specified source.
         /// </summary>
         /// <param name="source">The source expression to select from.</param>
-        public SelectExpression(ASourceExpression source)
-            : this(source, source?.Fields)
+        /// /// <param name="take">The number of fields to take from the source. Values less than zero indicate all rows.</param>
+        /// <param name="skip">The number of fields to ignore on the source before reading rows.</param>
+        public SelectExpression(ASourceExpression source, int take = -1, int skip = 0)
+            : this(source, source?.Fields, take, skip)
         { }
 
         /// <summary>
@@ -21,7 +23,9 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="source">The source expression to select from.</param>
         /// <param name="fields">The fields to select from the source.</param>
-        public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields)
+        /// <param name="take">The number of fields to take from the source. Values less than zero indicate all rows.</param>
+        /// <param name="skip">The number of fields to ignore on the source before reading rows.</param>
+        public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields, int take = -1, int skip = 0)
         {
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
@@ -31,6 +35,8 @@ namespace System.Linq.Sql
             Source = source;
             Fields = new FieldExpressions(this, fields);
             Expressions = new[] { source };
+            Take = take;
+            Skip = skip;
         }
 
         /// <summary>
@@ -53,5 +59,11 @@ namespace System.Linq.Sql
 
         /// <summary>Gets the child expressions of this source.</summary>
         public override IEnumerable<ASourceExpression> Expressions { get; } = null;
+
+        /// <summary>Gets the number of rows that will be skipped on the source expression.</summary>
+        public int Skip { get; } = 0;
+
+        /// <summary>Gets the number of rows that will be taken from the source expression.</summary>
+        public int Take { get; } = -1;
     }
 }
