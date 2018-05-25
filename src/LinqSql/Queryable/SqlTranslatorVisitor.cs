@@ -156,6 +156,8 @@ namespace System.Linq.Sql
             {
                 case "Contains":
                     return VisitContains(node);
+                case "Count":
+                    return VisitCount(node);
                 case "get_Item":
                     return VisitField(node);
                 case "Where":
@@ -167,7 +169,7 @@ namespace System.Linq.Sql
                 case "Take":
                     return VisitTake(node);
                 default:
-                    throw new NotSupportedException($"Cannot translate the method '{node.Method.Name}' because it's not known by the sql translator.");
+                    throw new MethodTranslationException(node.Method);
             }
         }
 
@@ -196,7 +198,15 @@ namespace System.Linq.Sql
                 return new ContainsExpression(new ScalarExpression(source, field), value);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Contains is not supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
+        }
+
+        private AggregateExpression VisitCount(MethodCallExpression expression)
+        {
+            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+                return new AggregateExpression(Visit<ASourceExpression>(expression.Arguments[0]), AggregateFunction.Count);
+
+            throw new MethodTranslationException(expression.Method);
         }
 
         private SelectExpression VisitSkip(MethodCallExpression expression)
@@ -208,7 +218,7 @@ namespace System.Linq.Sql
                 return new SelectExpression(source, source.Fields, -1, count);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private SelectExpression VisitTake(MethodCallExpression expression)
@@ -220,7 +230,7 @@ namespace System.Linq.Sql
                 return new SelectExpression(source, source.Fields, count, 0);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private WhereExpression VisitWhere(MethodCallExpression expression)
@@ -234,7 +244,7 @@ namespace System.Linq.Sql
                 return new WhereExpression(source, predicate);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Where is not supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private JoinExpression VisitJoin(MethodCallExpression expression)
@@ -287,7 +297,7 @@ namespace System.Linq.Sql
                 return new JoinExpression(outer, inner, predicate, fields, (JoinType)joinType.Value);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Join is not supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private IEnumerable<FieldExpression> DecodeJoinSelector(Expression expression, FieldExpressions outer, FieldExpressions inner)

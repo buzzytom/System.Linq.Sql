@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionTestHelper.cs" />
+    <Compile Include="Exceptions\MethodTranslationExceptionTests.cs" />
     <Compile Include="Expressions\FieldExpressionsTests.cs" />
     <Compile Include="Expressions\Implementations\AggregateExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\ContainsExpressionTests.cs" />

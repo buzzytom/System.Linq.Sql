@@ -12,8 +12,8 @@ namespace System.Linq.Sql.Tests
         private readonly SqlTranslatorVisitor visitor = new SqlTranslatorVisitor();
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void SqlTranslatorVisitor_Visit_NotSupportedException()
+        [ExpectedException(typeof(MethodTranslationException))]
+        public void SqlTranslatorVisitor_Visit_MethodTranslationException()
         {
             // Prepare the test data
             Expression<Action> expression = () => new Record[0]
