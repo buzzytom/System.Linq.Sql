@@ -48,7 +48,36 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
+            Builder.Append(GetAggregateFunction(expression.Function));
+
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets the sql name of the specified <see cref="AggregateFunction"/>.
+        /// </summary>
+        /// <param name="function">The function to get the sql name of.</param>
+        /// <returns>The sql name of the specified aggregate function.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the specified function is not a known function by the expression visitor.</exception>
+        protected virtual string GetAggregateFunction(AggregateFunction function)
+        {
+            switch (function)
+            {
+                case AggregateFunction.Average:
+                    return "avg";
+                case AggregateFunction.Count:
+                    return "count";
+                case AggregateFunction.Max:
+                    return "max";
+                case AggregateFunction.Min:
+                    return "min";
+                case AggregateFunction.Sum:
+                    return "sum";
+                case AggregateFunction.Top:
+                    return "top";
+                default:
+                    throw new NotSupportedException($"The aggregate function {function.ToString()} is not known by the sql expression visitor.");
+            }
         }
 
         /// <summary>
