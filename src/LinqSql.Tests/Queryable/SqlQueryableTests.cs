@@ -310,7 +310,7 @@ namespace System.Linq.Sql.Tests
                 .ToArray();
 
             // Check the test result
-            Assert.AreEqual(ConnectionTestHelper.CountCourses - 4, records.Length);
+            Assert.AreEqual(ConnectionTestHelper.CountCourses - 1, records.Length);
             foreach (Record record in records)
             {
                 Assert.AreEqual(1, record.Count);

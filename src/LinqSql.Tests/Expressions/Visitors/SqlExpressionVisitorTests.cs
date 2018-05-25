@@ -369,7 +369,7 @@ namespace System.Linq.Sql.Tests
             visitor.VisitSelect(expression);
 
             // Check the result
-            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] offset 2 rows fetch next 18446744073709551615 rows only) as [t1]", visitor.SqlState);
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] offset 2 rows fetch next 9223372036854775807 rows only) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]
