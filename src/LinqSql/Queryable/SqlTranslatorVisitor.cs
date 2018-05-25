@@ -186,7 +186,7 @@ namespace System.Linq.Sql
             {
                 // Get value expression first, because the source will change to the subquery making the value out of scope
                 AExpression value = Visit<AExpression>(expression.Arguments[2]);
-                
+
                 // Evaluate the subquery expressions
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 LambdaExpression fieldLambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
@@ -203,15 +203,9 @@ namespace System.Linq.Sql
         {
             if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
             {
-                // Read the expression values
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
-
-                // Create the expression
-                if (source is SelectExpression select)
-                    return new SelectExpression(select.Source, select.Fields, select.Take, count);
-                else
-                    return new SelectExpression(source, source.Fields, -1, count);
+                return new SelectExpression(source, source.Fields, -1, count);
             }
 
             throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
@@ -221,15 +215,9 @@ namespace System.Linq.Sql
         {
             if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
             {
-                // Read the expression values
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
-
-                // Create the expression
-                if (source is SelectExpression select)
-                    return new SelectExpression(select.Source, select.Fields, count, select.Skip);
-                else
-                    return new SelectExpression(source, source.Fields, count, 0);
+                return new SelectExpression(source, source.Fields, count, 0);
             }
 
             throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
