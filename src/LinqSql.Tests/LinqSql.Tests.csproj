@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="ConnectionTestHelper.cs" />
     <Compile Include="Expressions\FieldExpressionsTests.cs" />
+    <Compile Include="Expressions\Implementations\AggregateExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\ContainsExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\JoinExpressionTests.cs" />
     <Compile Include="Expressions\Implementations\BooleanExpressionTests.cs" />

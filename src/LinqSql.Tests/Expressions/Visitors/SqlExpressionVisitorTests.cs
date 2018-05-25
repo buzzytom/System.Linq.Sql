@@ -25,6 +25,7 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlExpressionVisitor_Visit_ArgumentNullExceptions()
         {
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitAggregate(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitBoolean(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitContains(null));
