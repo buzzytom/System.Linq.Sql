@@ -157,7 +157,17 @@ namespace System.Linq.Sql
                 case "Contains":
                     return VisitContains(node);
                 case "Count":
-                    return VisitCount(node);
+                    return VisitAggregate(node, AggregateFunction.Count);
+                case "Sum":
+                    return VisitAggregate(node, AggregateFunction.Sum);
+                case "Min":
+                    return VisitAggregate(node, AggregateFunction.Min);
+                case "Max":
+                    return VisitAggregate(node, AggregateFunction.Max);
+                case "Average":
+                    return VisitAggregate(node, AggregateFunction.Average);
+                case "Top":
+                    return VisitAggregate(node, AggregateFunction.Top);
                 case "get_Item":
                     return VisitField(node);
                 case "Where":
@@ -201,10 +211,16 @@ namespace System.Linq.Sql
             throw new MethodTranslationException(expression.Method);
         }
 
-        private AggregateExpression VisitCount(MethodCallExpression expression)
+        private AggregateExpression VisitAggregate(MethodCallExpression expression, AggregateFunction function)
         {
+            // TODO - Proccess optional second argument (selector)
+
             if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
-                return new AggregateExpression(Visit<ASourceExpression>(expression.Arguments[0]), AggregateFunction.Count);
+            {
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+                FieldExpression field = source.Fields.First();
+                return new AggregateExpression(source, field, function);
+            }
 
             throw new MethodTranslationException(expression.Method);
         }

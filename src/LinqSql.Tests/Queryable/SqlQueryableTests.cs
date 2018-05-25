@@ -302,10 +302,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_Skip()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = query
                 .Skip(1)
                 .ToArray();
 
@@ -323,10 +323,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_Take()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = query
                 .Take(2)
                 .ToArray();
 
@@ -344,10 +344,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_TakeSkip()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = query
                 .Take(4)
                 .Skip(1)
                 .ToArray();
@@ -366,10 +366,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_SkipTake()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> source = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = source
                 .Skip(1)
                 .Take(2)
                 .ToArray();
@@ -382,6 +382,19 @@ namespace System.Linq.Sql.Tests
                 Assert.IsTrue(record["Course"].ContainsKey("Id"));
                 Assert.IsTrue(record["Course"].ContainsKey("Name"));
             }
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Count()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Count();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountCourses, count);
         }
     }
 }
