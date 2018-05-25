@@ -23,5 +23,18 @@ namespace System.Linq.Sql
 
             return expression;
         }
+
+        /// <summary>
+        /// Renders the specified limit options.
+        /// </summary>
+        /// <param name="skip">The number of result rows to skip before reading.</param>
+        /// <param name="take"></param>
+        protected override void RenderLimit(long skip, long take)
+        {
+            Builder.Append(" limit ");
+            Builder.Append(take);
+            Builder.Append(" offset ");
+            Builder.Append(skip);
+        }
     }
 }

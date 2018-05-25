@@ -14,7 +14,7 @@ namespace System.Linq.Sql.Tests
         [TestInitialize]
         public void TestInitialize()
         {
-            expression = new SelectExpression(source, source.Fields);
+            expression = new SelectExpression(source, source.Fields, 10, 20);
         }
 
         [TestMethod]
@@ -29,6 +29,8 @@ namespace System.Linq.Sql.Tests
         {
             Assert.AreEqual(ExpressionType.Extension, expression.NodeType);
             Assert.AreEqual(typeof(IQueryable<Record>), expression.Type);
+            Assert.AreEqual(10, expression.Take);
+            Assert.AreEqual(20, expression.Skip);
             CollectionAssert.AreEquivalent(new[] { source }, expression.Expressions.ToArray());
             Assert.AreSame(source, expression.Source);
             foreach (FieldExpression field in expression.Fields)

@@ -343,6 +343,51 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_Take()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            SelectExpression expression = new SelectExpression(table, take: 3);
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] offset 0 rows fetch next 3 rows only) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_Skip()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            SelectExpression expression = new SelectExpression(table, skip: 2);
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] offset 2 rows fetch next 9223372036854775807 rows only) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_TakeSkip()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            SelectExpression expression = new SelectExpression(table, take: 3, skip: 2);
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] offset 2 rows fetch next 3 rows only) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitTable()
         {
             // Prepare the test data

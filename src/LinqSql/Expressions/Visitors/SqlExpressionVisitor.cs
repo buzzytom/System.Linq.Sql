@@ -302,9 +302,25 @@ namespace System.Linq.Sql
                 Builder.Append(" from ");
                 Visit(expression.Source);
             }
+            if (expression.Skip > 0 || expression.Take >= 0)
+                RenderLimit(expression.Skip < 0 ? 0 : expression.Skip, expression.Take < 0 ? long.MaxValue : expression.Take);
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
+        }
+
+        /// <summary>
+        /// Renders the specified limit options.
+        /// </summary>
+        /// <param name="skip">The number of result rows to skip before reading.</param>
+        /// <param name="take"></param>
+        protected virtual void RenderLimit(long skip, long take)
+        {
+            Builder.Append(" offset ");
+            Builder.Append(skip);
+            Builder.Append(" rows fetch next ");
+            Builder.Append(take);
+            Builder.Append(" rows only");
         }
 
         /// <summary>
