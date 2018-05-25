@@ -52,28 +52,6 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
-        /// Visits the children of the System.Linq.Expressions.MethodCallExpression, translating the expression to an <see cref="ASourceExpression"/>.
-        /// </summary>
-        /// <param name="node">The expression to visit.</param>
-        /// <returns>The specified expression converted to an <see cref="ASourceExpression"/>; otherwise a thrown exception.</returns>
-        protected override Expression VisitMethodCall(MethodCallExpression node)
-        {
-            switch (node.Method.Name)
-            {
-                case "Contains":
-                    return VisitContains(node);
-                case "get_Item":
-                    return VisitField(node);
-                case "Where":
-                    return VisitWhere(node);
-                case "Join":
-                    return VisitJoin(node);
-                default:
-                    throw new NotSupportedException($"Cannot translate the method '{node.Method.Name}' because it's not known by the sql translator.");
-            }
-        }
-
-        /// <summary>
         /// Visits the System.Linq.Expressions.ConstantExpression and converts it into either a <see cref="NullExpression"/> if the value is null, <see cref="BooleanExpression"/> if the expression is a boolean, otherwise a <see cref="LiteralExpression"/>.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
@@ -167,6 +145,32 @@ namespace System.Linq.Sql
             }
         }
 
+        /// <summary>
+        /// Visits the children of the System.Linq.Expressions.MethodCallExpression, translating the expression to an <see cref="ASourceExpression"/>.
+        /// </summary>
+        /// <param name="node">The expression to visit.</param>
+        /// <returns>The specified expression converted to an <see cref="ASourceExpression"/>; otherwise a thrown exception.</returns>
+        protected override Expression VisitMethodCall(MethodCallExpression node)
+        {
+            switch (node.Method.Name)
+            {
+                case "Contains":
+                    return VisitContains(node);
+                case "get_Item":
+                    return VisitField(node);
+                case "Where":
+                    return VisitWhere(node);
+                case "Join":
+                    return VisitJoin(node);
+                case "Skip":
+                    return VisitSkip(node);
+                case "Take":
+                    return VisitTake(node);
+                default:
+                    throw new NotSupportedException($"Cannot translate the method '{node.Method.Name}' because it's not known by the sql translator.");
+            }
+        }
+
         private ContainsExpression VisitContains(MethodCallExpression expression)
         {
             // Handle extension methods defined by Linqs
@@ -193,6 +197,32 @@ namespace System.Linq.Sql
             }
 
             throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Contains is not supported by the translator.");
+        }
+
+        private SelectExpression VisitSkip(MethodCallExpression expression)
+        {
+            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            {
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+                int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
+
+                throw new NotImplementedException();
+            }
+
+            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
+        }
+
+        private SelectExpression VisitTake(MethodCallExpression expression)
+        {
+            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            {
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+                int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
+
+                throw new NotImplementedException();
+            }
+
+            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
         }
 
         private WhereExpression VisitWhere(MethodCallExpression expression)
