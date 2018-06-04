@@ -396,5 +396,18 @@ namespace System.Linq.Sql.Tests
             // Check the test result
             Assert.AreEqual(ConnectionTestHelper.CountCourses, count);
         }
+
+        [TestMethod]
+        public void SqlQueryable_Count_Predicate()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Count(x => (int)x["Course"]["Id"] == 2 || (int)x["Course"]["Id"] == 3);
+
+            // Check the test result
+            Assert.AreEqual(2, count);
+        }
     }
 }

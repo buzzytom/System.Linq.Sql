@@ -31,7 +31,7 @@ namespace System.Linq.Sql.Tests
             SqlQueryable outer = new SqlQueryable(connection, "OuterTable", new[] { "OuterField" });
             SqlQueryable inner = new SqlQueryable(connection, "InnerTable", new[] { "InnerField" });
 
-            // Perform the test operation
+            // Perform the test operations
             IQueryable<Record> query = SqlQueryableHelper.Join(outer, inner, (o, i) => true, (o, i) => i);
 
             // Check the test result
@@ -45,9 +45,19 @@ namespace System.Linq.Sql.Tests
             SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
             Expression<Func<Record, object>> selector = record => record["key"];
 
-            // Perform the test operation
+            // Perform the test operations
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Contains(null, selector, 42));
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Contains(source, null, 42));
+        }
+
+        [TestMethod]
+        public void SqlQueryableHelper_Count_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Count(null, x => true));
         }
     }
 }
