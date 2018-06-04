@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace System.Linq.Sql
@@ -72,6 +73,38 @@ namespace System.Linq.Sql
 
             // Get the scalar value
             return records.GetScalar<bool>();
+        }
+
+        /// <summary>
+        /// Returns the number of elements in the specified sequence that satisfies a condition.
+        /// </summary>
+        /// <param name="source">The sequence with elements to be counted.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>The number of elements in the sequence that satisfies the condition in the predicate function.</returns>
+        /// <exception cref="ArgumentNullException">The source argument is null.</exception>
+        /// <exception cref="OverflowException">The number of elements in source (after applying the predicate) is larger than <see cref="System.Int32.MaxValue"/>.</exception>
+        public static int Count(this IQueryable<Record> source, Expression<Func<Record, bool>> predicate = null)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            // Map the predicate to true when null
+            if (predicate == null)
+                predicate = record => true;
+
+            // Create and execute the query
+            IQueryable<Record> records = source.Provider.CreateQuery<Record>(
+                Expression.Call(
+                    null,
+                    (MethodInfo)MethodBase.GetCurrentMethod(),
+                    new Expression[]
+                    {
+                        source.Expression,
+                        predicate
+                    }));
+
+            // Get the scalar value
+            return records.GetScalar<int>();
         }
     }
 }
