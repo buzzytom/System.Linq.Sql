@@ -76,6 +76,78 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
+        /// Computes the average of a sequence of values that is obtained by invoking a projection function on each element of the input sequence.
+        /// </summary>
+        /// <param name="source">A sequence of values to calculate the average of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null</exception>
+        public static int Average(this IQueryable<Record> source, Expression<Func<Record, int>> selector)
+        {
+            return Average(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Computes the average of a sequence of values that is obtained by invoking a projection function on each element of the input sequence.
+        /// </summary>
+        /// <param name="source">A sequence of values to calculate the average of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null</exception>
+        public static long Average(this IQueryable<Record> source, Expression<Func<Record, long>> selector)
+        {
+            return Average(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Computes the average of a sequence of values that is obtained by invoking a projection function on each element of the input sequence.
+        /// </summary>
+        /// <param name="source">A sequence of values to calculate the average of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null</exception>
+        public static decimal Average(this IQueryable<Record> source, Expression<Func<Record, decimal>> selector)
+        {
+            return Average(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Computes the average of a sequence of values that is obtained by invoking a projection function on each element of the input sequence.
+        /// </summary>
+        /// <param name="source">A sequence of values to calculate the average of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null</exception>
+        public static float Average(this IQueryable<Record> source, Expression<Func<Record, float>> selector)
+        {
+            return Average(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Computes the average of a sequence of values that is obtained by invoking a projection function on each element of the input sequence.
+        /// </summary>
+        /// <param name="source">A sequence of values to calculate the average of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The average of the sequence of values.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null</exception>
+        public static double Average(this IQueryable<Record> source, Expression<Func<Record, double>> selector)
+        {
+            return Average(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        private static T Average<T>(this IQueryable<Record> source, Expression<Func<Record, T>> selector, MethodBase method)
+        {
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            // TODO - Add support for something similar to this to the translators field selector so a default selector can be created.
+            //if (selector == null)
+            //    selector = record => (T)record.FirstTableColumnValue();
+
+            return source.EvaluateAggregateExpression<T>((MethodInfo)method, selector);
+        }
+
+        /// <summary>
         /// Returns the number of elements in the specified sequence that satisfies a condition.
         /// </summary>
         /// <param name="source">The sequence with elements to be counted.</param>
@@ -85,26 +157,31 @@ namespace System.Linq.Sql
         /// <exception cref="OverflowException">The number of elements in source (after applying the predicate) is larger than <see cref="System.Int32.MaxValue"/>.</exception>
         public static int Count(this IQueryable<Record> source, Expression<Func<Record, bool>> predicate = null)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
             // Map the predicate to true when null
             if (predicate == null)
                 predicate = record => true;
+
+            return source.EvaluateAggregateExpression<int>((MethodInfo)MethodBase.GetCurrentMethod(), predicate);
+        }
+
+        private static T EvaluateAggregateExpression<T>(this IQueryable<Record> source, MethodInfo method, Expression parameter)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
 
             // Create and execute the query
             IQueryable<Record> records = source.Provider.CreateQuery<Record>(
                 Expression.Call(
                     null,
-                    (MethodInfo)MethodBase.GetCurrentMethod(),
+                    method,
                     new Expression[]
                     {
                         source.Expression,
-                        predicate
+                        parameter
                     }));
 
             // Get the scalar value
-            return records.GetScalar<int>();
+            return records.GetScalar<T>();
         }
     }
 }

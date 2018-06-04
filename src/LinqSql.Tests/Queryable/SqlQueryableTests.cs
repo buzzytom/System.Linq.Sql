@@ -385,6 +385,27 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlQueryable_Average()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operations
+            int averageInt = query.Average(x => (int)x["Course"]["Id"]);
+            long averageLong = query.Average(x => (long)x["Course"]["Id"]);
+            decimal averageDecimal = query.Average(x => (decimal)x["Course"]["Id"]);
+            float averageFloat = query.Average(x => (float)x["Course"]["Id"]);
+            double averageDouble = query.Average(x => (double)x["Course"]["Id"]);
+
+            // Check the test results
+            Assert.AreEqual(2, averageInt);
+            Assert.AreEqual(2L, averageLong);
+            Assert.AreEqual(2.5m, averageDecimal);
+            Assert.AreEqual(2.5f, averageFloat);
+            Assert.AreEqual(2.5, averageDouble);
+        }
+
+        [TestMethod]
         public void SqlQueryable_Count()
         {
             // Prepare the test data

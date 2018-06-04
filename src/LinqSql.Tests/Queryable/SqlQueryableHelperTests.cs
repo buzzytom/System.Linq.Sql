@@ -51,6 +51,21 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlQueryableHelper_Average_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operations
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Average(null, x => (int)x["Field"]["Value"]));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Average(source, null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Average(source, (Expression<Func<Record, long>>)null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Average(source, (Expression<Func<Record, decimal>>)null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Average(source, (Expression<Func<Record, float>>)null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Average(source, (Expression<Func<Record, double>>)null));
+        }
+
+        [TestMethod]
         public void SqlQueryableHelper_Count_ArgumentExceptions()
         {
             // Prepare the test data
