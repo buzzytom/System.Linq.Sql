@@ -31,12 +31,59 @@ namespace System.Linq.Sql
             return new Query(Builder.ToString(), Context.Parameters);
         }
 
+        /// <summary>
+        /// Dispatches the list of expressions to one of the more specialized visit methods in this class.
+        /// </summary>
+        /// <param name="node">The expressions to visit.</param>
+        /// <returns>The modified expression list, if any one of the elements were modified; otherwise, returns the original expression list.</returns>
         public override Expression Visit(Expression node)
         {
             if (node is ASourceExpression source)
                 Context.Source = source;
 
             return base.Visit(node);
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitAggregate(AggregateExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            Builder.Append(GetAggregateFunction(expression.Function));
+            Builder.Append("(");
+            Visit(expression.SourceField);
+            Builder.Append(")");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Gets the sql name of the specified <see cref="AggregateFunction"/>.
+        /// </summary>
+        /// <param name="function">The function to get the sql name of.</param>
+        /// <returns>The sql name of the specified aggregate function.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the specified function is not a known function by the expression visitor.</exception>
+        protected virtual string GetAggregateFunction(AggregateFunction function)
+        {
+            switch (function)
+            {
+                case AggregateFunction.Average:
+                    return "avg";
+                case AggregateFunction.Count:
+                    return "count";
+                case AggregateFunction.Max:
+                    return "max";
+                case AggregateFunction.Min:
+                    return "min";
+                case AggregateFunction.Sum:
+                    return "sum";
+                default:
+                    throw new NotSupportedException($"The aggregate function {function.ToString()} is not known by the sql expression visitor.");
+            }
         }
 
         /// <summary>
@@ -162,7 +209,7 @@ namespace System.Linq.Sql
             // Note: Must be calculated before the field is rendered because child visitation will change the Context.Source value.
             string alias = Context.Source.Fields.GetKey(expression);
 
-            // Render the field source value, detecting if the source is a referenable source
+            // Render the field source value, detecting if the source is a referencable source
             ASourceExpression sourceExpression = expression.SourceExpression?.ValueExpression as ASourceExpression;
             if (expression.SourceExpression != null && sourceExpression == null)
                 Visit(expression.SourceExpression.ValueExpression);

@@ -302,10 +302,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_Skip()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = query
                 .Skip(1)
                 .ToArray();
 
@@ -323,10 +323,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_Take()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = query
                 .Take(2)
                 .ToArray();
 
@@ -344,10 +344,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_TakeSkip()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = query
                 .Take(4)
                 .Skip(1)
                 .ToArray();
@@ -366,10 +366,10 @@ namespace System.Linq.Sql.Tests
         public void SqlQueryable_SkipTake()
         {
             // Prepare the test data
-            IQueryable<Record> outer = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+            IQueryable<Record> source = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
 
             // Perform the test operation
-            Record[] records = outer
+            Record[] records = source
                 .Skip(1)
                 .Take(2)
                 .ToArray();
@@ -382,6 +382,100 @@ namespace System.Linq.Sql.Tests
                 Assert.IsTrue(record["Course"].ContainsKey("Id"));
                 Assert.IsTrue(record["Course"].ContainsKey("Name"));
             }
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Average()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operations
+            int averageInt = query.Average(x => (int)x["Course"]["Id"]);
+            long averageLong = query.Average(x => (long)x["Course"]["Id"]);
+            decimal averageDecimal = query.Average(x => (decimal)x["Course"]["Id"]);
+            float averageFloat = query.Average(x => (float)x["Course"]["Id"]);
+            double averageDouble = query.Average(x => (double)x["Course"]["Id"]);
+
+            // Check the test results
+            Assert.AreEqual(2, averageInt);
+            Assert.AreEqual(2L, averageLong);
+            Assert.AreEqual(2.5m, averageDecimal);
+            Assert.AreEqual(2.5f, averageFloat);
+            Assert.AreEqual(2.5, averageDouble);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Count()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Count();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountCourses, count);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Count_Predicate()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Count(x => (int)x["Course"]["Id"] == 2 || (int)x["Course"]["Id"] == 3);
+
+            // Check the test result
+            Assert.AreEqual(2, count);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Max()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Max(x => (int)x["Course"]["Id"]);
+
+            // Check the test result
+            Assert.AreEqual(4, count);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Min()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Min(x => (int)x["Course"]["Id"]);
+
+            // Check the test result
+            Assert.AreEqual(1, count);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Sum()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operations
+            int sumInt = query.Sum(x => (int)x["Course"]["Id"]);
+            long sumLong = query.Sum(x => (long)x["Course"]["Id"]);
+            decimal sumDecimal = query.Sum(x => (decimal)x["Course"]["Id"]);
+            float sumFloat = query.Sum(x => (float)x["Course"]["Id"]);
+            double sumDouble = query.Sum(x => (double)x["Course"]["Id"]);
+
+            // Check the test results
+            Assert.AreEqual(10, sumInt);
+            Assert.AreEqual(10L, sumLong);
+            Assert.AreEqual(10m, sumDecimal);
+            Assert.AreEqual(10f, sumFloat);
+            Assert.AreEqual(10, sumDouble);
         }
     }
 }

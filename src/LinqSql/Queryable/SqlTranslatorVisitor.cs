@@ -156,6 +156,16 @@ namespace System.Linq.Sql
             {
                 case "Contains":
                     return VisitContains(node);
+                case "Count":
+                    return VisitCount(node);
+                case "Sum":
+                    return VisitAggregate(node, AggregateFunction.Sum);
+                case "Min":
+                    return VisitAggregate(node, AggregateFunction.Min);
+                case "Max":
+                    return VisitAggregate(node, AggregateFunction.Max);
+                case "Average":
+                    return VisitAggregate(node, AggregateFunction.Average);
                 case "get_Item":
                     return VisitField(node);
                 case "Where":
@@ -167,7 +177,7 @@ namespace System.Linq.Sql
                 case "Take":
                     return VisitTake(node);
                 default:
-                    throw new NotSupportedException($"Cannot translate the method '{node.Method.Name}' because it's not known by the sql translator.");
+                    throw new MethodTranslationException(node.Method);
             }
         }
 
@@ -196,7 +206,60 @@ namespace System.Linq.Sql
                 return new ContainsExpression(new ScalarExpression(source, field), value);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Contains is not supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
+        }
+
+        private AggregateExpression VisitAggregate(MethodCallExpression expression, AggregateFunction function)
+        {
+            Type type = expression.Method.DeclaringType;
+            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
+            {
+                // Resolve the source
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+
+                // Resolve the optional selector
+                if (expression.Arguments.Count > 1)
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                    FieldExpression found = Visit<FieldExpression>(lambda.Body);
+                    source = new SelectExpression(source, new[] { found });
+                }
+
+                // Resolve the field to be counted (must be done after the source has been manipulated)
+                FieldExpression field = source.Fields.First();
+
+                // Create the expression
+                return new AggregateExpression(source, field, function);
+            }
+
+            throw new MethodTranslationException(expression.Method);
+        }
+
+        private AggregateExpression VisitCount(MethodCallExpression expression)
+        {
+            Type type = expression.Method.DeclaringType;
+            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
+            {
+                // Map the source
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+
+                // Resolve the optional predicate
+                if (expression.Arguments.Count > 1)
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                    APredicateExpression predicate = Visit<APredicateExpression>(lambda.Body);
+                    source = new WhereExpression(source, predicate);
+                }
+
+                // Resolve the field to be counted (must be done after the source has been manipulated)
+                FieldExpression field = source.Fields.First();
+
+                // Create the expression
+                return new AggregateExpression(source, field, AggregateFunction.Count);
+
+            }
+
+            throw new MethodTranslationException(expression.Method);
         }
 
         private SelectExpression VisitSkip(MethodCallExpression expression)
@@ -208,7 +271,7 @@ namespace System.Linq.Sql
                 return new SelectExpression(source, source.Fields, -1, count);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private SelectExpression VisitTake(MethodCallExpression expression)
@@ -220,7 +283,7 @@ namespace System.Linq.Sql
                 return new SelectExpression(source, source.Fields, count, 0);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Skip is no supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private WhereExpression VisitWhere(MethodCallExpression expression)
@@ -234,7 +297,7 @@ namespace System.Linq.Sql
                 return new WhereExpression(source, predicate);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Where is not supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private JoinExpression VisitJoin(MethodCallExpression expression)
@@ -287,7 +350,7 @@ namespace System.Linq.Sql
                 return new JoinExpression(outer, inner, predicate, fields, (JoinType)joinType.Value);
             }
 
-            throw new InvalidOperationException($"The {expression.Method.DeclaringType.Name} implementation of Join is not supported by the translator.");
+            throw new MethodTranslationException(expression.Method);
         }
 
         private IEnumerable<FieldExpression> DecodeJoinSelector(Expression expression, FieldExpressions outer, FieldExpressions inner)

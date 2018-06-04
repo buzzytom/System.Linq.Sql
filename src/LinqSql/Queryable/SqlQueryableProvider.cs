@@ -50,6 +50,13 @@ namespace System.Linq.Sql
                 expression = new ScalarExpression(null, value);
             }
 
+            // Covert aggregate (scalar) expressions to a source query
+            if (expression is AggregateExpression aggregate)
+            {
+                FieldExpression value = new FieldExpression(aggregate, "Scalar", "Value");
+                expression = new ScalarExpression(aggregate.Source, value);
+            }
+
             // Execute the query
             if (expression is ASourceExpression source)
                 return connection.ExecuteQuery(source, visitor);
