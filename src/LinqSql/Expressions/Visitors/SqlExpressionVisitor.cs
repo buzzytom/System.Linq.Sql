@@ -31,6 +31,11 @@ namespace System.Linq.Sql
             return new Query(Builder.ToString(), Context.Parameters);
         }
 
+        /// <summary>
+        /// Dispatches the list of expressions to one of the more specialized visit methods in this class.
+        /// </summary>
+        /// <param name="node">The expressions to visit.</param>
+        /// <returns>The modified expression list, if any one of the elements were modified; otherwise, returns the original expression list.</returns>
         public override Expression Visit(Expression node)
         {
             if (node is ASourceExpression source)

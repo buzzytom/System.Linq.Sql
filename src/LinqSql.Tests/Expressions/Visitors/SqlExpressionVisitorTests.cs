@@ -8,7 +8,7 @@ namespace System.Linq.Sql.Tests
         private readonly SqlExpressionVisitor visitor = new SqlExpressionVisitor();
 
         [TestMethod]
-        public void SqlExpressionVisitor_GenerateSql()
+        public void SqlExpressionVisitor_GenerateQuery()
         {
             // Prepare the test data
             string[] fields = new string[] { "FieldA", "FieldB" };
@@ -38,6 +38,35 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitSelect(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitTable(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitWhere(null));
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitAggregate()
+        {
+            // Prepare the expected result set
+            (AggregateFunction function, string name)[] expected = new[]
+            {
+                (AggregateFunction.Average, "avg"),
+                (AggregateFunction.Count, "count"),
+                (AggregateFunction.Top, "top"),
+                (AggregateFunction.Max, "max"),
+                (AggregateFunction.Min, "min"),
+                (AggregateFunction.Sum, "sum")
+            };
+
+            foreach (var (function, name) in expected)
+            {
+                // Prepare the test data
+                TableExpression table = new TableExpression("Table", "Alias", new[] { "Field" });
+                AggregateExpression expression = new AggregateExpression(table, table.Fields.First(), function);
+                ScalarExpression scalar = new ScalarExpression(expression.Source, new FieldExpression(expression, "Scalar", "Value"));
+
+                // Perform the test operation
+                Query query = visitor.GenerateQuery(scalar);
+
+                // Check the test result
+                Assert.AreEqual($"select * from (select {name}([t0].[f0]) as [f0] from (select [Field] as [f0] from [Table]) as [t0])", query.Sql);
+            }
         }
 
         [TestMethod]
