@@ -54,7 +54,7 @@ namespace System.Linq.Sql
             if (expression is AggregateExpression aggregate)
             {
                 FieldExpression value = new FieldExpression(aggregate, "Scalar", "Value");
-                expression = new ScalarExpression(null, value);
+                expression = new ScalarExpression(aggregate.Source, value);
             }
 
             // Execute the query

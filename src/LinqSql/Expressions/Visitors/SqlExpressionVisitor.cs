@@ -49,8 +49,11 @@ namespace System.Linq.Sql
                 throw new ArgumentNullException(nameof(expression));
 
             Builder.Append(GetAggregateFunction(expression.Function));
+            Builder.Append("(");
+            Visit(expression.SourceField);
+            Builder.Append(")");
 
-            throw new NotImplementedException();
+            return expression;
         }
 
         /// <summary>
@@ -203,7 +206,7 @@ namespace System.Linq.Sql
             // Note: Must be calculated before the field is rendered because child visitation will change the Context.Source value.
             string alias = Context.Source.Fields.GetKey(expression);
 
-            // Render the field source value, detecting if the source is a referenable source
+            // Render the field source value, detecting if the source is a referencable source
             ASourceExpression sourceExpression = expression.SourceExpression?.ValueExpression as ASourceExpression;
             if (expression.SourceExpression != null && sourceExpression == null)
                 Visit(expression.SourceExpression.ValueExpression);
