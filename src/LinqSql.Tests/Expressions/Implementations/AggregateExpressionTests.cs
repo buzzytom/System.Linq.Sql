@@ -19,8 +19,8 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void AggregateExpression_Constructor_Exceptions()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new AggregateExpression(null, source.Fields.First(), AggregateFunction.Top));
-            Assert.ThrowsException<ArgumentNullException>(() => new AggregateExpression(source, null, AggregateFunction.Top));
+            Assert.ThrowsException<ArgumentNullException>(() => new AggregateExpression(null, source.Fields.First(), AggregateFunction.Min));
+            Assert.ThrowsException<ArgumentNullException>(() => new AggregateExpression(source, null, AggregateFunction.Min));
         }
 
         [TestMethod]

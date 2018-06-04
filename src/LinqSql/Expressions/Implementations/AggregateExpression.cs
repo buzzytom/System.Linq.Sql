@@ -16,9 +16,7 @@ namespace System.Linq.Sql
         /// <summary>Gets the smallest numerical value in the aggregation.</summary>
         Min,
         /// <summary>Gets the total numerical value of adding all the values in the aggregation together.</summary>
-        Sum,
-        /// <summary>Gets the value of the first item in the aggregation.</summary>
-        Top
+        Sum
     }
 
     /// <summary>

@@ -81,8 +81,6 @@ namespace System.Linq.Sql
                     return "min";
                 case AggregateFunction.Sum:
                     return "sum";
-                case AggregateFunction.Top:
-                    return "top";
                 default:
                     throw new NotSupportedException($"The aggregate function {function.ToString()} is not known by the sql expression visitor.");
             }

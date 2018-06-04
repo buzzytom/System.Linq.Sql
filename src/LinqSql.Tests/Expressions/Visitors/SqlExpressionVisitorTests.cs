@@ -48,7 +48,6 @@ namespace System.Linq.Sql.Tests
             {
                 (AggregateFunction.Average, "avg"),
                 (AggregateFunction.Count, "count"),
-                (AggregateFunction.Top, "top"),
                 (AggregateFunction.Max, "max"),
                 (AggregateFunction.Min, "min"),
                 (AggregateFunction.Sum, "sum")

@@ -166,8 +166,6 @@ namespace System.Linq.Sql
                     return VisitAggregate(node, AggregateFunction.Max);
                 case "Average":
                     return VisitAggregate(node, AggregateFunction.Average);
-                case "Top":
-                    return VisitAggregate(node, AggregateFunction.Top);
                 case "get_Item":
                     return VisitField(node);
                 case "Where":
@@ -213,13 +211,24 @@ namespace System.Linq.Sql
 
         private AggregateExpression VisitAggregate(MethodCallExpression expression, AggregateFunction function)
         {
-            // TODO - Proccess optional second argument (selector)
-
             Type type = expression.Method.DeclaringType;
             if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
             {
+                // Resolve the source
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+
+                // Resolve the optional selector
+                if (expression.Arguments.Count > 1)
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                    FieldExpression found = Visit<FieldExpression>(lambda.Body);
+                    source = new SelectExpression(source, new[] { found });
+                }
+
+                // Resolve the field to be counted (must be done after the source has been manipulated)
                 FieldExpression field = source.Fields.First();
+
+                // Create the expression
                 return new AggregateExpression(source, field, function);
             }
 
@@ -245,6 +254,7 @@ namespace System.Linq.Sql
                 // Resolve the field to be counted (must be done after the source has been manipulated)
                 FieldExpression field = source.Fields.First();
 
+                // Create the expression
                 return new AggregateExpression(source, field, AggregateFunction.Count);
 
             }
