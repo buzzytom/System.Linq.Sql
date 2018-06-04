@@ -84,7 +84,7 @@ namespace System.Linq.Sql
         /// <exception cref="ArgumentNullException">source or selector is null</exception>
         public static int Average(this IQueryable<Record> source, Expression<Func<Record, int>> selector)
         {
-            return Average(source, selector, MethodBase.GetCurrentMethod());
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace System.Linq.Sql
         /// <exception cref="ArgumentNullException">source or selector is null</exception>
         public static long Average(this IQueryable<Record> source, Expression<Func<Record, long>> selector)
         {
-            return Average(source, selector, MethodBase.GetCurrentMethod());
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace System.Linq.Sql
         /// <exception cref="ArgumentNullException">source or selector is null</exception>
         public static decimal Average(this IQueryable<Record> source, Expression<Func<Record, decimal>> selector)
         {
-            return Average(source, selector, MethodBase.GetCurrentMethod());
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace System.Linq.Sql
         /// <exception cref="ArgumentNullException">source or selector is null</exception>
         public static float Average(this IQueryable<Record> source, Expression<Func<Record, float>> selector)
         {
-            return Average(source, selector, MethodBase.GetCurrentMethod());
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
         /// <summary>
@@ -132,19 +132,7 @@ namespace System.Linq.Sql
         /// <exception cref="ArgumentNullException">source or selector is null</exception>
         public static double Average(this IQueryable<Record> source, Expression<Func<Record, double>> selector)
         {
-            return Average(source, selector, MethodBase.GetCurrentMethod());
-        }
-
-        private static T Average<T>(this IQueryable<Record> source, Expression<Func<Record, T>> selector, MethodBase method)
-        {
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
-            // TODO - Add support for something similar to this to the translators field selector so a default selector can be created.
-            //if (selector == null)
-            //    selector = record => (T)record.FirstTableColumnValue();
-
-            return source.EvaluateAggregateExpression<T>((MethodInfo)method, selector);
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
         /// <summary>
@@ -162,6 +150,44 @@ namespace System.Linq.Sql
                 predicate = record => true;
 
             return source.EvaluateAggregateExpression<int>((MethodInfo)MethodBase.GetCurrentMethod(), predicate);
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the minimum resulting value.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the value returned by the function represented by selector.</typeparam>
+        /// <param name="source">A sequence of values to determine the minimum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The minimum value in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static TResult Max<TResult>(this IQueryable<Record> source, Expression<Func<Record, TResult>> selector)
+        {
+            return Aggregate(source, selector, ((Func<IQueryable<Record>, Expression<Func<Record, TResult>>, TResult>)Max).Method);
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the minimum resulting value.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the value returned by the function represented by selector.</typeparam>
+        /// <param name="source">A sequence of values to determine the minimum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The minimum value in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static TResult Min<TResult>(this IQueryable<Record> source, Expression<Func<Record, TResult>> selector)
+        {
+            return Aggregate(source, selector, ((Func<IQueryable<Record>, Expression<Func<Record, TResult>>, TResult>)Min).Method);
+        }
+
+        private static T Aggregate<T>(this IQueryable<Record> source, Expression<Func<Record, T>> selector, MethodBase method)
+        {
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            // TODO - Add support for something similar to this to the translators field selector so a default selector can be created.
+            //if (selector == null)
+            //    selector = record => (T)record.FirstTableColumnValue();
+
+            return source.EvaluateAggregateExpression<T>((MethodInfo)method, selector);
         }
 
         private static T EvaluateAggregateExpression<T>(this IQueryable<Record> source, MethodInfo method, Expression parameter)

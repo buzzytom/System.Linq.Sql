@@ -74,5 +74,27 @@ namespace System.Linq.Sql.Tests
             // Perform the test operation
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Count(null, x => true));
         }
+
+        [TestMethod]
+        public void SqlQueryableHelper_Max_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Max(null, x => 42));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Max<int>(source, null));
+        }
+
+        [TestMethod]
+        public void SqlQueryableHelper_Min_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Min(null, x => 42));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Min<int>(source, null));
+        }
     }
 }

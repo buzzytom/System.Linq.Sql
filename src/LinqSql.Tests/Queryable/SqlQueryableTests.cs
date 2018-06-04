@@ -430,5 +430,31 @@ namespace System.Linq.Sql.Tests
             // Check the test result
             Assert.AreEqual(2, count);
         }
+
+        [TestMethod]
+        public void SqlQueryable_Max()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Max(x => (int)x["Course"]["Id"]);
+
+            // Check the test result
+            Assert.AreEqual(4, count);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Min()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            int count = query.Min(x => (int)x["Course"]["Id"]);
+
+            // Check the test result
+            Assert.AreEqual(1, count);
+        }
     }
 }
