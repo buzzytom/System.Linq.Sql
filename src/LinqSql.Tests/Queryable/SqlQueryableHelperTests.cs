@@ -96,5 +96,20 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Min(null, x => 42));
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Min<int>(source, null));
         }
+
+        [TestMethod]
+        public void SqlQueryableHelper_Sum_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operations
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(null, x => (int)x["Field"]["Value"]));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, long>>)null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, decimal>>)null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, float>>)null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, double>>)null));
+        }
     }
 }

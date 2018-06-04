@@ -456,5 +456,26 @@ namespace System.Linq.Sql.Tests
             // Check the test result
             Assert.AreEqual(1, count);
         }
+
+        [TestMethod]
+        public void SqlQueryable_Sum()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operations
+            int sumInt = query.Sum(x => (int)x["Course"]["Id"]);
+            long sumLong = query.Sum(x => (long)x["Course"]["Id"]);
+            decimal sumDecimal = query.Sum(x => (decimal)x["Course"]["Id"]);
+            float sumFloat = query.Sum(x => (float)x["Course"]["Id"]);
+            double sumDouble = query.Sum(x => (double)x["Course"]["Id"]);
+
+            // Check the test results
+            Assert.AreEqual(10, sumInt);
+            Assert.AreEqual(10L, sumLong);
+            Assert.AreEqual(10m, sumDecimal);
+            Assert.AreEqual(10f, sumFloat);
+            Assert.AreEqual(10, sumDouble);
+        }
     }
 }

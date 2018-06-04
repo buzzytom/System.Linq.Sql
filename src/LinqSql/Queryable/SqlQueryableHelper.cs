@@ -153,12 +153,12 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
-        /// Selects a value for each element of a sequence and returns the minimum resulting value.
+        /// Selects a value for each element of a sequence and returns the maximum resulting value.
         /// </summary>
         /// <typeparam name="TResult">The type of the value returned by the function represented by selector.</typeparam>
-        /// <param name="source">A sequence of values to determine the minimum of.</param>
+        /// <param name="source">A sequence of values to determine the maximum of.</param>
         /// <param name="selector">A projection function to apply to each element.</param>
-        /// <returns>The minimum value in the sequence.</returns>
+        /// <returns>The maximum value in the sequence.</returns>
         /// <exception cref="ArgumentNullException">source or selector is null.</exception>
         public static TResult Max<TResult>(this IQueryable<Record> source, Expression<Func<Record, TResult>> selector)
         {
@@ -176,6 +176,66 @@ namespace System.Linq.Sql
         public static TResult Min<TResult>(this IQueryable<Record> source, Expression<Func<Record, TResult>> selector)
         {
             return Aggregate(source, selector, ((Func<IQueryable<Record>, Expression<Func<Record, TResult>>, TResult>)Min).Method);
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the sum of all the values.
+        /// </summary>
+        /// <param name="source">A sequence of values to determine the sum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The sum of all the selected values in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static int Sum(this IQueryable<Record> source, Expression<Func<Record, int>> selector)
+        {
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the sum of all the values.
+        /// </summary>
+        /// <param name="source">A sequence of values to determine the sum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The sum of all the selected values in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static long Sum(this IQueryable<Record> source, Expression<Func<Record, long>> selector)
+        {
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the sum of all the values.
+        /// </summary>
+        /// <param name="source">A sequence of values to determine the sum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The sum of all the selected values in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static decimal Sum(this IQueryable<Record> source, Expression<Func<Record, decimal>> selector)
+        {
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the sum of all the values.
+        /// </summary>
+        /// <param name="source">A sequence of values to determine the sum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The sum of all the selected values in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static float Sum(this IQueryable<Record> source, Expression<Func<Record, float>> selector)
+        {
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
+        }
+
+        /// <summary>
+        /// Selects a value for each element of a sequence and returns the sum of all the values.
+        /// </summary>
+        /// <param name="source">A sequence of values to determine the sum of.</param>
+        /// <param name="selector">A projection function to apply to each element.</param>
+        /// <returns>The sum of all the selected values in the sequence.</returns>
+        /// <exception cref="ArgumentNullException">source or selector is null.</exception>
+        public static double Sum(this IQueryable<Record> source, Expression<Func<Record, double>> selector)
+        {
+            return Aggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
         private static T Aggregate<T>(this IQueryable<Record> source, Expression<Func<Record, T>> selector, MethodBase method)
