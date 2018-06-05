@@ -26,6 +26,9 @@ namespace System.Linq.Sql
         /// <param name="type">The direction to order the column.</param>
         public Ordering(FieldExpression field, OrderType type)
         {
+            if (field == null)
+                throw new ArgumentNullException(nameof(field));
+
             Field = field;
             OrderType = type;
         }
@@ -51,6 +54,9 @@ namespace System.Linq.Sql
         /// <param name="take">The number of fields to take from the source. Values less than zero indicate all rows.</param>
         /// <param name="skip">The number of fields to ignore on the source before reading rows.</param>
         /// <param name="orderings">The optional sorting of the selected rows.</param>
+        /// <exception cref="ArgumentNullException">the source <see cref="ASourceExpression.Fields"/> property is null.</exception>
+        /// <exception cref="ArgumentException">the source <see cref="ASourceExpression.Fields" /> property contains no elements.</exception>
+        /// <exception cref="KeyNotFoundException">An ordering key could not be found in the sources <see cref="ASourceExpression.Fields"/> property.</exception>
         public SelectExpression(ASourceExpression source, int take = -1, int skip = 0, IEnumerable<Ordering> orderings = null)
             : this(source, source?.Fields, take, skip, orderings)
         { }
@@ -63,6 +69,9 @@ namespace System.Linq.Sql
         /// <param name="take">The number of fields to take from the source. Values less than zero indicate all rows.</param>
         /// <param name="skip">The number of fields to ignore on the source before reading rows.</param>
         /// <param name="orderings">The optional sorting of the selected rows.</param>
+        /// <exception cref="ArgumentNullException">fields is null.</exception>
+        /// <exception cref="ArgumentException">fields contains no elements.</exception>
+        /// <exception cref="KeyNotFoundException">An ordering key could not be found in fields.</exception>
         public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields, int take = -1, int skip = 0, IEnumerable<Ordering> orderings = null)
         {
             if (fields == null)
@@ -76,10 +85,15 @@ namespace System.Linq.Sql
             Take = take;
             Skip = skip;
 
-            if (orderings != null)
-            {
-                // TODO - Copy the orderings, getting their field from the new Fields.
-            }
+            Orderings = orderings?
+                .Select(x =>
+                {
+                    FieldExpression field = Fields.FirstOrDefault(y => y.SourceExpression == x.Field);
+                    if (field == null)
+                        throw new KeyNotFoundException($"The ordering field ${x.Field.FieldName} could not be found in the fields parameter.");
+                    return new Ordering(field, x.OrderType);
+                })
+                .ToArray();
         }
 
         /// <summary>
@@ -95,13 +109,13 @@ namespace System.Linq.Sql
         // ----- Properties ----- //
 
         /// <summary>Gets inner source of the expression.</summary>
-        public ASourceExpression Source { get; } = null;
+        public ASourceExpression Source { get; }
 
         /// <summary>Gets the given alias of the physical table that this table expression represents.</summary>
-        public override FieldExpressions Fields { get; } = null;
+        public override FieldExpressions Fields { get; }
 
         /// <summary>Gets the child expressions of this source.</summary>
-        public override IEnumerable<ASourceExpression> Expressions { get; } = null;
+        public override IEnumerable<ASourceExpression> Expressions { get; }
 
         /// <summary>Gets the number of rows that will be skipped on the source expression.</summary>
         public int Skip { get; } = 0;
@@ -110,6 +124,6 @@ namespace System.Linq.Sql
         public int Take { get; } = -1;
 
         /// <summary>Gets the orderings that will be applied to the source expression.</summary>
-        public IEnumerable<Ordering> Orderings { get; } = null;
+        public IEnumerable<Ordering> Orderings { get; }
     }
 }
