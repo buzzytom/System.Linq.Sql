@@ -72,7 +72,7 @@ namespace System.Linq.Sql.Tests
             Assert.AreEqual(orderings.Length, expression.Orderings.Count());
             foreach (Ordering ordering in expression.Orderings)
             {
-                Ordering expected = orderings.FirstOrDefault(x => x.Field == ordering.Field.SourceExpression);
+                Ordering expected = orderings.FirstOrDefault(x => x.Field == ordering.Field);
                 Assert.IsNotNull(expected);
                 Assert.AreEqual(expected.OrderType, ordering.OrderType);
             }

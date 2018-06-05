@@ -90,8 +90,8 @@ namespace System.Linq.Sql
                 {
                     FieldExpression field = Fields.FirstOrDefault(y => y.SourceExpression == x.Field);
                     if (field == null)
-                        throw new KeyNotFoundException($"The ordering field ${x.Field.FieldName} could not be found in the fields parameter.");
-                    return new Ordering(field, x.OrderType);
+                        throw new KeyNotFoundException($"The ordering field '[{x.Field.TableName}].[{x.Field.FieldName}]' could not be found in the fields parameter.");
+                    return x;
                 })
                 .ToArray();
         }

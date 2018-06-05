@@ -417,6 +417,39 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_Ordering()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            Ordering ordering = new Ordering(table.Fields.First(), OrderType.Ascending);
+            SelectExpression expression = new SelectExpression(table, orderings: new[] { ordering });
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] order by [t0].[f0] asc) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_Orderings()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            Ordering orderingA = new Ordering(table.Fields.First(), OrderType.Ascending);
+            Ordering orderingB = new Ordering(table.Fields.Last(), OrderType.Descending);
+            SelectExpression expression = new SelectExpression(table, orderings: new[] { orderingA, orderingB });
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] order by [t0].[f0] asc, [t0].[f1] desc) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
         public void SqlExpressionVisitor_VisitTable()
         {
             // Prepare the test data
