@@ -42,12 +42,15 @@ namespace System.Linq.Sql.Tests
         public void SelectExpression_Constructor_Exceptions()
         {
             // Prepare the test data.
-            FieldExpression field = new FieldExpression(new LiteralExpression(42), "Table", "Alias");
+            FieldExpression fakeField = new FieldExpression(new LiteralExpression(42), "Table", "Alias");
+            Ordering ordering = new Ordering(source.Fields.First(), OrderType.Ascending);
 
             // Perform the tests operations.
             Assert.ThrowsException<ArgumentNullException>(() => new SelectExpression(source, null));
             Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, new FieldExpression[0]));
-            Assert.ThrowsException<KeyNotFoundException>(() => new SelectExpression(source, -1, 0, new[] { new Ordering(field, OrderType.Ascending) }));
+            Assert.ThrowsException<KeyNotFoundException>(() => new SelectExpression(source, -1, 0, new[] { new Ordering(fakeField, OrderType.Ascending) }));
+            Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, -1, 0, new[] { ordering, ordering }));
+            Assert.ThrowsException<ArgumentException>(() => new SelectExpression(source, -1, 0, new Ordering[] { null }));
         }
 
         [TestMethod]

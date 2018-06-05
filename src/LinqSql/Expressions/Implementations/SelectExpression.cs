@@ -70,7 +70,7 @@ namespace System.Linq.Sql
         /// <param name="skip">The number of fields to ignore on the source before reading rows.</param>
         /// <param name="orderings">The optional sorting of the selected rows.</param>
         /// <exception cref="ArgumentNullException">fields is null.</exception>
-        /// <exception cref="ArgumentException">fields contains no elements.</exception>
+        /// <exception cref="ArgumentException">fields contains no elements or orderings contains duplicate field orderings.</exception>
         /// <exception cref="KeyNotFoundException">An ordering key could not be found in fields.</exception>
         public SelectExpression(ASourceExpression source, IEnumerable<FieldExpression> fields, int take = -1, int skip = 0, IEnumerable<Ordering> orderings = null)
         {
@@ -88,9 +88,15 @@ namespace System.Linq.Sql
             Orderings = orderings?
                 .Select(x =>
                 {
-                    FieldExpression field = Fields.FirstOrDefault(y => y.SourceExpression == x.Field);
-                    if (field == null)
+                    if (x == null)
+                        throw new ArgumentException("None of the ordering can be null.", nameof(orderings));
+
+                    int count = orderings.Count(y => y.Field == x.Field);
+                    if (count != 1)
+                        throw new ArgumentException($"One ordering per field is allowed but '[{x.Field.TableName}].[{x.Field.FieldName}]' has {count}.", nameof(orderings));
+                    if (!Fields.Any(y => y.SourceExpression == x.Field))
                         throw new KeyNotFoundException($"The ordering field '[{x.Field.TableName}].[{x.Field.FieldName}]' could not be found in the fields parameter.");
+
                     return x;
                 })
                 .ToArray();
