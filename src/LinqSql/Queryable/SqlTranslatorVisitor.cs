@@ -146,7 +146,7 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
-        /// Visits the children of the System.Linq.Expressions.MethodCallExpression, translating the expression to an <see cref="ASourceExpression"/>.
+        /// Visits the children of the <see cref="MethodCallExpression"/>, translating the expression to an <see cref="ASourceExpression"/>.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The specified expression converted to an <see cref="ASourceExpression"/>; otherwise a thrown exception.</returns>
@@ -158,16 +158,21 @@ namespace System.Linq.Sql
                     return VisitContains(node);
                 case "Count":
                     return VisitCount(node);
+                case "Average":
+                    return VisitAggregate(node, AggregateFunction.Average);
                 case "Sum":
                     return VisitAggregate(node, AggregateFunction.Sum);
                 case "Min":
                     return VisitAggregate(node, AggregateFunction.Min);
                 case "Max":
                     return VisitAggregate(node, AggregateFunction.Max);
-                case "Average":
-                    return VisitAggregate(node, AggregateFunction.Average);
                 case "get_Item":
                     return VisitField(node);
+                case "OrderBy":
+                case "OrderByDescending":
+                case "ThenBy":
+                case "ThenByDescending":
+                    return VisitOrderBy(node);
                 case "Where":
                     return VisitWhere(node);
                 case "Join":
@@ -281,6 +286,18 @@ namespace System.Linq.Sql
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
                 return new SelectExpression(source, source.Fields, count, 0);
+            }
+
+            throw new MethodTranslationException(expression.Method);
+        }
+
+        private SelectExpression VisitOrderBy(MethodCallExpression expression)
+        {
+            Type type = expression.Method.DeclaringType;
+            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
+            {
+                // TODO - Handle
+                throw new NotImplementedException();
             }
 
             throw new MethodTranslationException(expression.Method);
