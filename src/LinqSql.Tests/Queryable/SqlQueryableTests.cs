@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Collections.Generic;
+using System.Data.Common;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -476,6 +477,62 @@ namespace System.Linq.Sql.Tests
             Assert.AreEqual(10m, sumDecimal);
             Assert.AreEqual(10f, sumFloat);
             Assert.AreEqual(10, sumDouble);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_OrderBy()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            Dictionary<string, object>[] result = query
+                .OrderBy(x => x["Course"]["Id"])
+                .Flatten()
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountCourses, result.Length);
+            long last = 0;
+            foreach (Dictionary<string, object> record in result)
+            {
+                Assert.IsTrue((long)record["Id"] > last);
+                last = (long)record["Id"];
+            }
+        }
+
+        [TestMethod]
+        public void SqlQueryable_OrderByDescending()
+        {
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "Course", new[] { "Id", "Name" });
+
+            // Perform the test operation
+            Dictionary<string, object>[] result = query
+                .OrderByDescending(x => x["Course"]["Id"])
+                .Flatten()
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountCourses, result.Length);
+            long last = ConnectionTestHelper.CountCourses + 1;
+            foreach (Dictionary<string, object> record in result)
+            {
+                Assert.IsTrue((long)record["Id"] < last);
+                last = (long)record["Id"];
+            }
+        }
+
+        [TestMethod]
+        public void SqlQueryable_ThenBy()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void SqlQueryable_ThenByDescending()
+        {
+            Assert.Fail();
         }
     }
 }

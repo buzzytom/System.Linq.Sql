@@ -111,5 +111,49 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, float>>)null));
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, double>>)null));
         }
+
+        [TestMethod]
+        public void SqlQueryableHelper_OrderBy_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operations
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.OrderBy(null, x => x["Field"]["Value"]));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.OrderBy(source, null));
+        }
+
+        [TestMethod]
+        public void SqlQueryableHelper_OrderByDescending_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operations
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.OrderByDescending(null, x => x["Field"]["Value"]));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.OrderByDescending(source, null));
+        }
+
+        [TestMethod]
+        public void SqlQueryableHelper_ThenBy_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operations
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.ThenBy(null, x => x["Field"]["Value"]));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.ThenBy(source, null));
+        }
+
+        [TestMethod]
+        public void SqlQueryableHelper_ThenByDescending_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operations
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.ThenByDescending(null, x => x["Field"]["Value"]));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.ThenByDescending(source, null));
+        }
     }
 }

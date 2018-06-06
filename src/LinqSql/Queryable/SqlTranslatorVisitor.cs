@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Linq.Expressions;
 
 namespace System.Linq.Sql
@@ -293,11 +294,40 @@ namespace System.Linq.Sql
 
         private SelectExpression VisitOrderBy(MethodCallExpression expression)
         {
-            Type type = expression.Method.DeclaringType;
+            MethodInfo method = expression.Method;
+            Type type = method.DeclaringType;
             if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
             {
-                // TODO - Handle
-                throw new NotImplementedException();
+                // Resolve the source
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+
+                // Resolve the optional selector
+                FieldExpression field = source.Fields.First();
+                if (expression.Arguments.Count > 1)
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                    field = Visit<FieldExpression>(lambda.Body);
+                }
+
+                // Create the ordering
+                OrderType direction = method.Name.EndsWith("Descending") ? OrderType.Descending : OrderType.Ascending;
+                Ordering ordering = new Ordering(field, direction);
+
+                // Handle an existing select expression
+                if (source is SelectExpression select)
+                {
+                    if (method.Name.StartsWith("ThenBy") && !select.Orderings.Any())
+                        throw new InvalidOperationException($"{method.Name} can only be applied to an ordered sequence.");
+                    if (method.Name.StartsWith("OrderBy") && select.Orderings.Any())
+                        throw new InvalidOperationException($"{method.Name} can only be applied to an unordered sequence.");
+
+                    return new SelectExpression(select.Source, select.Fields, select.Take, select.Skip, select.Orderings.Concat(new[] { ordering }));
+                }
+
+                // Create the expression
+                if (method.Name.StartsWith("ThenBy"))
+                    throw new InvalidOperationException($"{method.Name} can only be applied to an ordered sequence.");
+                return new SelectExpression(source, orderings: new[] { ordering });
             }
 
             throw new MethodTranslationException(expression.Method);
