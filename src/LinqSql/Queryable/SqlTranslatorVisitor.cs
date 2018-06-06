@@ -309,9 +309,8 @@ namespace System.Linq.Sql
                     field = Visit<FieldExpression>(lambda.Body);
                 }
 
-                // Create the ordering
+                // Decode the direction
                 OrderType direction = method.Name.EndsWith("Descending") ? OrderType.Descending : OrderType.Ascending;
-                Ordering ordering = new Ordering(field, direction);
 
                 // Handle an existing select expression
                 if (source is SelectExpression select)
@@ -321,13 +320,16 @@ namespace System.Linq.Sql
                     if (method.Name.StartsWith("OrderBy") && select.Orderings.Any())
                         throw new InvalidOperationException($"{method.Name} can only be applied to an unordered sequence.");
 
-                    return new SelectExpression(select.Source, select.Fields, select.Take, select.Skip, select.Orderings.Concat(new[] { ordering }));
+                    // Clone and modify the select expression
+                    IEnumerable<FieldExpression> fields = select.Fields.Select(x => x.SourceExpression);
+                    IEnumerable<Ordering> orderings = select.Orderings.Concat(new[] { new Ordering(field.SourceExpression, direction) });
+                    return new SelectExpression(select.Source, fields, select.Take, select.Skip, orderings);
                 }
 
                 // Create the expression
                 if (method.Name.StartsWith("ThenBy"))
                     throw new InvalidOperationException($"{method.Name} can only be applied to an ordered sequence.");
-                return new SelectExpression(source, orderings: new[] { ordering });
+                return new SelectExpression(source, orderings: new[] { new Ordering(field, direction) });
             }
 
             throw new MethodTranslationException(expression.Method);

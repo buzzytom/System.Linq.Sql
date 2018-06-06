@@ -526,13 +526,49 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlQueryable_ThenBy()
         {
-            Assert.Fail();
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "SortTest", new[] { "Id", "Alpha", "Beta" });
+
+            // Perform the test operation
+            Dictionary<string, object>[] result = query
+                .OrderBy(x => x["SortTest"]["Alpha"])
+                .ThenBy(x => x["SortTest"]["Beta"])
+                .Flatten()
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountSortTestAlphas * ConnectionTestHelper.CountSortTestBetas, result.Length);
+            Dictionary<string, object> last = result[0];
+            for (int i = 1; i < result.Length; i++)
+            {
+                Dictionary<string, object> record = result[i];
+                Assert.IsTrue((long)record["Alpha"] > (long)last["Alpha"] || (long)record["Beta"] > (long)last["Beta"]);
+                last = record;
+            }
         }
 
         [TestMethod]
         public void SqlQueryable_ThenByDescending()
         {
-            Assert.Fail();
+            // Prepare the test data
+            IQueryable<Record> query = new SqliteQueryable(connection, "SortTest", new[] { "Id", "Alpha", "Beta" });
+
+            // Perform the test operation
+            Dictionary<string, object>[] result = query
+                .OrderBy(x => x["SortTest"]["Alpha"])
+                .ThenByDescending(x => x["SortTest"]["Beta"])
+                .Flatten()
+                .ToArray();
+
+            // Check the test result
+            Assert.AreEqual(ConnectionTestHelper.CountSortTestAlphas * ConnectionTestHelper.CountSortTestBetas, result.Length);
+            Dictionary<string, object> last = result[0];
+            for (int i = 1; i < result.Length; i++)
+            {
+                Dictionary<string, object> record = result[i];
+                Assert.IsTrue((long)record["Alpha"] > (long)last["Alpha"] || (long)record["Beta"] < (long)last["Beta"]);
+                last = record;
+            }
         }
     }
 }

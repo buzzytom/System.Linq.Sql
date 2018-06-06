@@ -237,50 +237,6 @@ namespace System.Linq.Sql
             return EvaluateAggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
-        /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key.
-        /// </summary>
-        /// <param name="source">A sequence of values to order.</param>
-        /// <param name="keySelector">A function to extract a key from an element.</param>
-        /// <returns>An <see cref="IQueryable{Record}"/> whose elements are sorted according to a key.</returns>
-        public static IQueryable<Record> OrderBy(this IQueryable<Record> source, Expression<Func<Record, object>> keySelector)
-        {
-            return source.EvaluateQuery((MethodInfo)MethodBase.GetCurrentMethod(), keySelector);
-        }
-
-        /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key.
-        /// </summary>
-        /// <param name="source">A sequence of values to order.</param>
-        /// <param name="keySelector">A function to extract a key from an element.</param>
-        /// <returns>An <see cref="IQueryable{Record}"/> whose elements are sorted according to a key.</returns>
-        public static IQueryable<Record> OrderByDescending(this IQueryable<Record> source, Expression<Func<Record, object>> keySelector)
-        {
-            return source.EvaluateQuery((MethodInfo)MethodBase.GetCurrentMethod(), keySelector);
-        }
-
-        /// <summary>
-        /// Performs a subsequent ordering of the elements in a sequence in ascending order according to a key.
-        /// </summary>
-        /// <param name="source">A sequence of values to order.</param>
-        /// <param name="keySelector">A function to extract a key from an element.</param>
-        /// <returns>An <see cref="IQueryable{Record}"/> whose elements are sorted according to a key.</returns>
-        public static IQueryable<Record> ThenBy(this IQueryable<Record> source, Expression<Func<Record, object>> keySelector)
-        {
-            return source.EvaluateQuery((MethodInfo)MethodBase.GetCurrentMethod(), keySelector);
-        }
-
-        /// <summary>
-        /// Performs a subsequent ordering of the elements in a sequence in descending order according to a key.
-        /// </summary>
-        /// <param name="source">A sequence of values to order.</param>
-        /// <param name="keySelector">A function to extract a key from an element.</param>
-        /// <returns>An <see cref="IQueryable{Record}"/> whose elements are sorted according to a key.</returns>
-        public static IQueryable<Record> ThenByDescending(this IQueryable<Record> source, Expression<Func<Record, object>> keySelector)
-        {
-            return source.EvaluateQuery((MethodInfo)MethodBase.GetCurrentMethod(), keySelector);
-        }
-
         private static T EvaluateAggregate<T>(this IQueryable<Record> source, Expression<Func<Record, T>> selector, MethodBase method)
         {
             if (selector == null)
