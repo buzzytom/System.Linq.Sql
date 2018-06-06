@@ -9,6 +9,8 @@ namespace System.Linq.Sql
         public const int CountCourses = 4;
         public const int CountStudents = 10;
         public const int CountCourseStudents = 2;
+        public const int CountSortTestAlphas = 3;
+        public const int CountSortTestBetas = 3;
 
         public static DbConnection CreateConnection()
         {
@@ -29,6 +31,7 @@ namespace System.Linq.Sql
             connection.CreateCourseTable();
             connection.CreateStudentTable();
             connection.CreateCourseStudentTable();
+            connection.CreateSortTestTable();
             return connection;
         }
 
@@ -38,6 +41,7 @@ namespace System.Linq.Sql
             int[] courseIds = connection.PopulateCourseTable();
             int[] studentIds = connection.PopulateStudentTable();
             connection.PopulateCourseStudentTable(courseIds, studentIds, random);
+            connection.PopulateSortTestTable();
             return connection;
         }
 
@@ -67,6 +71,16 @@ $@"create table CourseStudent (
     Id integer not null constraint PK_CourseStudent primary key autoincrement,
     CourseId,
     StudentId
+);");
+        }
+
+        private static void CreateSortTestTable(this DbConnection connection)
+        {
+            connection.ExecuteNonQuery(
+$@"create table SortTest (
+    Id integer not null constraint PK_SortTest primary key autoincrement,
+    Alpha,
+    Beta
 );");
         }
 
@@ -104,6 +118,20 @@ $@"create table CourseStudent (
                     connection.ExecuteNonQuery($"insert into CourseStudent (CourseId, StudentId) values ({courseId}, {studentId})");
                 }
             }
+        }
+
+        private static int[] PopulateSortTestTable(this DbConnection connection)
+        {
+            LinkedList<int> ids = new LinkedList<int>();
+            for (int alpha = 1; alpha <= CountSortTestAlphas; alpha++)
+            {
+                for (int beta = 1; beta <= CountSortTestBetas; beta++)
+                {
+                    connection.ExecuteNonQuery($"insert into SortTest (Alpha, Beta) values ({alpha}, {beta})");
+                    ids.AddLast(connection.GetLastInsertId());
+                }
+            }
+            return ids.ToArray();
         }
 
         private static void ExecuteNonQuery(this DbConnection connection, string sql)

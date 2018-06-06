@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Linq.Expressions;
 
 namespace System.Linq.Sql
@@ -146,7 +147,7 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
-        /// Visits the children of the System.Linq.Expressions.MethodCallExpression, translating the expression to an <see cref="ASourceExpression"/>.
+        /// Visits the children of the <see cref="MethodCallExpression"/>, translating the expression to an <see cref="ASourceExpression"/>.
         /// </summary>
         /// <param name="node">The expression to visit.</param>
         /// <returns>The specified expression converted to an <see cref="ASourceExpression"/>; otherwise a thrown exception.</returns>
@@ -158,16 +159,21 @@ namespace System.Linq.Sql
                     return VisitContains(node);
                 case "Count":
                     return VisitCount(node);
+                case "Average":
+                    return VisitAggregate(node, AggregateFunction.Average);
                 case "Sum":
                     return VisitAggregate(node, AggregateFunction.Sum);
                 case "Min":
                     return VisitAggregate(node, AggregateFunction.Min);
                 case "Max":
                     return VisitAggregate(node, AggregateFunction.Max);
-                case "Average":
-                    return VisitAggregate(node, AggregateFunction.Average);
                 case "get_Item":
                     return VisitField(node);
+                case "OrderBy":
+                case "OrderByDescending":
+                case "ThenBy":
+                case "ThenByDescending":
+                    return VisitOrderBy(node);
                 case "Where":
                     return VisitWhere(node);
                 case "Join":
@@ -281,6 +287,49 @@ namespace System.Linq.Sql
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
                 return new SelectExpression(source, source.Fields, count, 0);
+            }
+
+            throw new MethodTranslationException(expression.Method);
+        }
+
+        private SelectExpression VisitOrderBy(MethodCallExpression expression)
+        {
+            MethodInfo method = expression.Method;
+            Type type = method.DeclaringType;
+            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
+            {
+                // Resolve the source
+                ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
+
+                // Resolve the optional selector
+                FieldExpression field = source.Fields.First();
+                if (expression.Arguments.Count > 1)
+                {
+                    LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);
+                    field = Visit<FieldExpression>(lambda.Body);
+                }
+
+                // Decode the direction
+                OrderType direction = method.Name.EndsWith("Descending") ? OrderType.Descending : OrderType.Ascending;
+
+                // Handle an existing select expression
+                if (source is SelectExpression select)
+                {
+                    if (method.Name.StartsWith("ThenBy") && !select.Orderings.Any())
+                        throw new InvalidOperationException($"{method.Name} can only be applied to an ordered sequence.");
+                    if (method.Name.StartsWith("OrderBy") && select.Orderings.Any())
+                        throw new InvalidOperationException($"{method.Name} can only be applied to an unordered sequence.");
+
+                    // Clone and modify the select expression
+                    IEnumerable<FieldExpression> fields = select.Fields.Select(x => x.SourceExpression);
+                    IEnumerable<Ordering> orderings = select.Orderings.Concat(new[] { new Ordering(field.SourceExpression, direction) });
+                    return new SelectExpression(select.Source, fields, select.Take, select.Skip, orderings);
+                }
+
+                // Create the expression
+                if (method.Name.StartsWith("ThenBy"))
+                    throw new InvalidOperationException($"{method.Name} can only be applied to an ordered sequence.");
+                return new SelectExpression(source, orderings: new[] { new Ordering(field, direction) });
             }
 
             throw new MethodTranslationException(expression.Method);

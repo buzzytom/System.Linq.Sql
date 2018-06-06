@@ -342,15 +342,29 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
+            // Render the body declaration
             Builder.Append("(select ");
             VisitFields(expression, expression.Fields);
+
+            // Render the source expression
             if (expression.Source != null)
             {
                 Builder.Append(" from ");
                 Visit(expression.Source);
             }
+
+            // Restore the current source
+            Context.Source = expression;
+
+            // Render the orderings
+            if (expression.Orderings != null && expression.Orderings.Any())
+                RenderOrderings(expression.Orderings);
+
+            // Render the range selection
             if (expression.Skip > 0 || expression.Take >= 0)
                 RenderLimit(expression.Skip < 0 ? 0 : expression.Skip, expression.Take < 0 ? long.MaxValue : expression.Take);
+
+            // Render the expression alias
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
@@ -360,7 +374,7 @@ namespace System.Linq.Sql
         /// Renders the specified limit options.
         /// </summary>
         /// <param name="skip">The number of result rows to skip before reading.</param>
-        /// <param name="take"></param>
+        /// <param name="take">The number of result rows to read.</param>
         protected virtual void RenderLimit(long skip, long take)
         {
             Builder.Append(" offset ");
@@ -368,6 +382,32 @@ namespace System.Linq.Sql
             Builder.Append(" rows fetch next ");
             Builder.Append(take);
             Builder.Append(" rows only");
+        }
+
+        /// <summary>
+        /// Renders the specified orderings collection.
+        /// </summary>
+        /// <param name="orderings">The orderings to render.</param>
+        protected virtual void RenderOrderings(IEnumerable<Ordering> orderings)
+        {
+            Builder.Append(" order by ");
+            bool first = true;
+            foreach (Ordering ordering in orderings)
+            {
+                // Render punctuation
+                if (!first)
+                    Builder.Append(", ");
+                first = false;
+
+                // Render column
+                VisitField(ordering.Field);
+
+                // Render direction
+                if (ordering.OrderType == OrderType.Ascending)
+                    Builder.Append(" asc");
+                else
+                    Builder.Append(" desc");
+            }
         }
 
         /// <summary>
