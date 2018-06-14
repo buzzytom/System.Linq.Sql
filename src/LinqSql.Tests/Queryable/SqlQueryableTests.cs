@@ -78,10 +78,10 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.First(x => (int)x["Coure"]["Id"] == 2);
+            Record record = queryable.First(x => (int)x["Alias"]["Id"] == 2);
 
             // Check the test result
-            Assert.AreEqual(2L, record["Course"]["Id"]);
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -104,10 +104,10 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.SingleOrDefault(x => (int)x["Coure"]["Id"] == 2);
+            Record record = queryable.SingleOrDefault(x => (int)x["Alias"]["Id"] == 2);
 
             // Check the test result
-            Assert.AreEqual(2L, record["Course"]["Id"]);
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace System.Linq.Sql.Tests
             Record record = queryable.First();
 
             // Check the test result
-            Assert.AreEqual(1L, record["Course"]["Id"]);
+            Assert.AreEqual(1L, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -132,10 +132,10 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.First(x => (int)x["Coure"]["Id"] == 2);
+            Record record = queryable.First(x => (int)x["Alias"]["Id"] == 2);
 
             // Check the test result
-            Assert.AreEqual(2L, record["Course"]["Id"]);
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -149,7 +149,7 @@ namespace System.Linq.Sql.Tests
             Record record = queryable.FirstOrDefault();
 
             // Check the test result
-            Assert.AreEqual(1L, record["Course"]["Id"]);
+            Assert.AreEqual(1L, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -160,10 +160,10 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.FirstOrDefault(x => (int)x["Coure"]["Id"] == 2);
+            Record record = queryable.FirstOrDefault(x => (int)x["Alias"]["Id"] == 2);
 
             // Check the test result
-            Assert.AreEqual(2L, record["Course"]["Id"]);
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
         }
 
         [TestMethod]

@@ -169,9 +169,6 @@ namespace System.Linq.Sql
                     return VisitAggregate(node, AggregateFunction.Max);
                 case "get_Item":
                     return VisitField(node);
-                case "First":
-                case "FirstOrDefault":
-                    return VisitFirst(node);
                 case "OrderBy":
                 case "OrderByDescending":
                 case "ThenBy":
@@ -336,18 +333,6 @@ namespace System.Linq.Sql
             }
 
             throw new MethodTranslationException(expression.Method);
-        }
-
-        private Expression VisitFirst(MethodCallExpression expression)
-        {
-            MethodInfo method = expression.Method;
-            Type type = method.DeclaringType;
-            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
-            {
-                throw new NotImplementedException();
-            }
-
-            throw new MethodTranslationException(method);
         }
 
         private WhereExpression VisitWhere(MethodCallExpression expression)
