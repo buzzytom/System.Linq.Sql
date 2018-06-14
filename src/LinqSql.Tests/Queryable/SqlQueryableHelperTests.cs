@@ -111,5 +111,49 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, float>>)null));
             Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Sum(source, (Expression<Func<Record, double>>)null));
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SqlQueryableHelper_First_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            SqlQueryableHelper.First(null, x => true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SqlQueryableHelper_FirstOrDefault_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            SqlQueryableHelper.FirstOrDefault(null, x => true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SqlQueryableHelper_Single_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            SqlQueryableHelper.Single(null, x => true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SqlQueryableHelper_SingleOrDefault_ArgumentExceptions()
+        {
+            // Prepare the test data
+            SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
+
+            // Perform the test operation
+            SqlQueryableHelper.SingleOrDefault(null, x => true);
+        }
     }
 }
