@@ -237,6 +237,81 @@ namespace System.Linq.Sql
             return EvaluateAggregate(source, selector, MethodBase.GetCurrentMethod());
         }
 
+        /// <summary>
+        /// Returns the first element of a sequence that satisfies an optional specified condition.
+        /// </summary>
+        /// <param name="source">A sequence to return an element from.</param>
+        /// <param name="predicate">An optional function to test each element for a condition.</param>
+        /// <returns>The first element in the predicated sequence.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="InvalidOperationException">The predicated source sequence is empty.</exception>
+        public static Record First(this IQueryable<Record> source, Expression<Func<Record, bool>> predicate = null)
+        {
+            if (predicate != null)
+                source = source.Where(predicate);
+            return source
+                .Take(1)
+                .AsEnumerable()
+                .First();
+        }
+
+        /// <summary>
+        /// Returns the first element of a sequence that satisfies an optional specified condition or null if the sequence is empty.
+        /// </summary>
+        /// <param name="source">A sequence to return an element from.</param>
+        /// <param name="predicate">An optional function to test each element for a condition.</param>
+        /// <returns>The first element in the predicated sequence or null if the sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        public static Record FirstOrDefault(this IQueryable<Record> source, Expression<Func<Record, bool>> predicate = null)
+        {
+            if (predicate != null)
+                source = source.Where(predicate);
+            return source
+                .Take(1)
+                .AsEnumerable()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.
+        /// </summary>
+        /// <param name="source">A sequence to return an element from.</param>
+        /// <param name="predicate">An optional function to test each element for a condition.</param>
+        /// <returns>The single element in the predicated sequence.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="InvalidOperationException">The predicated source sequence does not contain exactly one element.</exception>
+        public static Record Single(this IQueryable<Record> source, Expression<Func<Record, bool>> predicate = null)
+        {
+            // Note: 2 results are taken so that the Single call will throw under the correct conditions.
+
+            if (predicate != null)
+                source = source.Where(predicate);
+            return source
+                .Take(2)
+                .AsEnumerable()
+                .Single();
+        }
+
+        /// <summary>
+        /// Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.
+        /// </summary>
+        /// <param name="source">A sequence to return an element from.</param>
+        /// <param name="predicate">An optional function to test each element for a condition.</param>
+        /// <returns>The single element of the input sequence that satisfies the condition in predicate, or null if no such element is found.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="InvalidOperationException">The predicated source sequence contanis more than one element.</exception>
+        public static Record SingleOrDefault(this IQueryable<Record> source, Expression<Func<Record, bool>> predicate = null)
+        {
+            // Note: 2 results are taken so that the SingleOrDefault call will throw under the correct conditions.
+
+            if (predicate != null)
+                source = source.Where(predicate);
+            return source
+                .Take(2)
+                .AsEnumerable()
+                .SingleOrDefault();
+        }
+
         private static T EvaluateAggregate<T>(this IQueryable<Record> source, Expression<Func<Record, T>> selector, MethodBase method)
         {
             if (selector == null)
@@ -265,11 +340,7 @@ namespace System.Linq.Sql
                 Expression.Call(
                     null,
                     method,
-                    new Expression[]
-                    {
-                        source.Expression,
-                        parameter
-                    }));
+                    new Expression[] { source.Expression, parameter }));
         }
     }
 }

@@ -59,6 +59,114 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlQueryable_Single()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.Single();
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Single_Predicate()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.First(x => (int)x["Alias"]["Id"] == 2);
+
+            // Check the test result
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlQueryable_SingleOrDefault()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.SingleOrDefault();
+        }
+
+        [TestMethod]
+        public void SqlQueryable_SingleOrDefault_Predicate()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.SingleOrDefault(x => (int)x["Alias"]["Id"] == 2);
+
+            // Check the test result
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_First()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.First();
+
+            // Check the test result
+            Assert.AreEqual(1L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_First_Predicate()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.First(x => (int)x["Alias"]["Id"] == 2);
+
+            // Check the test result
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_FirstOrDefault()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.FirstOrDefault();
+
+            // Check the test result
+            Assert.AreEqual(1L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_FirstOrDefault_Predicate()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.FirstOrDefault(x => (int)x["Alias"]["Id"] == 2);
+
+            // Check the test result
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
         public void SqlQueryable_Where_Boolean()
         {
             // Prepare the test data
