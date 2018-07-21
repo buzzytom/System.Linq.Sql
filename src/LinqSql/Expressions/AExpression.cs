@@ -14,7 +14,7 @@ namespace System.Linq.Sql
         /// <returns>The result of visiting this node.</returns>
         protected override Expression Accept(ExpressionVisitor visitor)
         {
-            if (visitor is IQueryExpressionVisitor sqlVisitor)
+            if (visitor is IQueryVisitor sqlVisitor)
                 return AcceptSql(sqlVisitor);
             else
                 return base.Accept(visitor);
@@ -25,7 +25,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract Expression AcceptSql(IQueryExpressionVisitor visitor);
+        protected abstract Expression AcceptSql(IQueryVisitor visitor);
 
         // ----- Properties ----- //
 

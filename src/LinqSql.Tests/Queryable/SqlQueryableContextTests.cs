@@ -13,7 +13,7 @@ namespace System.Linq.Sql.Tests
             // Prepare test data
             DbConnection connection = ConnectionTestHelper.CreatePopulatedConnection();
             TableExpression expression = new TableExpression("Student", "Alias", new string[] { "Id", "FirstName", "LastName" });
-            QueryExpressionVisitor visitor = new QueryExpressionVisitor();
+            SqlQueryVisitor visitor = new SqlQueryVisitor();
 
             // Perform test operation
             Record[] records = SqlQueryableContext
@@ -41,7 +41,7 @@ namespace System.Linq.Sql.Tests
             // Prepare test data
             DbConnection connection = ConnectionTestHelper.CreatePopulatedConnection();
             TableExpression expression = new TableExpression("Student", "Alias", new string[] { "Id", "FirstName", "LastName" });
-            QueryExpressionVisitor visitor = new QueryExpressionVisitor();
+            SqlQueryVisitor visitor = new SqlQueryVisitor();
 
             // Perform the test operation
             connection.Close();

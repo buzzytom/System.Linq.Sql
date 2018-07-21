@@ -11,7 +11,7 @@ namespace System.Linq.Sql
 #endif
     static class SqlQueryableContext
     {
-        public static IEnumerable<Record> ExecuteQuery(this DbConnection connection, ASourceExpression expression, QueryExpressionVisitor visitor)
+        public static IEnumerable<Record> ExecuteQuery(this DbConnection connection, ASourceExpression expression, SqlQueryVisitor visitor)
         {
             // Create the outer select expression
             SelectExpression select = expression as SelectExpression;

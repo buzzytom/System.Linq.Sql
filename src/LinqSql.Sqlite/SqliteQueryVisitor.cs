@@ -3,9 +3,9 @@
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="SqliteQueryVisitor"/> is a custom implementation of <see cref="QueryExpressionVisitor"/>, designed for queries on an SQLite database.
+    /// <see cref="SqliteQueryVisitor"/> is a custom implementation of <see cref="SqlQueryVisitor"/>, designed for queries on an SQLite database.
     /// </summary>
-    public class SqliteQueryVisitor : QueryExpressionVisitor
+    public class SqliteQueryVisitor : SqlQueryVisitor
     {
         /// <summary>
         /// Visits the specified expression.

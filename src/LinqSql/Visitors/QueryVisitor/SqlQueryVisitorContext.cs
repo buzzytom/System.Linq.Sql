@@ -5,7 +5,7 @@ namespace System.Linq.Sql
     /// <summary>
     /// Defines a shared data store for use in evaluation of the query syntax tree. This class can be used to track parameter input values for the query and previously evaluated <see cref="ASourceExpression"/> items. 
     /// </summary>
-    public class QueryVisitorContext
+    public class SqlQueryVisitorContext
     {
         private Dictionary<string, object> parameters = new Dictionary<string, object>();
         private int parameter = 0;
@@ -14,7 +14,7 @@ namespace System.Linq.Sql
         private int source = 0;
 
         /// <summary>
-        /// Removes all cached parameters and sources from the <see cref="QueryVisitorContext"/> instance.
+        /// Removes all cached parameters and sources from the <see cref="SqlQueryVisitorContext"/> instance.
         /// </summary>
         public void Clear()
         {

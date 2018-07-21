@@ -11,13 +11,13 @@ namespace System.Linq.Sql
     class SqlQueryableProvider : IQueryProvider
     {
         private readonly DbConnection connection = null;
-        private readonly QueryExpressionVisitor visitor = null;
+        private readonly SqlQueryVisitor visitor = null;
 
         public SqlQueryableProvider(DbConnection connection)
-            : this(connection, new QueryExpressionVisitor())
+            : this(connection, new SqlQueryVisitor())
         { }
 
-        protected SqlQueryableProvider(DbConnection connection, QueryExpressionVisitor visitor)
+        protected SqlQueryableProvider(DbConnection connection, SqlQueryVisitor visitor)
         {
             if (connection == null)
                 throw new ArgumentNullException(nameof(connection));
