@@ -1,11 +1,11 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql
+namespace System.Linq.Sql.Sqlite
 {
     /// <summary>
-    /// <see cref="SqliteExpressionVisitor"/> is a custom implementation of <see cref="SqlExpressionVisitor"/>, designed for queries on an SQLite database.
+    /// <see cref="SqliteQueryVisitor"/> is a custom implementation of <see cref="SqlQueryVisitor"/>, designed for queries on an SQLite database.
     /// </summary>
-    public class SqliteExpressionVisitor : SqlExpressionVisitor
+    public class SqliteQueryVisitor : SqlQueryVisitor
     {
         /// <summary>
         /// Visits the specified expression.

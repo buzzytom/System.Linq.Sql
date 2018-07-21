@@ -5,10 +5,10 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class SqlExpressionVisitorTests
     {
-        private readonly SqlExpressionVisitor visitor = new SqlExpressionVisitor();
+        private readonly SqlQueryVisitor visitor = new SqlQueryVisitor();
 
         [TestMethod]
-        public void SqlExpressionVisitor_GenerateSql()
+        public void SqlExpressionVisitor_GenerateQuery()
         {
             // Prepare the test data
             string[] fields = new string[] { "FieldA", "FieldB" };
@@ -25,6 +25,7 @@ namespace System.Linq.Sql.Tests
         [TestMethod]
         public void SqlExpressionVisitor_Visit_ArgumentNullExceptions()
         {
+            Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitAggregate(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitBoolean(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitComposite(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitContains(null));
@@ -37,6 +38,34 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitSelect(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitTable(null));
             Assert.ThrowsException<ArgumentNullException>(() => visitor.VisitWhere(null));
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitAggregate()
+        {
+            // Prepare the expected result set
+            (AggregateFunction function, string name)[] expected = new[]
+            {
+                (AggregateFunction.Average, "avg"),
+                (AggregateFunction.Count, "count"),
+                (AggregateFunction.Max, "max"),
+                (AggregateFunction.Min, "min"),
+                (AggregateFunction.Sum, "sum")
+            };
+
+            foreach (var (function, name) in expected)
+            {
+                // Prepare the test data
+                TableExpression table = new TableExpression("Table", "Alias", new[] { "Field" });
+                AggregateExpression expression = new AggregateExpression(table, table.Fields.First(), function);
+                ScalarExpression scalar = new ScalarExpression(expression.Source, new FieldExpression(expression, "Scalar", "Value"));
+
+                // Perform the test operation
+                Query query = visitor.GenerateQuery(scalar);
+
+                // Check the test result
+                Assert.AreEqual($"select * from (select {name}([t0].[f0]) as [f0] from (select [Field] as [f0] from [Table]) as [t0])", query.Sql);
+            }
         }
 
         [TestMethod]
@@ -385,6 +414,39 @@ namespace System.Linq.Sql.Tests
 
             // Check the result
             Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] offset 2 rows fetch next 3 rows only) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_Ordering()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            Ordering ordering = new Ordering(table.Fields.First(), OrderType.Ascending);
+            SelectExpression expression = new SelectExpression(table, orderings: new[] { ordering });
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] order by [t0].[f0] asc) as [t1]", visitor.SqlState);
+        }
+
+        [TestMethod]
+        public void SqlExpressionVisitor_VisitSelect_Orderings()
+        {
+            // Prepare the test data
+            string[] fields = new string[] { "FieldA", "FieldB" };
+            TableExpression table = new TableExpression("Table", "Alias", fields);
+            Ordering orderingA = new Ordering(table.Fields.First(), OrderType.Ascending);
+            Ordering orderingB = new Ordering(table.Fields.Last(), OrderType.Descending);
+            SelectExpression expression = new SelectExpression(table, orderings: new[] { orderingA, orderingB });
+
+            // Performs the test operation
+            visitor.VisitSelect(expression);
+
+            // Check the result
+            Assert.AreEqual("(select [t0].[f0] as [f0],[t0].[f1] as [f1] from (select [FieldA] as [f0],[FieldB] as [f1] from [Table]) as [t0] order by [t0].[f0] asc, [t0].[f1] desc) as [t1]", visitor.SqlState);
         }
 
         [TestMethod]

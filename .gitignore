@@ -7,3 +7,5 @@ src/LinqSql.Tests/bin/
 src/LinqSql/bin/
 *.user
 src/.vs/LinqSql/DesignTimeBuild/
+src/LinqSql.Sqlite/obj/
+src/LinqSql.Sqlite/bin/

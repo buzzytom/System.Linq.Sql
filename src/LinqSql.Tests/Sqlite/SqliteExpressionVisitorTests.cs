@@ -6,7 +6,7 @@ namespace System.Linq.Sql.Sqlite.Tests
     [TestClass]
     public class SqliteExpressionVisitorTests
     {
-        private readonly SqliteExpressionVisitor visitor = new SqliteExpressionVisitor();
+        private readonly SqliteQueryVisitor visitor = new SqliteQueryVisitor();
 
         [TestMethod]
         public void SqliteExpressionVisitor_Visit_ArgumentNullExceptions()

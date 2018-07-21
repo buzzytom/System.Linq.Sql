@@ -2,8 +2,14 @@
 
 namespace System.Linq.Sql.Tests
 {
-    public class MockExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
+    public class MockExpressionVisitor : ExpressionVisitor, IQueryVisitor
     {
+        public Expression VisitAggregate(AggregateExpression expression)
+        {
+            AggregateVisited = true;
+            return expression;
+        }
+
         public Expression VisitBoolean(BooleanExpression expression)
         {
             BooleanVisited = true;
@@ -77,6 +83,8 @@ namespace System.Linq.Sql.Tests
         }
 
         // ----- Properties ----- //
+
+        public bool AggregateVisited { private set; get; } = false;
 
         public bool BooleanVisited { private set; get; } = false;
 

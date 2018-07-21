@@ -5,7 +5,7 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class SqlVisitorContextTests
     {
-        private SqlVisitorContext context = new SqlVisitorContext();
+        private SqlQueryVisitorContext context = new SqlQueryVisitorContext();
 
         [TestMethod]
         public void SqlVisitorContext_CreateParameter()

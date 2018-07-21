@@ -3,10 +3,17 @@
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="ISqlExpressionVisitor"/> represents a visitor for expression trees.
+    /// <see cref="IQueryVisitor"/> represents a visitor for expression trees.
     /// </summary>
-    public interface ISqlExpressionVisitor
+    public interface IQueryVisitor
     {
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        /// <returns>The modified expression, if it or any subexpression was modified; otherwise, returns the original expression.</returns>
+        Expression VisitAggregate(AggregateExpression expression);
+
         /// <summary>
         /// Visits the specified expression.
         /// </summary>

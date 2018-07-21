@@ -18,7 +18,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected override Expression AcceptSql(ISqlExpressionVisitor visitor)
+        protected override Expression AcceptSql(IQueryVisitor visitor)
         {
             return visitor.VisitNull(this);
         }

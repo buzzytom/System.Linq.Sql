@@ -5,14 +5,14 @@ using System.Text;
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="ISqlExpressionVisitor"/>, which the visit implementations generate an SQL representation of an expression tree.
+    /// <see cref="SqlQueryVisitor"/> is an implementation of <see cref="IQueryVisitor"/>, which the visit implementations generate an SQL representation of an expression tree.
     /// </summary>
-    public class SqlExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
+    public class SqlQueryVisitor : ExpressionVisitor, IQueryVisitor
     {
         /// <summary>
-        /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
+        /// Creates a new instance of <see cref="SqlQueryVisitor"/>.
         /// </summary>
-        public SqlExpressionVisitor()
+        public SqlQueryVisitor()
         { }
 
         /// <summary>
@@ -31,12 +31,59 @@ namespace System.Linq.Sql
             return new Query(Builder.ToString(), Context.Parameters);
         }
 
+        /// <summary>
+        /// Dispatches the list of expressions to one of the more specialized visit methods in this class.
+        /// </summary>
+        /// <param name="node">The expressions to visit.</param>
+        /// <returns>The modified expression list, if any one of the elements were modified; otherwise, returns the original expression list.</returns>
         public override Expression Visit(Expression node)
         {
             if (node is ASourceExpression source)
                 Context.Source = source;
 
             return base.Visit(node);
+        }
+
+        /// <summary>
+        /// Visits the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression to visit.</param>
+        public virtual Expression VisitAggregate(AggregateExpression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            Builder.Append(GetAggregateFunction(expression.Function));
+            Builder.Append("(");
+            Visit(expression.SourceField);
+            Builder.Append(")");
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Gets the sql name of the specified <see cref="AggregateFunction"/>.
+        /// </summary>
+        /// <param name="function">The function to get the sql name of.</param>
+        /// <returns>The sql name of the specified aggregate function.</returns>
+        /// <exception cref="NotSupportedException">Thrown if the specified function is not a known function by the expression visitor.</exception>
+        protected virtual string GetAggregateFunction(AggregateFunction function)
+        {
+            switch (function)
+            {
+                case AggregateFunction.Average:
+                    return "avg";
+                case AggregateFunction.Count:
+                    return "count";
+                case AggregateFunction.Max:
+                    return "max";
+                case AggregateFunction.Min:
+                    return "min";
+                case AggregateFunction.Sum:
+                    return "sum";
+                default:
+                    throw new NotSupportedException($"The aggregate function {function.ToString()} is not known by the sql expression visitor.");
+            }
         }
 
         /// <summary>
@@ -162,7 +209,7 @@ namespace System.Linq.Sql
             // Note: Must be calculated before the field is rendered because child visitation will change the Context.Source value.
             string alias = Context.Source.Fields.GetKey(expression);
 
-            // Render the field source value, detecting if the source is a referenable source
+            // Render the field source value, detecting if the source is a referencable source
             ASourceExpression sourceExpression = expression.SourceExpression?.ValueExpression as ASourceExpression;
             if (expression.SourceExpression != null && sourceExpression == null)
                 Visit(expression.SourceExpression.ValueExpression);
@@ -211,7 +258,7 @@ namespace System.Linq.Sql
                     Builder.Append("right join");
                     break;
                 default:
-                    throw new NotSupportedException($"The {nameof(JoinType)} {expression.JoinType.ToString()} is not supported by {nameof(SqlExpressionVisitor)}.");
+                    throw new NotSupportedException($"The {nameof(JoinType)} {expression.JoinType.ToString()} is not supported by {nameof(SqlQueryVisitor)}.");
             }
 
             // Build the inner selector
@@ -295,15 +342,29 @@ namespace System.Linq.Sql
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
 
+            // Render the body declaration
             Builder.Append("(select ");
             VisitFields(expression, expression.Fields);
+
+            // Render the source expression
             if (expression.Source != null)
             {
                 Builder.Append(" from ");
                 Visit(expression.Source);
             }
+
+            // Restore the current source
+            Context.Source = expression;
+
+            // Render the orderings
+            if (expression.Orderings != null && expression.Orderings.Any())
+                RenderOrderings(expression.Orderings);
+
+            // Render the range selection
             if (expression.Skip > 0 || expression.Take >= 0)
                 RenderLimit(expression.Skip < 0 ? 0 : expression.Skip, expression.Take < 0 ? long.MaxValue : expression.Take);
+
+            // Render the expression alias
             Builder.Append($") as [{Context.GetSource(expression)}]");
 
             return expression;
@@ -313,7 +374,7 @@ namespace System.Linq.Sql
         /// Renders the specified limit options.
         /// </summary>
         /// <param name="skip">The number of result rows to skip before reading.</param>
-        /// <param name="take"></param>
+        /// <param name="take">The number of result rows to read.</param>
         protected virtual void RenderLimit(long skip, long take)
         {
             Builder.Append(" offset ");
@@ -321,6 +382,32 @@ namespace System.Linq.Sql
             Builder.Append(" rows fetch next ");
             Builder.Append(take);
             Builder.Append(" rows only");
+        }
+
+        /// <summary>
+        /// Renders the specified orderings collection.
+        /// </summary>
+        /// <param name="orderings">The orderings to render.</param>
+        protected virtual void RenderOrderings(IEnumerable<Ordering> orderings)
+        {
+            Builder.Append(" order by ");
+            bool first = true;
+            foreach (Ordering ordering in orderings)
+            {
+                // Render punctuation
+                if (!first)
+                    Builder.Append(", ");
+                first = false;
+
+                // Render column
+                VisitField(ordering.Field);
+
+                // Render direction
+                if (ordering.OrderType == OrderType.Ascending)
+                    Builder.Append(" asc");
+                else
+                    Builder.Append(" desc");
+            }
         }
 
         /// <summary>
@@ -386,7 +473,7 @@ namespace System.Linq.Sql
         protected StringBuilder Builder { get; } = new StringBuilder();
 
         /// <summary>Gets the vistor context used during the visitation of expressions.</summary>
-        protected SqlVisitorContext Context { get; } = new SqlVisitorContext();
+        protected SqlQueryVisitorContext Context { get; } = new SqlQueryVisitorContext();
 
         /// <summary>Gets the current sql state of the visitor.</summary>
         public string SqlState => Builder.ToString();
