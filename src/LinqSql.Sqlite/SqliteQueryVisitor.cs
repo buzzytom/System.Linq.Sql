@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace System.Linq.Sql
+namespace System.Linq.Sql.Sqlite
 {
     /// <summary>
     /// <see cref="SqliteQueryVisitor"/> is a custom implementation of <see cref="SqlQueryVisitor"/>, designed for queries on an SQLite database.
