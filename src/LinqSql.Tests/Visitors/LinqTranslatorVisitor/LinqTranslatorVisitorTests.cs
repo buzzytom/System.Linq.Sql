@@ -9,7 +9,7 @@ namespace System.Linq.Sql.Tests
     public class SqlTranslatorVisitorTests
     {
         private readonly DbConnection connection = ConnectionTestHelper.CreateConnection();
-        private readonly SqlTranslatorVisitor visitor = new SqlTranslatorVisitor();
+        private readonly LinqTranslatorVisitor visitor = new LinqTranslatorVisitor();
 
         [TestMethod]
         [ExpectedException(typeof(MethodTranslationException))]

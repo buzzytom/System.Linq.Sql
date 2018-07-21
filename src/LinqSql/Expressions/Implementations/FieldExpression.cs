@@ -34,7 +34,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected override Expression AcceptSql(ISqlExpressionVisitor visitor)
+        protected override Expression AcceptSql(IQueryExpressionVisitor visitor)
         {
             return visitor.VisitField(this);
         }
@@ -44,7 +44,7 @@ namespace System.Linq.Sql
         /// </summary>
         /// <param name="visitor">The visitor to visit this node with.</param>
         /// <returns>The result of visiting this node.</returns>
-        public virtual Expression AcceptDeclarationSql(ISqlExpressionVisitor visitor)
+        public virtual Expression AcceptDeclarationSql(IQueryExpressionVisitor visitor)
         {
             return visitor.VisitFieldDeclaration(this);
         }

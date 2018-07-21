@@ -5,7 +5,7 @@ namespace System.Linq.Sql.Tests
     [TestClass]
     public class SqlExpressionVisitorTests
     {
-        private readonly SqlExpressionVisitor visitor = new SqlExpressionVisitor();
+        private readonly QueryExpressionVisitor visitor = new QueryExpressionVisitor();
 
         [TestMethod]
         public void SqlExpressionVisitor_GenerateQuery()

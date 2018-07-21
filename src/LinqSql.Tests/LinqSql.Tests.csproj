@@ -75,7 +75,7 @@
     <Compile Include="Queryable\CommandFieldTests.cs" />
     <Compile Include="Queryable\SqlQueryableHelperTests.cs" />
     <Compile Include="Queryable\QueryHelperTests.cs" />
-    <Compile Include="Visitors\SqlTranslatorVisitor\SqlTranslatorVisitorTests.cs" />
+    <Compile Include="Visitors\LinqTranslatorVisitor\LinqTranslatorVisitorTests.cs" />
     <Compile Include="Queryable\RecordItemTests.cs" />
     <Compile Include="Queryable\RecordTests.cs" />
     <Compile Include="Queryable\SqlQueryableContextTests.cs" />

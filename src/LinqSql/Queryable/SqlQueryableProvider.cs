@@ -11,13 +11,13 @@ namespace System.Linq.Sql
     class SqlQueryableProvider : IQueryProvider
     {
         private readonly DbConnection connection = null;
-        private readonly SqlExpressionVisitor visitor = null;
+        private readonly QueryExpressionVisitor visitor = null;
 
         public SqlQueryableProvider(DbConnection connection)
-            : this(connection, new SqlExpressionVisitor())
+            : this(connection, new QueryExpressionVisitor())
         { }
 
-        protected SqlQueryableProvider(DbConnection connection, SqlExpressionVisitor visitor)
+        protected SqlQueryableProvider(DbConnection connection, QueryExpressionVisitor visitor)
         {
             if (connection == null)
                 throw new ArgumentNullException(nameof(connection));
@@ -41,7 +41,7 @@ namespace System.Linq.Sql
         public object Execute(Expression expression)
         {
             // Translate the expression tree
-            expression = SqlTranslatorVisitor.Translate(expression);
+            expression = LinqTranslatorVisitor.Translate(expression);
 
             // Covert prediate (scalar) expressions to a source query
             if (expression is APredicateExpression predicate)

@@ -3,9 +3,9 @@
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="ISqlExpressionVisitor"/> represents a visitor for expression trees.
+    /// <see cref="IQueryExpressionVisitor"/> represents a visitor for expression trees.
     /// </summary>
-    public interface ISqlExpressionVisitor
+    public interface IQueryExpressionVisitor
     {
         /// <summary>
         /// Visits the specified expression.

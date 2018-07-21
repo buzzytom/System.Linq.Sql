@@ -5,16 +5,16 @@ using System.Linq.Expressions;
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="SqlTranslatorVisitor"/> translates an expression call to an sql expression tree.
+    /// <see cref="LinqTranslatorVisitor"/> translates an expression call to an sql expression tree.
     /// </summary>
-    public class SqlTranslatorVisitor : ExpressionVisitor
+    public class LinqTranslatorVisitor : ExpressionVisitor
     {
         private ASourceExpression[] sources = null;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SqlTranslatorVisitor"/>.
+        /// Initializes a new instance of <see cref="LinqTranslatorVisitor"/>.
         /// </summary>
-        public SqlTranslatorVisitor()
+        public LinqTranslatorVisitor()
         { }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace System.Linq.Sql
         /// <returns>The converted expression tree.</returns>
         public static Expression Translate(Expression expression)
         {
-            SqlTranslatorVisitor visitor = new SqlTranslatorVisitor();
+            LinqTranslatorVisitor visitor = new LinqTranslatorVisitor();
             return visitor.Visit(expression);
         }
 

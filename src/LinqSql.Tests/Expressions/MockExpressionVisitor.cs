@@ -2,7 +2,7 @@
 
 namespace System.Linq.Sql.Tests
 {
-    public class MockExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
+    public class MockExpressionVisitor : ExpressionVisitor, IQueryExpressionVisitor
     {
         public Expression VisitAggregate(AggregateExpression expression)
         {

@@ -5,14 +5,14 @@ using System.Text;
 namespace System.Linq.Sql
 {
     /// <summary>
-    /// <see cref="SqlExpressionVisitor"/> is an implementation of <see cref="ISqlExpressionVisitor"/>, which the visit implementations generate an SQL representation of an expression tree.
+    /// <see cref="QueryExpressionVisitor"/> is an implementation of <see cref="IQueryExpressionVisitor"/>, which the visit implementations generate an SQL representation of an expression tree.
     /// </summary>
-    public class SqlExpressionVisitor : ExpressionVisitor, ISqlExpressionVisitor
+    public class QueryExpressionVisitor : ExpressionVisitor, IQueryExpressionVisitor
     {
         /// <summary>
-        /// Creates a new instance of <see cref="SqlExpressionVisitor"/>.
+        /// Creates a new instance of <see cref="QueryExpressionVisitor"/>.
         /// </summary>
-        public SqlExpressionVisitor()
+        public QueryExpressionVisitor()
         { }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace System.Linq.Sql
                     Builder.Append("right join");
                     break;
                 default:
-                    throw new NotSupportedException($"The {nameof(JoinType)} {expression.JoinType.ToString()} is not supported by {nameof(SqlExpressionVisitor)}.");
+                    throw new NotSupportedException($"The {nameof(JoinType)} {expression.JoinType.ToString()} is not supported by {nameof(QueryExpressionVisitor)}.");
             }
 
             // Build the inner selector
@@ -473,7 +473,7 @@ namespace System.Linq.Sql
         protected StringBuilder Builder { get; } = new StringBuilder();
 
         /// <summary>Gets the vistor context used during the visitation of expressions.</summary>
-        protected SqlVisitorContext Context { get; } = new SqlVisitorContext();
+        protected QueryVisitorContext Context { get; } = new QueryVisitorContext();
 
         /// <summary>Gets the current sql state of the visitor.</summary>
         public string SqlState => Builder.ToString();
