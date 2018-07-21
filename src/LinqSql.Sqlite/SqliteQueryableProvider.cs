@@ -11,7 +11,7 @@ namespace System.Linq.Sql.Sqlite
     class SqliteQueryableProvider : SqlQueryableProvider
     {
         public SqliteQueryableProvider(DbConnection connection)
-            : base(connection, new SqliteExpressionVisitor())
+            : base(connection, new SqliteQueryVisitor())
         { }
 
         public override IQueryable CreateQuery(Expression expression)

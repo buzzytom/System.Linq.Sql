@@ -85,6 +85,10 @@
     <Compile Include="Sqlite\SqliteQueryableProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinqSql.Sqlite\LinqSql.Sqlite.csproj">
+      <Project>{8cbf4c01-61cb-4e7c-a294-8396b8c1b0f0}</Project>
+      <Name>LinqSql.Sqlite</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinqSql\LinqSql.csproj">
       <Project>{7363d960-384a-4caa-bbca-542c76369b4d}</Project>
       <Name>LinqSql</Name>
