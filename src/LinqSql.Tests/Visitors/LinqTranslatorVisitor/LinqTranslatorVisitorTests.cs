@@ -25,6 +25,32 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlTranslatorVisitor_Visit_Last_Exception()
+        {
+            // Prepare the test data
+            Expression<Action> expression = () => new Record[0]
+                .AsQueryable()
+                .Last();
+
+            // Perform the test operation
+            visitor.Visit(expression.Body);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SqlTranslatorVisitor_Visit_LastOrDefault_Exception()
+        {
+            // Prepare the test data
+            Expression<Action> expression = () => new Record[0]
+                .AsQueryable()
+                .LastOrDefault();
+
+            // Perform the test operation
+            visitor.Visit(expression.Body);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void SqlTranslatorVisitor_VisitGeneric_NotSupportedException()
         {

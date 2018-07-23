@@ -273,6 +273,51 @@ namespace System.Linq.Sql
         }
 
         /// <summary>
+        /// Returns the first element of a sequence that satisfies an optional specified condition.
+        /// </summary>
+        /// <param name="source">A sequence to return an element from.</param>
+        /// <param name="selector">The selector used to order the results.</param>
+        /// <param name="predicate">An optional function to test each element for a condition.</param>
+        /// <returns>The last element in the predicated sequence.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        /// <exception cref="InvalidOperationException">The predicated source sequence is empty.</exception>
+        public static Record Last(this IQueryable<Record> source, Expression<Func<Record, object>> selector, Expression<Func<Record, bool>> predicate = null)
+        {
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (predicate != null)
+                source = source.Where(predicate);
+            return source
+                .OrderByDescending(selector)
+                .Take(1)
+                .AsEnumerable()
+                .First();
+        }
+
+        /// <summary>
+        /// Returns the first element of a sequence that satisfies an optional specified condition or null if the sequence is empty.
+        /// </summary>
+        /// <param name="source">A sequence to return an element from.</param>
+        /// <param name="selector">The selector used to order the results.</param>
+        /// <param name="predicate">An optional function to test each element for a condition.</param>
+        /// <returns>The last element in the predicated sequence or null if the sequence is empty.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        public static Record LastOrDefault(this IQueryable<Record> source, Expression<Func<Record, object>> selector, Expression<Func<Record, bool>> predicate = null)
+        {
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
+
+            if (predicate != null)
+                source = source.Where(predicate);
+            return source
+                .OrderByDescending(selector)
+                .Take(1)
+                .AsEnumerable()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
         /// Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.
         /// </summary>
         /// <param name="source">A sequence to return an element from.</param>

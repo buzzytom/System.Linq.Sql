@@ -167,6 +167,62 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
+        public void SqlQueryable_Last()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.Last(x => x["Alias"]["Id"]);
+
+            // Check the test result
+            Assert.AreEqual((long)ConnectionTestHelper.CountCourses, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_Last_Predicate()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.Last(x => x["Alias"]["Id"], x => (int)x["Alias"]["Id"] == 2);
+
+            // Check the test result
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_LastOrDefault()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.LastOrDefault(x => x["Alias"]["Id"]);
+
+            // Check the test result
+            Assert.AreEqual((long)ConnectionTestHelper.CountCourses, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
+        public void SqlQueryable_LastOrDefault_Predicate()
+        {
+            // Prepare the test data
+            string[] fields = new[] { "Id", "Name" };
+            IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
+
+            // Perform the test operation
+            Record record = queryable.LastOrDefault(x => x["Alias"]["Id"], x => (int)x["Alias"]["Id"] == 2);
+
+            // Check the test result
+            Assert.AreEqual(2L, record["Alias"]["Id"]);
+        }
+
+        [TestMethod]
         public void SqlQueryable_Where_Boolean()
         {
             // Prepare the test data
