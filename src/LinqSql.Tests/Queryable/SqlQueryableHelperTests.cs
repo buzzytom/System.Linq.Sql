@@ -135,25 +135,26 @@ namespace System.Linq.Sql.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void SqlQueryableHelper_Last_ArgumentExceptions()
         {
             // Prepare the test data
             SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
 
             // Perform the test operation
-            SqlQueryableHelper.Last(null, x => true);
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Last(null, y => 1, null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Last(source, null, null));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void SqlQueryableHelper_LastOrDefault_ArgumentExceptions()
         {
             // Prepare the test data
             SqlQueryable source = new SqlQueryable(connection, "Table", new[] { "Field" });
 
             // Perform the test operation
-            SqlQueryableHelper.LastOrDefault(null, x => true);
+            // Perform the test operation
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.LastOrDefault(null, y => 1, null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.LastOrDefault(source, null, null));
         }
 
         [TestMethod]

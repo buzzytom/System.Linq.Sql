@@ -165,6 +165,9 @@ namespace System.Linq.Sql
                     return VisitAggregate(node, AggregateFunction.Min);
                 case "Max":
                     return VisitAggregate(node, AggregateFunction.Max);
+                case "Last":
+                case "LastOrDefault":
+                    throw new InvalidOperationException($"{node.Method.Name} is not known by the translator. Make sure you use the support extension method declared in {nameof(SqlQueryableHelper)}.");
                 case "get_Item":
                     return VisitField(node);
                 case "OrderBy":
@@ -190,21 +193,6 @@ namespace System.Linq.Sql
             while (expression.NodeType == ExpressionType.Quote)
                 expression = ((UnaryExpression)expression).Operand;
             return expression;
-        }
-
-        private static bool IsDeclaring<T1>(MethodCallExpression expression)
-        {
-            return IsDeclaring(expression, typeof(T1));
-        }
-
-        private static bool IsDeclaring<T1, T2>(MethodCallExpression expression)
-        {
-            return IsDeclaring(expression, typeof(T1), typeof(T2));
-        }
-
-        private static bool IsDeclaring<T1, T2, T3>(MethodCallExpression expression)
-        {
-            return IsDeclaring(expression, typeof(T1), typeof(T2), typeof(T3));
         }
 
         private static bool IsDeclaring(MethodCallExpression expression, params Type[] types)

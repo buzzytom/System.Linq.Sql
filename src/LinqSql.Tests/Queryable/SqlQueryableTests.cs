@@ -174,10 +174,10 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.Last();
+            Record record = queryable.Last(x => x["Alias"]["Id"]);
 
             // Check the test result
-            Assert.AreEqual(ConnectionTestHelper.CountCourses, record["Alias"]["Id"]);
+            Assert.AreEqual((long)ConnectionTestHelper.CountCourses, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -188,7 +188,7 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.Last(x => (int)x["Alias"]["Id"] == 2);
+            Record record = queryable.Last(x => x["Alias"]["Id"], x => (int)x["Alias"]["Id"] == 2);
 
             // Check the test result
             Assert.AreEqual(2L, record["Alias"]["Id"]);
@@ -202,10 +202,10 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.LastOrDefault();
+            Record record = queryable.LastOrDefault(x => x["Alias"]["Id"]);
 
             // Check the test result
-            Assert.AreEqual(ConnectionTestHelper.CountCourses, record["Alias"]["Id"]);
+            Assert.AreEqual((long)ConnectionTestHelper.CountCourses, record["Alias"]["Id"]);
         }
 
         [TestMethod]
@@ -216,7 +216,7 @@ namespace System.Linq.Sql.Tests
             IQueryable<Record> queryable = new SqliteQueryable(connection, "Course", "Alias", fields);
 
             // Perform the test operation
-            Record record = queryable.LastOrDefault(x => (int)x["Alias"]["Id"] == 2);
+            Record record = queryable.LastOrDefault(x => x["Alias"]["Id"], x => (int)x["Alias"]["Id"] == 2);
 
             // Check the test result
             Assert.AreEqual(2L, record["Alias"]["Id"]);
