@@ -9,8 +9,7 @@ namespace System.Linq.Sql
         private SelectExpression VisitOrderBy(MethodCallExpression expression)
         {
             MethodInfo method = expression.Method;
-            Type type = method.DeclaringType;
-            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable), typeof(SqlQueryableHelper)))
             {
                 // Resolve the source
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);

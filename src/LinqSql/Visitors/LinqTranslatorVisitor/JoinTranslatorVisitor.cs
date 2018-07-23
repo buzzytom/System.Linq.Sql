@@ -8,7 +8,7 @@ namespace System.Linq.Sql
         public JoinExpression VisitJoin(MethodCallExpression expression)
         {
             // Handle the default Queryable extension Join
-            if (expression.Method.DeclaringType == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable)))
             {
                 // Resolve the sources
                 ASourceExpression outer = Visit<ASourceExpression>(expression.Arguments[0]);
@@ -32,7 +32,7 @@ namespace System.Linq.Sql
             }
 
             // Handle the default SqlQueryableHelper extension Join
-            if (expression.Method.DeclaringType == typeof(SqlQueryableHelper))
+            if (IsDeclaring(expression, typeof(SqlQueryableHelper)))
             {
                 // Resolve the sources
                 ASourceExpression outer = Visit<ASourceExpression>(expression.Arguments[0]);

@@ -191,5 +191,31 @@ namespace System.Linq.Sql
                 expression = ((UnaryExpression)expression).Operand;
             return expression;
         }
+
+        private static bool IsDeclaring<T1>(MethodCallExpression expression)
+        {
+            return IsDeclaring(expression, typeof(T1));
+        }
+
+        private static bool IsDeclaring<T1, T2>(MethodCallExpression expression)
+        {
+            return IsDeclaring(expression, typeof(T1), typeof(T2));
+        }
+
+        private static bool IsDeclaring<T1, T2, T3>(MethodCallExpression expression)
+        {
+            return IsDeclaring(expression, typeof(T1), typeof(T2), typeof(T3));
+        }
+
+        private static bool IsDeclaring(MethodCallExpression expression, params Type[] types)
+        {
+            Type type = expression?.Method?.DeclaringType;
+            if (type == null)
+                throw new ArgumentException("The specified expression does not define a DeclaringType.", nameof(expression));
+            if (types == null)
+                throw new ArgumentNullException(nameof(types));
+
+            return types.Contains(type);
+        }
     }
 }

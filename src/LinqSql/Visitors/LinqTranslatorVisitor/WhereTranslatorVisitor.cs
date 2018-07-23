@@ -7,7 +7,7 @@ namespace System.Linq.Sql
         private WhereExpression VisitWhere(MethodCallExpression expression)
         {
             // Handle the default Queryable extension Where
-            if (expression.Method.DeclaringType == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable)))
             {
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 LambdaExpression lambda = (LambdaExpression)StripQuotes(expression.Arguments[1]);

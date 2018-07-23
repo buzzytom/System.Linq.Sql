@@ -7,7 +7,7 @@ namespace System.Linq.Sql
         private ContainsExpression VisitContains(MethodCallExpression expression)
         {
             // Handle extension methods defined by Linqs
-            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable)))
             {
                 AExpression values = Visit<AExpression>(expression.Arguments[0]);
                 AExpression value = Visit<AExpression>(expression.Arguments[1]);
@@ -15,7 +15,7 @@ namespace System.Linq.Sql
             }
 
             // Handle custom extension method
-            if (expression.Method.DeclaringType == typeof(SqlQueryableHelper))
+            if (IsDeclaring(expression, typeof(SqlQueryableHelper)))
             {
                 // Get value expression first, because the source will change to the subquery making the value out of scope
                 AExpression value = Visit<AExpression>(expression.Arguments[2]);

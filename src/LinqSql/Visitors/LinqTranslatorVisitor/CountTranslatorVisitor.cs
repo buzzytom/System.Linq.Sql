@@ -6,8 +6,7 @@ namespace System.Linq.Sql
     {
         private AggregateExpression VisitCount(MethodCallExpression expression)
         {
-            Type type = expression.Method.DeclaringType;
-            if (type == typeof(SqlQueryableHelper) || type == typeof(Enumerable) || type == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable), typeof(SqlQueryableHelper)))
             {
                 // Map the source
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);

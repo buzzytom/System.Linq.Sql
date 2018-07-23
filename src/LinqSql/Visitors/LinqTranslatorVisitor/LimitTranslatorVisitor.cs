@@ -6,7 +6,7 @@ namespace System.Linq.Sql
     {
         private SelectExpression VisitSkip(MethodCallExpression expression)
         {
-            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable)))
             {
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
@@ -18,7 +18,7 @@ namespace System.Linq.Sql
 
         private SelectExpression VisitTake(MethodCallExpression expression)
         {
-            if (expression.Method.DeclaringType == typeof(Enumerable) || expression.Method.DeclaringType == typeof(Queryable))
+            if (IsDeclaring(expression, typeof(Queryable), typeof(Enumerable)))
             {
                 ASourceExpression source = Visit<ASourceExpression>(expression.Arguments[0]);
                 int count = (int)((ConstantExpression)expression.Arguments[1]).Value;
