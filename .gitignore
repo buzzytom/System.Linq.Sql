@@ -1,1 +1,11 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
+src/.vs/LinqSql/v15/
+src/LinqSql.Tests/obj/
+src/packages/
+src/LinqSql/obj/
+src/LinqSql.Tests/bin/
+src/LinqSql/bin/
+*.user
+src/.vs/LinqSql/DesignTimeBuild/
+src/LinqSql.Sqlite/obj/
+src/LinqSql.Sqlite/bin/
