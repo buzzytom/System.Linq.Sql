@@ -9,3 +9,5 @@ src/LinqSql/bin/
 src/.vs/LinqSql/DesignTimeBuild/
 src/LinqSql.Sqlite/obj/
 src/LinqSql.Sqlite/bin/
+src/LinqSql.Samples/bin/
+src/LinqSql.Samples/obj/
