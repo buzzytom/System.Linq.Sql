@@ -72,5 +72,10 @@ namespace System.Linq.Sql.Samples
                 .GetCustomAttributes(typeof(SampleAttribute), false)
                 .FirstOrDefault() as SampleAttribute;
         }
+
+        public static void RenderRecords(IEnumerable<Record> records)
+        {
+            // TODO - Implement
+        }
     }
 }
