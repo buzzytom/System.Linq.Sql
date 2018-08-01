@@ -11,3 +11,4 @@ src/LinqSql.Sqlite/obj/
 src/LinqSql.Sqlite/bin/
 src/LinqSql.Samples/bin/
 src/LinqSql.Samples/obj/
+src/LinqSql.Samples/.vs/
