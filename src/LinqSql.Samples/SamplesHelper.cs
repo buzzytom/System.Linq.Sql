@@ -73,9 +73,63 @@ namespace System.Linq.Sql.Samples
                 .FirstOrDefault() as SampleAttribute;
         }
 
-        public static void RenderRecords(IEnumerable<Record> records)
+        public static void RenderQuery(string sql)
         {
-            // TODO - Implement
+            // TODO - auto format
+            Console.WriteLine(sql);
+        }
+
+        public static void RenderRecords(IEnumerable<Record> records, int columnWidth = 16)
+        {
+            if (records.Count() == 0)
+                Console.WriteLine("No Records.");
+            else
+            {
+                // Get the first records headings
+                IEnumerable<string> headings = records
+                    .First()
+                    .Values
+                    .SelectMany(x => x.Keys);
+                int columns = headings.Count();
+
+                // Render the headings
+                RenderDivider(columns, columnWidth);
+                RenderRow(headings, columnWidth);
+                RenderDivider(columns, columnWidth);
+
+                // Render cells
+                foreach (Record record in records)
+                {
+                    IEnumerable<string> values = record.Values
+                        .SelectMany(x => x.Values)
+                        .Select(x => x.ToString());
+                    RenderRow(values, columnWidth);
+                }
+
+                // Render Footer
+                RenderDivider(columns, columnWidth);
+            }
+        }
+
+        private static void RenderDivider(int columns, int columnWidth)
+        {
+            Console.Write("|".PadRight(columns * (columnWidth + 1), '-') + "|" + Environment.NewLine);
+        }
+
+        private static void RenderRow(IEnumerable<string> values, int columnWidth)
+        {
+            Console.Write("|");
+            foreach (string value in values)
+                Console.Write(String.Format("{0," + columnWidth + "}|", value.Truncate(columnWidth)));
+            Console.Write(Environment.NewLine);
+        }
+
+        private static string Truncate(this string value, int length)
+        {
+            if (value.Length > length)
+                return value.Substring(0, length);
+            else
+                return value;
         }
     }
 }

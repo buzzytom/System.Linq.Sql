@@ -31,12 +31,12 @@ namespace System.Linq.Sql.Samples
                 // ["table"]["field"]
                 // Note: The casts are required for the comparisions to be valid C#
                 query = query.Where(x => (int)x["Blogs"]["BlogId"] == 1 || (int)x["Blogs"]["BlogId"] == 2);
-                Console.WriteLine(query);
 
                 // Executing the query can be achieved with methods like ToArray, ToList, FirstOrDefault etc.
                 // Note: Helper methods exist to flatten results which we will cover in other samples
                 Record[] results = query.ToArray();
 
+                SamplesHelper.RenderQuery("select * from Blogs where BlogId = 1 or BlogId = 2");
                 SamplesHelper.RenderRecords(results);
             }
         }
