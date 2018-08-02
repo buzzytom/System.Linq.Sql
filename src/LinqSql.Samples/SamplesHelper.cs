@@ -4,7 +4,7 @@ namespace System.Linq.Sql.Samples
 {
     internal static class SamplesHelper
     {
-        private static string[] keywords = { "select", "from", "where", "limit", "or", "and", "as" };
+        private static string[] keywords = { "select", "from", "where", "limit", "or", "and", "as", "order", "by", "asc", "desc", "left", "right", "join", "on" };
 
         public static T ReadInRange<T>()
             where T : struct, IConvertible
@@ -82,7 +82,7 @@ namespace System.Linq.Sql.Samples
             foreach (string token in tokens)
             {
                 // Determine the colour of the token
-                if (keywords.Any(x => string.Equals(token, x, StringComparison.OrdinalIgnoreCase)))
+                if (keywords.Any(x => string.Equals(token.TrimEnd(','), x, StringComparison.OrdinalIgnoreCase)))
                     Console.ForegroundColor = ConsoleColor.Cyan;
                 else
                     Console.ForegroundColor = ConsoleColor.White;
