@@ -4,6 +4,8 @@ namespace System.Linq.Sql.Samples
 {
     internal static class SamplesHelper
     {
+        private static string[] keywords = { "select", "from", "where", "limit", "or", "and" };
+
         public static T ReadInRange<T>()
             where T : struct, IConvertible
         {
@@ -75,8 +77,23 @@ namespace System.Linq.Sql.Samples
 
         public static void RenderQuery(string sql)
         {
-            // TODO - auto format
-            Console.WriteLine(sql);
+            // Split the sql query into tokens
+            string[] tokens = sql.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            foreach (string token in tokens)
+            {
+                // Determine the colour of the token
+                if (keywords.Any(x => string.Equals(token, x, StringComparison.OrdinalIgnoreCase)))
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                else
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                // Render the token
+                Console.Write(token + " ");
+            }
+            Console.Write(Environment.NewLine);
+
+            // Reset the console colour
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void RenderRecords(IEnumerable<Record> records, int columnWidth = 16)
