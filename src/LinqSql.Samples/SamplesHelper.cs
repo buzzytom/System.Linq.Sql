@@ -4,7 +4,7 @@ namespace System.Linq.Sql.Samples
 {
     internal static class SamplesHelper
     {
-        private static string[] keywords = { "select", "from", "where", "limit", "or", "and" };
+        private static string[] keywords = { "select", "from", "where", "limit", "or", "and", "as" };
 
         public static T ReadInRange<T>()
             where T : struct, IConvertible
@@ -65,7 +65,7 @@ namespace System.Linq.Sql.Samples
                 .Where(x => x.Attribute != null)
                 .ToDictionary(x => x.Attribute, x => x.Type)
                 .Where(x => x.Key?.Section == section)
-                .OrderBy(x => x.Key.Name);
+                .OrderBy(x => x.Value.Name);
         }
 
         private static SampleAttribute GetSampleAttribute(this Type type)
