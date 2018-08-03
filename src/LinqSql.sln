@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqSql", "LinqSql\LinqSql.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqSql.Tests", "LinqSql.Tests\LinqSql.Tests.csproj", "{F0CD662D-DCFE-4B78-95D1-9E88FE3FEAED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqSql.Sqlite", "LinqSql.Sqlite\LinqSql.Sqlite.csproj", "{8CBF4C01-61CB-4E7C-A294-8396B8C1B0F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqSql.Sqlite", "LinqSql.Sqlite\LinqSql.Sqlite.csproj", "{8CBF4C01-61CB-4E7C-A294-8396B8C1B0F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqSql.Samples", "LinqSql.Samples\LinqSql.Samples.csproj", "{C495B2D6-FE67-41D8-A7BD-41D43E3669CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{8CBF4C01-61CB-4E7C-A294-8396B8C1B0F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CBF4C01-61CB-4E7C-A294-8396B8C1B0F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CBF4C01-61CB-4E7C-A294-8396B8C1B0F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C495B2D6-FE67-41D8-A7BD-41D43E3669CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C495B2D6-FE67-41D8-A7BD-41D43E3669CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C495B2D6-FE67-41D8-A7BD-41D43E3669CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C495B2D6-FE67-41D8-A7BD-41D43E3669CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
