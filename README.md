@@ -49,33 +49,22 @@ way of indexing your tables and fields. We recommend having a separate mechanism
 for describing the meta structure of your system. This can be as simple as
 declaring a `FieldDefinition` table. E.g:
 
-`public class FieldDefinition`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ c#
+public class FieldDefinition
+{
+    public FieldDefinition()
+    { }
 
-`{`
+    public int Id { set; get; }
 
-`public FieldDefinition()`
+    public string TableName { set; get; }
 
-`{ }`
+    public string FieldName { set; get; }
 
- 
-
-`public int Id { set; get; }`
-
-\` \`
-
-`public string TableName { set; get; }`
-
- 
-
-`public string FieldName { set; get; }`
-
-\` \`
-
-`/// Optional, e.g: database: VARCHAR, BIGINT etc...`
-
-`public string Type { set; get; }`
-
-`}`
+    /// Optional, e.g: database: VARCHAR, BIGINT etc...
+    public string Type { set; get; }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Road Map
 --------
@@ -93,8 +82,6 @@ These are planned future features:
 ### 1.2.0
 
 -   PostgreSQL support
-
--   Oracle SQL support
 
 License
 -------
