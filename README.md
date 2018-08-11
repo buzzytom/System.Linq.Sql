@@ -16,6 +16,46 @@ us all agree that this is messy.
 
 Solution, query on tables created at run-time, enter System.Linq.Sql.
 
+Getting Started
+---------------
+
+### Installation
+
+Install the following package:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+System.Linq.Sql
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+otherwise, clone the master branch of this repository and reference the
+*System.Linq.Sql* project as well any database vendor specific package you
+require.
+
+### Constructing Queries
+
+Use a `Linq` like syntax to build queries, this is best shown with an example:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ c#
+IQueryable<Record> query = new SqliteQueryable(connection, "Blogs", fields);
+
+// Traditional linq syntax can be used to predicate your queries
+// When comparing a field value you must specify the table and field with this square bracket style:
+// ["table"]["field"]
+query = query.Where(x => (int)x["Blogs"]["BlogId"] == 1 || (int)x["Blogs"]["BlogId"] == 2);
+
+// Executing the query can be achieved with methods like ToArray, ToList, FirstOrDefault etc.
+// Note: Helper methods exist to flatten results which we will cover in other samples
+Record[] results = query.ToArray();
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Samples
+
+There is a sample project, you should clone the repository and run it. It has
+samples of most the queries you would need to run.
+
+[Samples
+Directory](https://github.com/buzzytom/System.Linq.Sql/tree/master/src/LinqSql.Samples)
+
 Requirements
 ------------
 
@@ -82,6 +122,18 @@ These are planned future features:
 ### 1.2.0
 
 -   PostgreSQL support
+
+### 1.3.0
+
+-   Implicit table names (this would allow `x => x[”FieldName”] == “Something”`
+    without the table name)
+
+-   Optional field type checking, this would allow run-time checks of query
+    parameters types if the field definitions type is specified
+
+### 1.4.0
+
+-   Group By
 
 License
 -------
