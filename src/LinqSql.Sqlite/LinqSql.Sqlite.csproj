@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>System.Linq.Sql.Sqlite</RootNamespace>
-    <PackageId>System.Linq.Sql.Sqlite</PackageId>
+    <PackageId>Buzzytom.System.Linq.Sql.Sqlite</PackageId>
     <Authors>Thomas Williams</Authors>
     <Description>System.Linq.Sql is a light weight set of extensions for System.Linq for making database operations on types that are not known at compile time. This package provides SQLite support for package.</Description>
     <Copyright>© Thomas Williams 2018</Copyright>
