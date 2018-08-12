@@ -53,6 +53,7 @@ namespace System.Linq.Sql.Tests
             }
         }
 
+#if DEBUG
         [TestMethod]
         public void FieldExpressions_Add_SameKey()
         {
@@ -67,6 +68,7 @@ namespace System.Linq.Sql.Tests
             // Check test result
             Assert.AreEqual(a, b);
         }
+#endif
 
         [TestMethod]
         public void FieldExpressions_GetKey_Exceptions()
@@ -76,6 +78,7 @@ namespace System.Linq.Sql.Tests
             Assert.ThrowsException<KeyNotFoundException>(() => expressions.GetKey(new FieldExpression(source, "Table", "Field")));
         }
 
+#if DEBUG
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void FieldExpressions_Add_Exception()
@@ -83,5 +86,6 @@ namespace System.Linq.Sql.Tests
             FieldExpressions expressions = new FieldExpressions();
             expressions.Add(null);
         }
+#endif
     }
 }
