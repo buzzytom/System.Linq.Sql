@@ -3,12 +3,7 @@ using System.Linq.Expressions;
 
 namespace System.Linq.Sql
 {
-#if DEBUG
-    public
-#else
-    internal
-#endif
-    class SqlQueryableProvider : IQueryProvider
+    public class SqlQueryableProvider : IQueryProvider
     {
         private readonly DbConnection connection = null;
         private readonly SqlQueryVisitor visitor = null;
