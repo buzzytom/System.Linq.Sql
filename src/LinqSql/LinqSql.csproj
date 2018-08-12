@@ -3,6 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>System.Linq.Sql</RootNamespace>
+    <Authors>Thomas Williams</Authors>
+    <PackageLicenseUrl>https://github.com/buzzytom/System.Linq.Sql/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/buzzytom/System.Linq.Sql/tree/master/src/LinqSql</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/buzzytom/System.Linq.Sql</RepositoryUrl>
+    <PackageId>System.Linq.Sql</PackageId>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>System.Linq.Sql is a light weight set of extensions for System.Linq for making database operations on types that are not known at compile time.</Description>
+    <Copyright>© Thomas Williams</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Initial release. View the project url for more information.</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
