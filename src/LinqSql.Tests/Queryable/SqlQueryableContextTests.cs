@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Linq.Sql.Tests
 {
+#if DEBUG
     [TestClass]
     public class SqlQueryableContextTests
     {
@@ -48,4 +49,5 @@ namespace System.Linq.Sql.Tests
             SqlQueryableContext.ExecuteQuery(connection, expression, visitor);
         }
     }
+#endif
 }
