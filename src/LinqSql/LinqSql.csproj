@@ -10,10 +10,11 @@
     <PackageId>System.Linq.Sql</PackageId>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>System.Linq.Sql is a light weight set of extensions for System.Linq for making database operations on types that are not known at compile time.</Description>
-    <Copyright>© Thomas Williams</Copyright>
+    <Copyright>© Thomas Williams 2018</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Initial release. View the project url for more information.</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageTags>System Linq Sql Dynamic</PackageTags>
   </PropertyGroup>
 
 </Project>
