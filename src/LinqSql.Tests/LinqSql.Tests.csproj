@@ -79,6 +79,7 @@
     <Compile Include="Queryable\SqlQueryableLinqTests\SqlQueryableSkipTests.cs" />
     <Compile Include="Queryable\SqlQueryableLinqTests\SqlQueryableAggregateTests.cs" />
     <Compile Include="Queryable\SqlQueryableLinqTests\SqlQueryableOrderByTests.cs" />
+    <Compile Include="Queryable\SqlQueryableLinqTests\SqlQueryableUpdateTests.cs" />
     <Compile Include="Queryable\SqlQueryableLinqTests\SqlQueryableWhereTests.cs" />
     <Compile Include="Visitors\QueryVisitor\QueryTests.cs" />
     <Compile Include="Visitors\QueryVisitor\SqlQueryContextTests.cs" />

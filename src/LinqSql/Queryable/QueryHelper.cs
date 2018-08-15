@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace System.Linq.Sql
 {
@@ -119,6 +120,24 @@ namespace System.Linq.Sql
             {
                 throw new Exception($"{nameof(GetScalar)} failed to convert the result of type '{result.GetType().Name}' to '{typeof(TResult).Name}'.");
             }
+        }
+
+        /// <summary>
+        /// Updates the values in the source record set to the specified values.
+        /// </summary>
+        /// <param name="records">The records to update.</param>
+        /// <param name="mapper">The mapper which updates specified fields to the current record.</param>
+        /// <returns>The number of affected rows.</returns>
+        public static int Update(this IQueryable<Record> records, string table, Expression<Func<Record, Dictionary<string, object>>> mapper)
+        {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+            if (string.IsNullOrWhiteSpace(table))
+                throw new ArgumentException("Cannot be whitespace.", nameof(table));
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+
+            throw new NotImplementedException();
         }
     }
 }
