@@ -395,7 +395,7 @@ namespace System.Linq.Sql
         /// <param name="source">The query to update.</param>
         /// <param name="mapper">The mapper which updates specified fields to the current record.</param>
         /// <returns>The number of affected rows.</returns>
-        public static int Update(this IQueryable<Record> source, string table, Expression<Func<Record, Dictionary<string, object>>> mapper)
+        public static IQueryable<Record> Update(this IQueryable<Record> source, string table, Expression<Func<Record, Dictionary<string, object>>> mapper)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -404,7 +404,14 @@ namespace System.Linq.Sql
             if (mapper == null)
                 throw new ArgumentNullException(nameof(mapper));
 
-            throw new NotImplementedException();
+            MethodInfo method = (MethodInfo)MethodBase.GetCurrentMethod();
+            MethodCallExpression expression = Expression.Call(null, method, new Expression[]
+            {
+                source.Expression,
+                Expression.Constant(table),
+                mapper
+            });
+            return source.Provider.CreateQuery<Record>(expression);
         }
     }
 }

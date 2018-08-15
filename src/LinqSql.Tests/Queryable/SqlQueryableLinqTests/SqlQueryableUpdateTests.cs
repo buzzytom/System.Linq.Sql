@@ -34,10 +34,12 @@ namespace System.Linq.Sql.Tests
                 .Where(x => (int)x["Alias"]["Id"] == 1 || (int)x["Alias"]["Id"] == 2);
 
             // Preform the test operation
-            int updated = queryable.Update("Alias", record => new Dictionary<string, object>
-            {
-                { "Name", "Updated Name " + record["Alias"]["Id"] }
-            });
+            int updated = queryable
+                .Update("Alias", record => new Dictionary<string, object>
+                {
+                    { "Name", "Updated Name " + record["Alias"]["Id"] }
+                })
+                .GetScalar<int>();
 
             // Check the test result
             Assert.AreEqual(2, updated);
