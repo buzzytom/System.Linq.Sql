@@ -183,6 +183,8 @@ namespace System.Linq.Sql
                     return VisitSkip(node);
                 case "Take":
                     return VisitTake(node);
+                case "Update":
+                    return VisitUpdate(node);
                 default:
                     throw new MethodTranslationException(node.Method);
             }

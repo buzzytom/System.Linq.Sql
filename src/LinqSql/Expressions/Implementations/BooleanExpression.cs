@@ -8,7 +8,7 @@ namespace System.Linq.Sql
     public class BooleanExpression : APredicateExpression
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="LiteralExpression"/>, with the specified value.
+        /// Initializes a new instance of <see cref="BooleanExpression"/>, with the specified value.
         /// </summary>
         public BooleanExpression(bool value)
         {
