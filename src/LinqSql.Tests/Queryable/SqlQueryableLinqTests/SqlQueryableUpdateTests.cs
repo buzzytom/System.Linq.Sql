@@ -20,9 +20,9 @@ namespace System.Linq.Sql.Tests
             Expression<Func<Record, Dictionary<string, object>>> mapper = record => null;
 
             // Perform the test operations
-            Assert.ThrowsException<ArgumentNullException>(() => QueryHelper.Update(null, "table", mapper));
-            Assert.ThrowsException<ArgumentException>(() => QueryHelper.Update(queryable, "", mapper));
-            Assert.ThrowsException<ArgumentNullException>(() => QueryHelper.Update(queryable, "table", null));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Update(null, "table", mapper));
+            Assert.ThrowsException<ArgumentException>(() => SqlQueryableHelper.Update(queryable, "", mapper));
+            Assert.ThrowsException<ArgumentNullException>(() => SqlQueryableHelper.Update(queryable, "table", null));
         }
 
         [TestMethod]

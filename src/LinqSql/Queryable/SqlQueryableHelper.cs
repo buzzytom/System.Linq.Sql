@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace System.Linq.Sql
@@ -386,6 +387,24 @@ namespace System.Linq.Sql
                     null,
                     method,
                     new Expression[] { source.Expression, parameter }));
+        }
+
+        /// <summary>
+        /// Updates the values in the source record set to the specified values.
+        /// </summary>
+        /// <param name="source">The query to update.</param>
+        /// <param name="mapper">The mapper which updates specified fields to the current record.</param>
+        /// <returns>The number of affected rows.</returns>
+        public static int Update(this IQueryable<Record> source, string table, Expression<Func<Record, Dictionary<string, object>>> mapper)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (string.IsNullOrWhiteSpace(table))
+                throw new ArgumentException("Cannot be whitespace.", nameof(table));
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
+
+            throw new NotImplementedException();
         }
     }
 }
